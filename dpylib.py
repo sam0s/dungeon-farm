@@ -24,6 +24,8 @@ def loadlvl(ents,loc):
             w=Wall(int(data[1]),int(data[2]))
         if data[0]=='"player"':
             w=Player(int(data[1]),int(data[2]))
+        if data[0]=='"door"':
+            w=Door(int(data[1]),int(data[2]))
         ents.add(w)
         data=data[3:]
     load.close()
@@ -42,6 +44,7 @@ def changelevel(ents,loc,pos):
     except:
         fill(ents)
         carve(ents)
+        doors(ents)
         savelvl(ents,loc+"\\world"+str(pos[0])+str(pos[1])+".txt")
 
 
@@ -61,14 +64,14 @@ def carve(ents):
         if direction == 1:
             for f in range(choice([3,4,5,9,15])):
                 if x<736: x+=32
-                rect = pygame.Rect(x,y,16,16)
+                rect = pygame.Rect(x,y,2,2)
                 for ff in ents:
                     if rect.colliderect(ff.rect):
                         ents.remove(ff)
         if direction == 2:
             for f in range(choice([3,4,5,9,15])):
                 if x>32: x-=32
-                rect = pygame.Rect(x,y,16,16)
+                rect = pygame.Rect(x,y,2,2)
 
                 for ff in ents:
                     if rect.colliderect(ff.rect):
@@ -84,7 +87,7 @@ def carve(ents):
         if direction == 4:
             for f in range(choice([3,4,5,9])):
                 if y>32: y-=32
-                rect = pygame.Rect(x,y,16,16)
+                rect = pygame.Rect(x,y,2,2)
 
                 for ff in ents:
                     if rect.colliderect(ff.rect):
@@ -98,12 +101,47 @@ def fill(ents):
             x+=32
         x=0
         y+=32
+def doors(ents):
+    x=384
+    y=224
+    while x<900:
+        x+=32
+        rect = pygame.Rect(x,y,2,2)
+        for ff in ents:
+            if rect.colliderect(ff.rect):
+                ents.remove(ff)
+    while x>-200:
+        x-=32
+        rect = pygame.Rect(x,y,2,2)
+        for ff in ents:
+            if rect.colliderect(ff.rect):
+                ents.remove(ff)
 
+    x=384
+    while y<900:
+        y+=32
+        rect = pygame.Rect(x,y,2,2)
+        for ff in ents:
+            if rect.colliderect(ff.rect):
+                ents.remove(ff)
+    while y>-900:
+        y-=32
+        rect = pygame.Rect(x,y,2,2)
+        for ff in ents:
+            if rect.colliderect(ff.rect):
+                ents.remove(ff)
+    ents.add(Door(768,224))
+    ents.add(Door(384,480))
+    ents.add(Door(384,0))
+    ents.add(Door(0,224))
 def drawhud(asurf):
     asurf.blit(hudbord,(0,0))
 
 
 class Entity(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+class TextHolder(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
@@ -115,6 +153,14 @@ class Wall(Entity):
         self.image.convert()
         self.image.fill((100,100,100))
         self.rect = Rect(x,y,32,32)
+class Door(Entity):
+    def __init__(self,x,y):
+        Entity.__init__(self)
+        self.name = "door"
+        self.image = Surface((32,32))
+        self.image.convert()
+        self.image.fill((139,69,19))
+        self.rect = Rect(x,y,32,32)
 class Player(Entity):
     def __init__(self,x,y):
         Entity.__init__(self)
@@ -124,6 +170,7 @@ class Player(Entity):
         self.image.fill((0,250,0))
         self.rect = Rect(x,y,32,32)
         self.wasd=0
+        self.worldpos = [0,0]
     def update(self,surf):
         px=self.rect.x
         py=self.rect.y
@@ -144,6 +191,14 @@ class Player(Entity):
                 self.rect.x+=32
                 self.wasd=0
         if surf.get_at((self.rect.x+16,self.rect.y+16)) != (0,0,0):
+            if surf.get_at((self.rect.x+16,self.rect.y+16)) == surf.get_at((389,7)):
+                if self.rect.y<64:
+                    print "you enter a north door"
             self.rect.x=px
             self.rect.y=py
-        pygame.draw.rect(surf,(0,255,0),(self.rect.x,self.rect.y,32,32),2)
+        pygame.draw.rect(surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
+
+class Log(TextHolder):
+    def __init__(self,x,y):
+        TextHolder.__init__(self)
+        print "F"
