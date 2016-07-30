@@ -141,6 +141,7 @@ def drawhud(asurf):
 class Entity(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
+        
 class TextHolder(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -169,33 +170,48 @@ class Player(Entity):
         self.image.convert()
         self.image.fill((0,250,0))
         self.rect = Rect(x,y,32,32)
-        self.wasd=0
         self.worldpos = [0,0]
+        self.prev = self.moveto = [x,y]
+        self.moving=False
+        self.prev=[]
     def update(self,surf):
-        px=self.rect.x
-        py=self.rect.y
-        k=pygame.key.get_pressed()
-        if not k[K_w] and not k[K_a] and not k[K_s] and not k[K_d]:
-            self.wasd=1
-        if self.wasd==1:
+        if not self.moving:
+            self.prev=[self.rect.x,self.rect.y]
+            k=pygame.key.get_pressed()
+            #if not k[K_w] and not k[K_a] and not k[K_s] and not k[K_d]:
+                #self.wasd=1
+            #if self.wasd>-1:
             if k[K_w]:
-                self.rect.y-=32
+                self.moveto[1]-=32
                 self.wasd=0
-            if k[K_a]:
-                self.rect.x-=32
+                self.moving=True
+            elif k[K_a]:
+                self.moveto[0]-=32
                 self.wasd=0
-            if k[K_s]:
-                self.rect.y+=32
+                self.moving=True
+            elif k[K_s]:
+                self.moveto[1]+=32
                 self.wasd=0
-            if k[K_d]:
-                self.rect.x+=32
+                self.moving=True
+            elif k[K_d]:
+                self.moveto[0]+=32
                 self.wasd=0
-        if surf.get_at((self.rect.x+16,self.rect.y+16)) != (0,0,0):
-            if surf.get_at((self.rect.x+16,self.rect.y+16)) == surf.get_at((389,7)):
-                if self.rect.y<64:
-                    print "you enter a north door"
-            self.rect.x=px
-            self.rect.y=py
+                self.moving=True
+                
+            #COLLISIONS
+            if surf.get_at(self.moveto) != (0,0,0):
+                if surf.get_at(self.moveto) == surf.get_at((389,7)):
+                    if self.rect.y<64:
+                        print "DOOR N"
+                self.moveto=self.prev
+                self.moving=False
+        else:
+            if self.rect.x<self.moveto[0]: self.rect.x+=2
+            elif self.rect.x>self.moveto[0]: self.rect.x-=2
+            elif self.rect.y<self.moveto[1]: self.rect.y+=2
+            elif self.rect.y>self.moveto[1]: self.rect.y-=2
+            else: self.moving=False
+            
         pygame.draw.rect(surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
 
 class Log(TextHolder):
