@@ -17,8 +17,7 @@ timer = time.Clock()
 ent = pygame.sprite.Group()
 p=dpylib.Player(384,224)
 hud = Surface((800,128))
-eggs=dpylib.Log(12,12)
-print eggs
+gamelog=dpylib.Log(12,12,100,120,(220,220,220),(0,0,0)) 
 def main():
     try:
         dpylib.loadlvl(ent,levelname+"\\world00.txt")
@@ -46,6 +45,7 @@ def main():
         dpylib.drawhud(hud)
         screen.blit(hud, (0,512))
         p.update(screen)
+        gamelog.update(screen)
         pygame.display.flip()
         display.set_caption("DungeonPy - "+str(mse))
     pygame.display.quit()

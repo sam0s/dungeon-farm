@@ -215,6 +215,12 @@ class Player(Entity):
         pygame.draw.rect(surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
 
 class Log(TextHolder):
-    def __init__(self,x,y):
+    def __init__(self,x,y,sizex,sizey,ic,oc):
         TextHolder.__init__(self)
-        print "F"
+        self.rect=pygame.Rect(x,y,sizex,sizey)
+        #INNER AND OUTER COLORS
+        self.ic=ic
+        self.oc=oc
+    def update(self,surf):
+        pygame.draw.rect(surf,(self.ic),self.rect,0)
+        pygame.draw.rect(surf,(self.oc),self.rect,3)
