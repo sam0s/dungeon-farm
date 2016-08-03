@@ -5,7 +5,6 @@ from pygame import *
 
 pygame.init()
 font=pygame.font.Font(None,15)
-hudbord = pygame.image.load("hudborder.png")
 
 def savelvl(ents,loc):
     save = open(loc,"w")
@@ -134,8 +133,6 @@ def doors(ents):
     ents.add(Door(384,480))
     ents.add(Door(384,0))
     ents.add(Door(0,224))
-def drawhud(asurf):
-    asurf.blit(hudbord,(0,0))
 
 
 class Entity(pygame.sprite.Sprite):
@@ -145,6 +142,23 @@ class Entity(pygame.sprite.Sprite):
 class TextHolder(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
+
+class World(object):
+    def __init__(self,containing):
+        print "world made"
+        self.containing=containing
+        print self.containing
+        self.turn=1
+    def Update(self,surf):
+        if self.turn%2 ==0:
+            print "ur turn"
+        self.turn+=1
+        surf.fill((0,0,0))
+        self.containing.draw(surf)
+    def Shift(self,d):
+        if d=='n':
+            print "going north"
+            print self.containing
 
 class Wall(Entity):
     def __init__(self,x,y):
@@ -163,7 +177,8 @@ class Door(Entity):
         self.image.fill((139,69,19))
         self.rect = Rect(x,y,32,32)
 class Player(Entity):
-    def __init__(self,x,y):
+    def __init__(self,x,y,world):
+        self.world=world
         Entity.__init__(self)
         self.name = "player"
         self.image = Surface((32,32))
@@ -174,6 +189,7 @@ class Player(Entity):
         self.prev = self.moveto = [x,y]
         self.moving=False
         self.prev=[]
+        
     def update(self,surf):
         if not self.moving:
             self.prev=[self.rect.x,self.rect.y]
@@ -202,10 +218,11 @@ class Player(Entity):
             if surf.get_at(self.moveto) != (0,0,0):
                 if surf.get_at(self.moveto) == surf.get_at((389,7)):
                     if self.rect.y<64:
-                        print "DOOR N"
+                        self.world.Shift('n')
                 self.moveto=self.prev
                 self.moving=False
         else:
+            self.world.Update(surf)
             if self.rect.x<self.moveto[0]: self.rect.x+=2
             elif self.rect.x>self.moveto[0]: self.rect.x-=2
             elif self.rect.y<self.moveto[1]: self.rect.y+=2
