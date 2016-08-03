@@ -1,10 +1,18 @@
-#dungeonpy library
+#################################
+# sam0s #######################
+#################################
+
+
 import pygame
 from random import choice
 from pygame import *
 
 pygame.init()
 font=pygame.font.Font(None,15)
+
+#################################
+# FUNCTIONS #######################
+#################################
 
 def savelvl(ents,loc):
     save = open(loc,"w")
@@ -135,6 +143,12 @@ def doors(ents):
     ents.add(Door(0,224))
 
 
+
+#################################
+# CLASSES #######################
+#################################
+
+
 class Entity(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -149,6 +163,10 @@ class World(object):
         self.containing=containing
         print self.containing
         self.turn=1
+        self.pos=[0,0]
+        self.player=None
+    def SetPlayer(self,p):
+        self.player=p
     def Update(self,surf):
         if self.turn%2 ==0:
             print "ur turn"
@@ -157,6 +175,9 @@ class World(object):
         self.containing.draw(surf)
     def Shift(self,d):
         if d=='n':
+            print self.player.worldpos
+            #self.pos=[self.pos[0],self.pos[1]-1]
+            #changelevel(self.containing,"lvl",self.pos)
             print "going north"
             print self.containing
 
@@ -178,18 +199,17 @@ class Door(Entity):
         self.rect = Rect(x,y,32,32)
 class Player(Entity):
     def __init__(self,x,y,world):
-        self.world=world
         Entity.__init__(self)
+        self.world=world
         self.name = "player"
         self.image = Surface((32,32))
         self.image.convert()
         self.image.fill((0,250,0))
         self.rect = Rect(x,y,32,32)
-        self.worldpos = [0,0]
         self.prev = self.moveto = [x,y]
         self.moving=False
         self.prev=[]
-        
+        self.worldpos=[0,0]
     def update(self,surf):
         if not self.moving:
             self.prev=[self.rect.x,self.rect.y]

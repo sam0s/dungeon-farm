@@ -15,8 +15,12 @@ display.set_caption("DungeonPy")
 timer = time.Clock()
 
 ent = pygame.sprite.Group()
+
+#Connect Player and World
 w=dpylib.World(ent)
 p=dpylib.Player(384,224,w)
+w.SetPlayer(p)
+
 hud = Surface((800,128))
 gamelog=dpylib.Log(1,513,100,120,(220,220,220),(0,0,0))
 
