@@ -167,20 +167,32 @@ class World(object):
         self.player=None
     def SetPlayer(self,p):
         self.player=p
-    def Update(self,surf):
+    def Turn(self):
+        self.turn+=1
         if self.turn%2 ==0:
             print "ur turn"
-        self.turn+=1
+    def Update(self,surf):
         surf.fill((0,0,0))
         self.containing.draw(surf)
-    def Shift(self,d):
+    def Shift(self,d,surf):
         if d=='n':
-            print self.player.worldpos
-            #self.pos=[self.pos[0],self.pos[1]-1]
-            #changelevel(self.containing,"lvl",self.pos)
+            self.pos=[self.pos[0],self.pos[1]-1]
+            self.player.moveto[1]=self.player.rect.y=448
             print "going north"
-            print self.containing
-
+        elif d=='e':
+            self.pos=[self.pos[0]+1,self.pos[1]]
+            self.player.moveto[0]=self.player.rect.x=32
+            print "going east"
+        elif d=='s':
+            self.pos=[self.pos[0],self.pos[1]+1]
+            self.player.moveto[1]=self.player.rect.y=32
+            print "going south"
+        elif d=='w':
+            self.pos=[self.pos[0]-1,self.pos[1]]
+            self.player.moveto[0]=self.player.rect.x=736
+            print "going west"
+        changelevel(self.containing,"lvl",self.pos)
+        self.Update(surf)
 class Wall(Entity):
     def __init__(self,x,y):
         Entity.__init__(self)
@@ -197,6 +209,7 @@ class Door(Entity):
         self.image.convert()
         self.image.fill((139,69,19))
         self.rect = Rect(x,y,32,32)
+
 class Player(Entity):
     def __init__(self,x,y,world):
         Entity.__init__(self)
@@ -235,12 +248,20 @@ class Player(Entity):
                 self.moving=True
                 
             #COLLISIONS
+            if surf.get_at(self.moveto) == surf.get_at((389,7)):
+                if self.rect.y<64:
+                    self.world.Shift('n',surf)
+                elif self.rect.x>704:
+                    self.world.Shift('e',surf)
+                elif self.rect.y>416:
+                    self.world.Shift('s',surf)
+                elif self.rect.x<64:
+                    self.world.Shift('w',surf)
             if surf.get_at(self.moveto) != (0,0,0):
-                if surf.get_at(self.moveto) == surf.get_at((389,7)):
-                    if self.rect.y<64:
-                        self.world.Shift('n')
                 self.moveto=self.prev
                 self.moving=False
+            if self.moving ==True:
+                self.world.Turn()
         else:
             self.world.Update(surf)
             if self.rect.x<self.moveto[0]: self.rect.x+=2
