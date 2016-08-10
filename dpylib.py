@@ -159,9 +159,7 @@ class TextHolder(pygame.sprite.Sprite):
 
 class World(object):
     def __init__(self,containing):
-        print "world made"
         self.containing=containing
-        print self.containing
         self.turn=1
         self.pos=[0,0]
         self.player=None
@@ -170,27 +168,33 @@ class World(object):
     def Turn(self):
         self.turn+=1
         if self.turn%2 ==0:
-            print "ur turn"
+            global logtext
+            logtext.append("Your turn!")
     def Update(self,surf):
         surf.fill((0,0,0))
         self.containing.draw(surf)
     def Shift(self,d,surf):
+        global logtext
         if d=='n':
             self.pos=[self.pos[0],self.pos[1]-1]
             self.player.moveto[1]=self.player.rect.y=448
-            print "going north"
+            
+            logtext.append("going north")
         elif d=='e':
             self.pos=[self.pos[0]+1,self.pos[1]]
             self.player.moveto[0]=self.player.rect.x=32
-            print "going east"
+
+            logtext.append("going east")
         elif d=='s':
             self.pos=[self.pos[0],self.pos[1]+1]
             self.player.moveto[1]=self.player.rect.y=32
-            print "going south"
+
+            logtext.append("going south")
         elif d=='w':
             self.pos=[self.pos[0]-1,self.pos[1]]
             self.player.moveto[0]=self.player.rect.x=736
-            print "going west"
+
+            logtext.append("going west")
         changelevel(self.containing,"lvl",self.pos)
         self.Update(surf)
 class Wall(Entity):
@@ -273,12 +277,29 @@ class Player(Entity):
         pygame.draw.rect(surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
 
 class Log(TextHolder):
-    def __init__(self,x,y,sizex,sizey,ic,oc):
+    def __init__(self,x,y,sizex,sizey,ic,surf):
         TextHolder.__init__(self)
         self.rect=pygame.Rect(x,y,sizex,sizey)
+        global logtext
+        logtext=[]
         #INNER AND OUTER COLORS
         self.ic=ic
-        self.oc=oc
-    def update(self,surf):
+        self.oc=(0,0,0)
+        self.textY=4
         pygame.draw.rect(surf,(self.ic),self.rect,0)
         pygame.draw.rect(surf,(self.oc),self.rect,3)
+    def update(self,surf):
+        global logtext
+        if len(logtext)>0:
+            for f in logtext:
+                if self.textY<112:self.textY+=12
+                else:self.textY=4;pygame.draw.rect(surf,(self.ic),self.rect,0);pygame.draw.rect(surf,(self.oc),self.rect,3)
+                wax=font.render(str(logtext[0]),0,(255,0,0))
+                surf.blit(wax,(4,self.textY))
+                logtext=logtext[1:]
+
+            
+            
+            
+            
+        

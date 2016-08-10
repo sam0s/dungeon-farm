@@ -22,7 +22,7 @@ p=dpylib.Player(384,224,w)
 w.SetPlayer(p)
 
 hud = Surface((800,128))
-gamelog=dpylib.Log(1,513,100,120,(220,220,220),(0,0,0))
+gamelog=dpylib.Log(1,1,200,125,(220,220,220),hud)
 
 def main():
     try:
@@ -46,13 +46,14 @@ def main():
             if e.type == QUIT:
                 dpylib.savelvl(ent,levelname+"\\world"+str(p.worldpos[0])+str(p.worldpos[1])+".txt")
                 go = False
-        #screen.blit(hud, (0,512))
+        
         p.update(screen)
-        gamelog.update(screen)
+        gamelog.update(hud)
+        screen.blit(hud, (0,512))
         pygame.display.flip()
         display.set_caption("DungeonPy - "+str(mse))
     pygame.display.quit()
-
+    
 
 
 if(__name__ == "__main__"):
