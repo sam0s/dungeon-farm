@@ -29,10 +29,10 @@ def loadlvl(ents,loc):
     while len(data) > 0:
         if data[0]=='"wall"':
             w=Wall(int(data[1]),int(data[2]))
-        if data[0]=='"player"':
-            w=Player(int(data[1]),int(data[2]))
         if data[0]=='"door"':
             w=Door(int(data[1]),int(data[2]))
+        if data[0]=='"gold"':
+            w=Gold(int(data[1]),int(data[2]))
         ents.add(w)
         data=data[3:]
     load.close()
@@ -65,6 +65,9 @@ def carve(ents):
     carvnum = choice([95,100,110,125,130,150,200,225])
     while total < carvnum:
         total+=1
+        special=choice([1,0,0,0,0,0,0,0,0,0])
+        if special==1:
+            ents.add(Gold(x,y))
         while direction == lastdir:
             direction = choice([1,2,3,4])
         lastdir = direction
@@ -168,8 +171,8 @@ class World(object):
     def Turn(self):
         self.turn+=1
         if self.turn%2 ==0:
-            global logtext
-            logtext.append("Your turn!")
+            #turn
+            pass
     def Update(self,surf):
         surf.fill((0,0,0))
         self.containing.draw(surf)
@@ -197,6 +200,17 @@ class World(object):
             logtext.append("going west")
         changelevel(self.containing,"lvl",self.pos)
         self.Update(surf)
+
+
+class Gold(Entity):
+    def __init__(self,x,y):
+        Entity.__init__(self)
+        self.name = "gold"
+        self.image = Surface((32,32))
+        self.image.convert()
+        self.image.fill((255,255,0))
+        self.rect = Rect(x,y,32,32)
+        
 class Wall(Entity):
     def __init__(self,x,y):
         Entity.__init__(self)
@@ -231,9 +245,6 @@ class Player(Entity):
         if not self.moving:
             self.prev=[self.rect.x,self.rect.y]
             k=pygame.key.get_pressed()
-            #if not k[K_w] and not k[K_a] and not k[K_s] and not k[K_d]:
-                #self.wasd=1
-            #if self.wasd>-1:
             if k[K_w]:
                 self.moveto[1]-=32
                 self.wasd=0
@@ -250,23 +261,27 @@ class Player(Entity):
                 self.moveto[0]+=32
                 self.wasd=0
                 self.moving=True
-                
-            #COLLISIONS
-            if surf.get_at(self.moveto) == surf.get_at((389,7)):
-                if self.rect.y<64:
-                    self.world.Shift('n',surf)
-                elif self.rect.x>704:
-                    self.world.Shift('e',surf)
-                elif self.rect.y>416:
-                    self.world.Shift('s',surf)
-                elif self.rect.x<64:
-                    self.world.Shift('w',surf)
-            if surf.get_at(self.moveto) != (0,0,0):
-                self.moveto=self.prev
-                self.moving=False
-            if self.moving ==True:
+            if self.moving == True:
                 self.world.Turn()
         else:
+
+            #collision
+            cl=pygame.sprite.spritecollide(self, self.world.containing, False)
+            if cl:
+                for f in cl:
+                    if f.name=='door':
+                        if self.rect.y<64:
+                            self.world.Shift('n',surf)
+                        elif self.rect.x>704:
+                            self.world.Shift('e',surf)
+                        elif self.rect.y>416:
+                            self.world.Shift('s',surf)
+                        elif self.rect.x<64:
+                            self.world.Shift('w',surf)
+                    if f.name=='gold':
+                        pygame.sprite.spritecollide(self, self.world.containing, True)
+                    if f.name=='wall':
+                        self.moveto=self.prev
             self.world.Update(surf)
             if self.rect.x<self.moveto[0]: self.rect.x+=2
             elif self.rect.x>self.moveto[0]: self.rect.x-=2
