@@ -33,6 +33,8 @@ def loadlvl(ents,loc):
             w=Door(int(data[1]),int(data[2]))
         if data[0]=='"gold"':
             w=Gold(int(data[1]),int(data[2]))
+        if data[0]=='"enemy"':
+            w=Enemy(int(data[1]),int(data[2]))
         ents.add(w)
         data=data[3:]
     load.close()
@@ -65,9 +67,11 @@ def carve(ents):
     carvnum = choice([95,100,110,125,130,150,200,225])
     while total < carvnum:
         total+=1
-        special=choice([1,0,0,0,0,0,0,0,0,0])
+        special=choice([1,0,0,0,0,0,0,0,0,0,2,1,0,0,0,0])
         if special==1:
             ents.add(Gold(x,y))
+        if special==2:
+            ents.add(Enemy(x,y))
         while direction == lastdir:
             direction = choice([1,2,3,4])
         lastdir = direction
@@ -161,11 +165,15 @@ class TextHolder(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
 class World(object):
-    def __init__(self,containing):
+    def __init__(self,containing,surf,hudsurf):
         self.containing=containing
         self.turn=1
         self.pos=[0,0]
         self.player=None
+        self.state="game"
+        self.surf=surf
+        self.hudsurf=hudsurf
+        self.hudlog=Log(1,1,200,125,(220,220,220),hudsurf)
     def SetPlayer(self,p):
         self.player=p
     def Turn(self):
@@ -173,10 +181,17 @@ class World(object):
         if self.turn%2 ==0:
             #turn
             pass
-    def Update(self,surf):
-        surf.fill((0,0,0))
-        self.containing.draw(surf)
-    def Shift(self,d,surf):
+    def Update(self):
+        if self.state == "game":
+            self.player.update()
+            self.hudlog.update(self.hudsurf)
+            self.surf.blit(self.hudsurf, (0,512))
+        if self.state == "menu":
+            self.surf.fill((0,0,0))
+    def Draw(self):
+        self.surf.fill((0,0,0))
+        self.containing.draw(self.surf)
+    def Shift(self,d):
         global logtext
         if d=='n':
             self.pos=[self.pos[0],self.pos[1]-1]
@@ -199,7 +214,7 @@ class World(object):
 
             logtext.append("going west")
         changelevel(self.containing,"lvl",self.pos)
-        self.Update(surf)
+        self.Draw()
 
 
 class Gold(Entity):
@@ -210,7 +225,18 @@ class Gold(Entity):
         self.image.convert()
         self.image.fill((255,255,0))
         self.rect = Rect(x,y,32,32)
-        
+
+class Enemy(Entity):
+    def __init__(self,x,y):
+        Entity.__init__(self)
+        self.name = "enemy"
+        self.etype = "grunt"
+        self.image = Surface((32,32))
+        self.image.convert()
+        self.image.fill((255,0,0))
+        self.rect = Rect(x,y,32,32)
+
+
 class Wall(Entity):
     def __init__(self,x,y):
         Entity.__init__(self)
@@ -241,7 +267,7 @@ class Player(Entity):
         self.moving=False
         self.prev=[]
         self.worldpos=[0,0]
-    def update(self,surf):
+    def update(self):
         if not self.moving:
             self.prev=[self.rect.x,self.rect.y]
             k=pygame.key.get_pressed()
@@ -271,25 +297,25 @@ class Player(Entity):
                 for f in cl:
                     if f.name=='door':
                         if self.rect.y<64:
-                            self.world.Shift('n',surf)
+                            self.world.Shift('n')
                         elif self.rect.x>704:
-                            self.world.Shift('e',surf)
+                            self.world.Shift('e')
                         elif self.rect.y>416:
-                            self.world.Shift('s',surf)
+                            self.world.Shift('s')
                         elif self.rect.x<64:
-                            self.world.Shift('w',surf)
+                            self.world.Shift('w')
                     if f.name=='gold':
                         pygame.sprite.spritecollide(self, self.world.containing, True)
                     if f.name=='wall':
                         self.moveto=self.prev
-            self.world.Update(surf)
+            self.world.Draw()
             if self.rect.x<self.moveto[0]: self.rect.x+=2
             elif self.rect.x>self.moveto[0]: self.rect.x-=2
             elif self.rect.y<self.moveto[1]: self.rect.y+=2
             elif self.rect.y>self.moveto[1]: self.rect.y-=2
             else: self.moving=False
             
-        pygame.draw.rect(surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
+        pygame.draw.rect(self.world.surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
 
 class Log(TextHolder):
     def __init__(self,x,y,sizex,sizey,ic,surf):

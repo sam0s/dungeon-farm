@@ -17,12 +17,11 @@ timer = time.Clock()
 ent = pygame.sprite.Group()
 
 #Connect Player and World
-w=dpylib.World(ent)
+hud = Surface((800,128))
+
+w=dpylib.World(ent,screen,hud)
 p=dpylib.Player(384,224,w)
 w.SetPlayer(p)
-
-hud = Surface((800,128))
-gamelog=dpylib.Log(1,1,200,125,(220,220,220),hud)
 
 def main():
     try:
@@ -33,7 +32,7 @@ def main():
         dpylib.carve(ent)
         dpylib.doors(ent)
     go=True
-    w.Update(screen)
+    w.Draw()
     while go:
         mse=pygame.mouse.get_pos()
         mse=(((mse[0])/32)*32,((mse[1])/32)*32)
@@ -44,12 +43,13 @@ def main():
 
         for e in pygame.event.get():
             if e.type == QUIT:
-                dpylib.savelvl(ent,levelname+"\\world"+str(p.worldpos[0])+str(p.worldpos[1])+".txt")
+                if w.state=="game":
+                    dpylib.savelvl(ent,levelname+"\\world"+str(p.worldpos[0])+str(p.worldpos[1])+".txt")
                 go = False
+                
+        w.Update()
         
-        p.update(screen)
-        gamelog.update(hud)
-        screen.blit(hud, (0,512))
+     
         pygame.display.flip()
         display.set_caption("DungeonPy - "+str(mse))
     pygame.display.quit()
