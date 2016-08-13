@@ -10,6 +10,7 @@ from pygame import *
 pygame.init()
 font=pygame.font.Font(None,15)
 menuimg=pygame.image.load("menu.png")
+headshots=[pygame.image.load("headshot1.png")]
 #################################
 # FUNCTIONS #######################
 #################################
@@ -173,7 +174,7 @@ class World(object):
         self.state="menu"
         self.surf=surf
         self.hudsurf=hudsurf
-        self.hudlog=Log(1,1,200,125,(220,220,220),hudsurf)
+        self.hudlog=Log(439,1,360,125,(220,220,220),hudsurf)
     def SetPlayer(self,p):
         self.player=p
     def Turn(self):
@@ -183,9 +184,18 @@ class World(object):
             pass
     def Update(self):
         if self.state == "game":
+           
             self.player.update()
+            
+            #hud
+
+            #this bar will only be drawn when hp values change
+            bar(self.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.player.hp,self.player.maxhp)
+            
+            self.hudsurf.blit(headshots[0],(1,1))
             self.hudlog.update(self.hudsurf)
             self.surf.blit(self.hudsurf, (0,512))
+           
         if self.state == "menu":
             self.surf.fill((0,0,0))
             self.surf.blit(menuimg,(0,0))
@@ -272,6 +282,8 @@ class Player(Entity):
         self.moving=False
         self.prev=[]
         self.worldpos=[0,0]
+        self.hp=25
+        self.maxhp=100
     def update(self):
         if not self.moving:
             self.prev=[self.rect.x,self.rect.y]
@@ -341,7 +353,7 @@ class Log(TextHolder):
                 if self.textY<112:self.textY+=12
                 else:self.textY=4;pygame.draw.rect(surf,(self.ic),self.rect,0);pygame.draw.rect(surf,(self.oc),self.rect,3)
                 wax=font.render(str(logtext[0]),0,(255,0,0))
-                surf.blit(wax,(4,self.textY))
+                surf.blit(wax,(self.rect.x+5,self.textY))
                 logtext=logtext[1:]
 
             
