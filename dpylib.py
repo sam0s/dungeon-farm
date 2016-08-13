@@ -9,7 +9,7 @@ from pygame import *
 
 pygame.init()
 font=pygame.font.Font(None,15)
-
+menuimg=pygame.image.load("menu.png")
 #################################
 # FUNCTIONS #######################
 #################################
@@ -170,7 +170,7 @@ class World(object):
         self.turn=1
         self.pos=[0,0]
         self.player=None
-        self.state="game"
+        self.state="menu"
         self.surf=surf
         self.hudsurf=hudsurf
         self.hudlog=Log(1,1,200,125,(220,220,220),hudsurf)
@@ -188,6 +188,11 @@ class World(object):
             self.surf.blit(self.hudsurf, (0,512))
         if self.state == "menu":
             self.surf.fill((0,0,0))
+            self.surf.blit(menuimg,(0,0))
+            key=pygame.key.get_pressed()
+            if key[K_SPACE]:
+                self.state="game"
+                self.Draw()
     def Draw(self):
         self.surf.fill((0,0,0))
         self.containing.draw(self.surf)
