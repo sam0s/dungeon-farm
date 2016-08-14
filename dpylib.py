@@ -340,6 +340,7 @@ class Log(TextHolder):
         self.rect=pygame.Rect(x,y,sizex,sizey)
         global logtext
         logtext=[]
+        self.drawntext=[]
         #INNER AND OUTER COLORS
         self.ic=ic
         self.oc=(0,0,0)
@@ -347,14 +348,26 @@ class Log(TextHolder):
         pygame.draw.rect(surf,(self.ic),self.rect,0)
         pygame.draw.rect(surf,(self.oc),self.rect,3)
     def update(self,surf):
+        print self.drawntext
         global logtext
         if len(logtext)>0:
             for f in logtext:
-                if self.textY<112:self.textY+=12
-                else:self.textY=4;pygame.draw.rect(surf,(self.ic),self.rect,0);pygame.draw.rect(surf,(self.oc),self.rect,3)
-                wax=font.render(str(logtext[0]),0,(255,0,0))
-                surf.blit(wax,(self.rect.x+5,self.textY))
+                self.drawntext.append(logtext[0])
                 logtext=logtext[1:]
+                if len(self.drawntext)>10:
+                    pygame.draw.rect(surf,(self.ic),self.rect,0)
+                    pygame.draw.rect(surf,(self.oc),self.rect,3)
+                    self.drawntext=self.drawntext[1:]
+                    
+            y=4
+            a=0
+            
+            for f in self.drawntext:
+                wax=font.render(str(self.drawntext[a]),0,(255,0,0))
+                surf.blit(wax,(self.rect.x+5,y))
+                a+=1
+                y+=12
+                
 
             
             
