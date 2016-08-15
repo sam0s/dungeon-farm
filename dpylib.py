@@ -46,6 +46,7 @@ def bar(surface,color1,color2,x,y,width,height,value,maxvalue):
     for hp in range(int(max(min(value / float(maxvalue) * width, width), 0))):
         pygame.draw.rect(surface, color1, (x+xx,y,1,height), 0)
         xx+= 1
+    surface.blit(font.render(str(value)+"/"+str(maxvalue),0,(0,0,0)),(x+width/2-11,y+height/2-5))
 
 def changelevel(ents,loc,pos):
     try:
@@ -190,9 +191,7 @@ class World(object):
             #hud
 
             #this bar will only be drawn when hp values change
-            bar(self.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.player.hp,self.player.maxhp)
             
-            self.hudsurf.blit(headshots[0],(1,1))
             self.hudlog.update(self.hudsurf)
             self.surf.blit(self.hudsurf, (0,512))
            
@@ -206,6 +205,8 @@ class World(object):
     def Draw(self):
         self.surf.fill((0,0,0))
         self.containing.draw(self.surf)
+        bar(self.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.player.hp,self.player.maxhp)
+        self.hudsurf.blit(headshots[0],(1,1))
     def Shift(self,d):
         global logtext
         if d=='n':

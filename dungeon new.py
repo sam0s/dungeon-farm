@@ -27,7 +27,13 @@ def main():
     try:
         dpylib.loadlvl(ent,levelname+"\\world00.txt")
     except:
-        mkdir(levelname)
+
+        #try to grab/create the level folder
+        try:
+            mkdir(levelname)
+        except:
+            pass
+        
         dpylib.fill(ent)
         dpylib.carve(ent)
         dpylib.doors(ent)
