@@ -285,6 +285,7 @@ class Player(Entity):
         self.hp=25
         self.maxhp=100
     def update(self):
+        global logtext
         if not self.moving:
             self.prev=[self.rect.x,self.rect.y]
             k=pygame.key.get_pressed()
@@ -322,7 +323,9 @@ class Player(Entity):
                         elif self.rect.x<64:
                             self.world.Shift('w')
                     if f.name=='gold':
+                        logtext.append("gold found!")
                         pygame.sprite.spritecollide(self, self.world.containing, True)
+                        pygame.sprite.spritecollide(self, self.world.containing, False)
                     if f.name=='wall':
                         self.moveto=self.prev
             self.world.Draw()
@@ -348,7 +351,6 @@ class Log(TextHolder):
         pygame.draw.rect(surf,(self.ic),self.rect,0)
         pygame.draw.rect(surf,(self.oc),self.rect,3)
     def update(self,surf):
-        print self.drawntext
         global logtext
         if len(logtext)>0:
             for f in logtext:
