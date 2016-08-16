@@ -11,6 +11,7 @@ pygame.init()
 font=pygame.font.Font(None,15)
 menuimg=pygame.image.load("menu.png")
 headshots=[pygame.image.load("headshot1.png")]
+
 #################################
 # FUNCTIONS #######################
 #################################
@@ -36,6 +37,9 @@ def loadlvl(ents,loc):
             w=Gold(int(data[1]),int(data[2]))
         if data[0]=='"enemy"':
             w=Enemy(int(data[1]),int(data[2]))
+        if data[0]=='"chest"':
+            #load the contents of the chest, stored in a file
+            pass
         ents.add(w)
         data=data[3:]
     load.close()
@@ -69,11 +73,16 @@ def carve(ents):
     carvnum = choice([95,100,110,125,130,150,200,225])
     while total < carvnum:
         total+=1
-        special=choice([1,0,0,0,0,0,0,0,0,0,2,1,0,0,0,0])
+
+        #generate cool stuff
+        special=choice([1,1,1,1,2,2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
         if special==1:
             ents.add(Gold(x,y))
         if special==2:
             ents.add(Enemy(x,y))
+        if special==3:
+            ents.add(Chest(x,y))
+            
         while direction == lastdir:
             direction = choice([1,2,3,4])
         lastdir = direction
@@ -175,9 +184,8 @@ class World(object):
         self.state="menu"
         self.surf=surf
         self.hudsurf=hudsurf
+        self.levelname="lvl"
         self.hudlog=Log(439,1,360,125,(220,220,220),hudsurf)
-    def SetPlayer(self,p):
-        self.player=p
     def Turn(self):
         self.turn+=1
         if self.turn%2 ==0:
@@ -208,6 +216,7 @@ class World(object):
         bar(self.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.player.hp,self.player.maxhp)
         self.hudsurf.blit(headshots[0],(1,1))
     def Shift(self,d):
+        savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt")
         global logtext
         if d=='n':
             self.pos=[self.pos[0],self.pos[1]-1]
@@ -229,7 +238,8 @@ class World(object):
             self.player.moveto[0]=self.player.rect.x=736
 
             logtext.append("going west")
-        changelevel(self.containing,"lvl",self.pos)
+        
+        changelevel(self.containing,self.levelname,self.pos)
         self.Draw()
 
 
@@ -241,6 +251,17 @@ class Gold(Entity):
         self.image.convert()
         self.image.fill((255,255,0))
         self.rect = Rect(x,y,32,32)
+        
+class Chest(Entity):
+    def __init__(self,x,y):
+        Entity.__init__(self)
+        self.name = "chest"
+        self.contents=[]
+        self.image = Surface((32,32))
+        self.image.convert()
+        self.image.fill((120,60,10))
+        self.rect = Rect(x,y,32,32)
+
 
 class Enemy(Entity):
     def __init__(self,x,y):
@@ -282,7 +303,6 @@ class Player(Entity):
         self.prev = self.moveto = [x,y]
         self.moving=False
         self.prev=[]
-        self.worldpos=[0,0]
         self.hp=25
         self.maxhp=100
     def update(self):
@@ -325,8 +345,7 @@ class Player(Entity):
                             self.world.Shift('w')
                     if f.name=='gold':
                         logtext.append("gold found!")
-                        pygame.sprite.spritecollide(self, self.world.containing, True)
-                        pygame.sprite.spritecollide(self, self.world.containing, False)
+                        self.world.containing.remove(f)
                     if f.name=='wall':
                         self.moveto=self.prev
             self.world.Draw()

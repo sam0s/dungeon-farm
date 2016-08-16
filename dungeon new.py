@@ -7,7 +7,7 @@ DISPLAY = (800, 640)
 DEPTH = 16
 FLAGS = pygame.RESIZABLE
 
-levelname="lvl"
+
 
 screen = display.set_mode(DISPLAY, FLAGS, DEPTH)
 pygame.init()
@@ -21,22 +21,23 @@ hud = Surface((800,128))
 
 w=dpylib.World(ent,screen,hud)
 p=dpylib.Player(384,224,w)
-w.SetPlayer(p)
-
+w.player=p
+w.levelname="level"
 def main():
     try:
-        dpylib.loadlvl(ent,levelname+"\\world00.txt")
+        dpylib.loadlvl(ent,w.levelname+"\\world00.txt")
     except:
 
         #try to grab/create the level folder
         try:
-            mkdir(levelname)
+            mkdir(w.levelname)
         except:
             pass
         
         dpylib.fill(ent)
         dpylib.carve(ent)
         dpylib.doors(ent)
+        dpylib.savelvl(ent,w.levelname+"\\world"+str(w.pos[0])+str(w.pos[1])+".txt")
     go=True
     w.Draw()
     while go:
@@ -50,7 +51,7 @@ def main():
         for e in pygame.event.get():
             if e.type == QUIT:
                 if w.state=="game":
-                    dpylib.savelvl(ent,levelname+"\\world"+str(p.worldpos[0])+str(p.worldpos[1])+".txt")
+                    dpylib.savelvl(ent,w.levelname+"\\world"+str(w.pos[0])+str(w.pos[1])+".txt")
                 go = False
                 
         w.Update()
