@@ -6,6 +6,7 @@
 import pygame
 from random import choice
 from pygame import *
+import battle,escmenu
 
 pygame.init()
 font=pygame.font.Font(None,15)
@@ -181,24 +182,32 @@ class World(object):
         self.turn=1
         self.pos=[0,0]
         self.player=None
-        self.state="menu"
+        self.state="escmenu"
         self.surf=surf
         self.hudsurf=hudsurf
         self.levelname="lvl"
         self.hudlog=Log(439,1,360,125,(220,220,220),hudsurf)
+
+        #this whole deal right here might be changed later
+        self.bat=battle.Battle(self.surf,self)
+        self.esc=escmenu.EscMenu(self.surf,self,self.levelname)
+        
     def Turn(self):
         self.turn+=1
         if self.turn%2 ==0:
             #turn
             pass
     def Update(self):
+        if self.state == "battle":
+            self.bat.Draw()
+        if self.state == "escmenu":
+            self.esc.Draw()
+            
         if self.state == "game":
            
             self.player.update()
             
             #hud
-
-            #this bar will only be drawn when hp values change
             
             self.hudlog.update(self.hudsurf)
             self.surf.blit(self.hudsurf, (0,512))
@@ -343,6 +352,10 @@ class Player(Entity):
                             self.world.Shift('s')
                         elif self.rect.x<64:
                             self.world.Shift('w')
+                    if f.name=='enemy':
+                        self.world.state='battle'
+                        self.world.containing.remove(f)
+                        #logtext.append("an enemy was slain")
                     if f.name=='gold':
                         logtext.append("gold found!")
                         self.world.containing.remove(f)

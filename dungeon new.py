@@ -58,7 +58,7 @@ def main():
         
      
         pygame.display.flip()
-        display.set_caption("DungeonPy - "+str(mse))
+        display.set_caption("DungeonPy - "+str(timer.get_fps()))
     pygame.display.quit()
     
 
