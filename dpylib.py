@@ -185,7 +185,7 @@ class World(object):
         self.state="escmenu"
         self.surf=surf
         self.hudsurf=hudsurf
-        self.levelname="lvl"
+        self.levelname="level"
         self.hudlog=Log(439,1,360,125,(220,220,220),hudsurf)
 
         #this whole deal right here might be changed later
@@ -353,7 +353,7 @@ class Player(Entity):
                         elif self.rect.x<64:
                             self.world.Shift('w')
                     if f.name=='enemy':
-                        self.world.state='battle'
+                        self.world.state='escmenu'
                         self.world.containing.remove(f)
                         #logtext.append("an enemy was slain")
                     if f.name=='gold':

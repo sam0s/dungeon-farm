@@ -22,7 +22,7 @@ class Battle(object):
         self.world=world
     def Draw(self):
         self.surf.fill((0,0,0))
-        pygame.draw.rect(self.surf,(255,0,0),(0,0,100,100),0)
+        pygame.draw.rect(self.surf,(0,0,255),(0,0,100,100),0)
         key=pygame.key.get_pressed()
         if key[K_SPACE]:
             self.world.state="game"
