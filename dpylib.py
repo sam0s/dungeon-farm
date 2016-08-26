@@ -182,43 +182,63 @@ class World(object):
         self.turn=1
         self.pos=[0,0]
         self.player=None
-        self.state="escmenu"
+        self.state="game"
         self.surf=surf
         self.hudsurf=hudsurf
         self.levelname="level"
         self.hudlog=Log(439,1,360,125,(220,220,220),hudsurf)
-
+        self.keys=pygame.key.get_pressed()
+        self.go=True
+        
         #this whole deal right here might be changed later
         self.bat=battle.Battle(self.surf,self)
         self.esc=escmenu.EscMenu(self.surf,self,self.levelname)
-        
+
+        #really prob need to find a better way to do this
+        self.good=1
     def Turn(self):
         self.turn+=1
         if self.turn%2 ==0:
             #turn
             pass
+    def ChangeState(self,state):
+        self.good=0
+        self.state=state
+        if state=="escmenu":
+            self.esc.created=0        
+        
+        
     def Update(self):
+        #Events and Keys
+        self.events=pygame.event.get()
+        self.keys=pygame.key.get_pressed()
+        
+        if self.state == "game":
+            
+            if self.good==1:
+                if self.keys[K_ESCAPE]:
+                    self.ChangeState("escmenu")
+            else:
+                self.Draw()
+                    
+            if not self.keys[K_ESCAPE]:
+                self.good=1
+            
+            for e in self.events:
+                if e.type == QUIT:
+                    savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt")
+                    self.go = False
+            self.player.update()
+           
         if self.state == "battle":
             self.bat.Draw()
+   
         if self.state == "escmenu":
             self.esc.Draw()
-            
-        if self.state == "game":
-           
-            self.player.update()
-            
-            #hud
-            
-            self.hudlog.update(self.hudsurf)
-            self.surf.blit(self.hudsurf, (0,512))
-           
-        if self.state == "menu":
-            self.surf.fill((0,0,0))
-            self.surf.blit(menuimg,(0,0))
-            key=pygame.key.get_pressed()
-            if key[K_SPACE]:
-                self.state="game"
-                self.Draw()
+        
+        self.hudlog.update(self.hudsurf)
+        self.surf.blit(self.hudsurf, (0,512))
+        pygame.display.flip()
     def Draw(self):
         self.surf.fill((0,0,0))
         self.containing.draw(self.surf)
@@ -318,7 +338,7 @@ class Player(Entity):
         global logtext
         if not self.moving:
             self.prev=[self.rect.x,self.rect.y]
-            k=pygame.key.get_pressed()
+            k=self.world.keys
             if k[K_w]:
                 self.moveto[1]-=32
                 self.wasd=0
@@ -353,9 +373,9 @@ class Player(Entity):
                         elif self.rect.x<64:
                             self.world.Shift('w')
                     if f.name=='enemy':
-                        self.world.state='escmenu'
+                        self.world.ChangeState("battle")
                         self.world.containing.remove(f)
-                        #logtext.append("an enemy was slain")
+                        logtext.append("an enemy was slain")
                     if f.name=='gold':
                         logtext.append("gold found!")
                         self.world.containing.remove(f)

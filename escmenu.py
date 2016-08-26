@@ -19,9 +19,9 @@ class Entity(pygame.sprite.Sprite):
 class Square(Entity):
     def __init__(self,x,y,c):
         Entity.__init__(self)
-        self.image=pygame.Surface((16,16))
+        self.image=pygame.Surface((8,8))
         self.image.fill(c)
-        self.rect=(x/2,y/2,16,16)
+        self.rect=(x/4,y/4,8,8)
     
 
 class EscMenu(object):
@@ -30,7 +30,8 @@ class EscMenu(object):
         self.world=world
         self.levelname=loc
         self.small = pygame.sprite.Group()
-        self.CreateSmallMap(str(self.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small)
+        self.created=0
+        #self.CreateSmallMap(str(self.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small)
     def CreateSmallMap(self,loc,lev):
         self.small.empty()
         load = open(loc,"r")
@@ -43,28 +44,32 @@ class EscMenu(object):
             c=(0,0,0)
             if data[0]=='"wall"':
                 c=(100,100,100)
-            if data[0]=='"gold"':
-                c=(255,255,0)
-            if data[0]=='"enemy"':
-                c=(255,0,0)
-            if data[0]=='"chest"':
-                c=(120,60,10)
             lev.add(Square(int(data[1]),int(data[2]),c))
             data=data[3:]
         load.close()
     def Draw(self):
-        coolbeans=[]
+        pygame.event.clear([KEYUP])
         self.surf.fill((0,0,0))
-        
 
-        self.small.draw(self.surf)
-            
-
+        if self.world.good==1:
+            if self.world.keys[K_ESCAPE]:
+                self.world.ChangeState("game")
+                
         
-        pygame.draw.rect(self.surf,(255,0,0),(0,0,100,100),0)
-        key=pygame.key.get_pressed()
-        if key[K_SPACE]:
-            self.world.state="game"
+        if not self.world.keys[K_ESCAPE]:
+            self.world.good=1
+    
+        
+        for e in self.world.events:
+            if e.type == QUIT:
+                self.world.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
+                self.world.go = False
+
+        if self.created==0:
+            self.CreateSmallMap(str(self.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small)
+            self.created=1
+        else:
+            self.small.draw(self.surf)
 
 class Button(Entity):
     def __init__(self,surf):

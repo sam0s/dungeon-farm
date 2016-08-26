@@ -40,24 +40,16 @@ def main():
         dpylib.savelvl(ent,w.levelname+"\\world"+str(w.pos[0])+str(w.pos[1])+".txt")
     go=True
     w.Draw()
-    while go:
-        mse=pygame.mouse.get_pos()
-        mse=(((mse[0])/32)*32,((mse[1])/32)*32)
+    pygame.display.flip()
+    while w.go:
+        #mse=pygame.mouse.get_pos()
+        #mse=(((mse[0])/32)*32,((mse[1])/32)*32)
         dt=timer.tick(60)
         #speed = 1 / float(dt)
         #speed = 5 * speed
         #screen.fill((0,0,0))
-
-        for e in pygame.event.get():
-            if e.type == QUIT:
-                if w.state=="game":
-                    dpylib.savelvl(ent,w.levelname+"\\world"+str(w.pos[0])+str(w.pos[1])+".txt")
-                go = False
                 
         w.Update()
-        
-     
-        pygame.display.flip()
         display.set_caption("DungeonPy - "+str(timer.get_fps()))
     pygame.display.quit()
     
