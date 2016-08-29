@@ -7,6 +7,7 @@ import pygame
 from random import choice
 from pygame import *
 import dpylib
+import ui
 
 
 pygame.init()
@@ -31,6 +32,7 @@ class EscMenu(object):
         self.levelname=loc
         self.small = pygame.sprite.Group()
         self.created=0
+        self.buttons=[ui.Button(300,300,100,32,"Go Back!",self.surf)]
         #self.CreateSmallMap(str(self.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small)
     def CreateSmallMap(self,loc,lev):
         self.small.empty()
@@ -61,8 +63,13 @@ class EscMenu(object):
     
         
         for e in self.world.events:
+            #button handling
+            if e.type == MOUSEBUTTONUP:
+                for b in self.buttons:
+                    if b.rect.collidepoint(e.pos):
+                        self.world.ChangeState("game")
             if e.type == QUIT:
-                self.world.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
+                dpylib.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
                 self.world.go = False
 
         if self.created==0:
@@ -71,9 +78,8 @@ class EscMenu(object):
         else:
             self.small.draw(self.surf)
 
-class Button(Entity):
-    def __init__(self,surf):
-        pass
+        for f in self.buttons:
+            f.Update()
 
             
             

@@ -225,9 +225,13 @@ class World(object):
                 self.good=1
             
             for e in self.events:
+                if e.type == MOUSEBUTTONDOWN:
+                    print e.pos
+                    
                 if e.type == QUIT:
                     savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt")
                     self.go = False
+                    
             self.player.update()
            
         if self.state == "battle":

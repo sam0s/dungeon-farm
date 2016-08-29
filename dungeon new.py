@@ -48,7 +48,6 @@ def main():
         #speed = 1 / float(dt)
         #speed = 5 * speed
         #screen.fill((0,0,0))
-                
         w.Update()
         display.set_caption("DungeonPy - "+str(timer.get_fps()))
     pygame.display.quit()
