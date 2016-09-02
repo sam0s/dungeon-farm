@@ -80,15 +80,22 @@ class EscMenu(object):
 
         if self.created==0:
             self.small.empty()
+
+            #top
+            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1]-1)+".txt"),self.small,0)
+            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1]-1)+".txt"),self.small,792)
+            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1]-1)+".txt"),self.small,1584)
+            
             #mid
             self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1])+".txt"),self.small,0,492)
             self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small,792,492)
             self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1])+".txt"),self.small,1584,492)
+            
 
-            #top
-            #self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1]-1)+".txt"),self.small)
-            #self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1]-1)+".txt"),self.small,792)
-            #self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1]-1)+".txt"),self.small,1584)
+            #bot
+            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1]+1)+".txt"),self.small,0,984)
+            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1]+1)+".txt"),self.small,792,984)
+            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1]+1)+".txt"),self.small,1584,984)
 
             self.created=1
         else:
