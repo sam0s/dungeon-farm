@@ -185,14 +185,14 @@ class World(object):
         self.state="game"
         self.surf=surf
         self.hudsurf=hudsurf
-        self.levelname="level"
         self.hudlog=Log(439,1,360,125,(220,220,220),hudsurf)
         self.keys=pygame.key.get_pressed()
         self.go=True
+        self.levelname="default"
         
         #this whole deal right here might be changed later
         self.bat=battle.Battle(self.surf,self)
-        self.esc=escmenu.EscMenu(self.surf,self,self.levelname)
+        self.esc=escmenu.EscMenu(self.surf,self)
 
         #really prob need to find a better way to do this
         self.good=1
@@ -201,6 +201,8 @@ class World(object):
         if self.turn%2 ==0:
             #turn
             pass
+    def SetLevel(self,lev):
+        self.levelname=lev
     def ChangeState(self,state):
         self.good=0
         self.state=state

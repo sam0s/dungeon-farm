@@ -22,8 +22,10 @@ hud = Surface((800,128))
 w=dpylib.World(ent,screen,hud)
 p=dpylib.Player(384,224,w)
 w.player=p
-w.levelname="level"
+
 def main():
+    w.SetLevel("Cool Level Name")
+    print w.levelname
     try:
         dpylib.loadlvl(ent,w.levelname+"\\world00.txt")
     except:

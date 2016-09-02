@@ -20,38 +20,44 @@ class Entity(pygame.sprite.Sprite):
 class Square(Entity):
     def __init__(self,x,y,c):
         Entity.__init__(self)
-        self.image=pygame.Surface((8,8))
+        self.image=pygame.Surface((6,6))
         self.image.fill(c)
-        self.rect=(x/4,y/4,8,8)
+        self.rect=(x/6,y/6,5,5)
     
 
 class EscMenu(object):
-    def __init__(self,surf,world,loc):
+    def __init__(self,surf,world):
         self.surf=surf
         self.world=world
-        self.levelname=loc
         self.small = pygame.sprite.Group()
-        self.created=0
-        self.buttons=[ui.Button(300,300,100,32,"Go Back!",self.surf)]
-        #self.CreateSmallMap(str(self.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small)
-    def CreateSmallMap(self,loc,lev):
-        self.small.empty()
-        load = open(loc,"r")
-        read = 0
-        data = load.read()
-        data=data.split(".")
-        data=data[:-1]
+        self.small2 = pygame.sprite.Group()
         
-        while len(data) > 0:
-            c=(0,0,0)
-            if data[0]=='"wall"':
-                c=(100,100,100)
-            lev.add(Square(int(data[1]),int(data[2]),c))
-            data=data[3:]
-        load.close()
+        self.created=0
+        self.buttons=[ui.Button(300,300,100,32,"Go Back.",self.surf)]
+        #self.CreateSmallMap(str(self.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small)
+    def CreateSmallMap(self,loc,lev,offset=0,offsety=0):
+        #self.small.empty()
+        FNF=0
+        try:
+            load = open(loc,"r")
+        except:
+            FNF=1
+        if FNF==0:
+            read = 0
+            data = load.read()
+            data=data.split(".")
+            data=data[:-1]
+            
+            while len(data) > 0:
+                c=(0,0,0)
+                if data[0]=='"wall"':
+                    c=(100,100,100)
+                lev.add(Square(int(data[1])+offset,int(data[2])+offsety,c))
+                data=data[3:]
+            load.close()
+            lev.add(Square(self.world.player.rect.x+792,self.world.player.rect.y+492,(0,255,0)))
     def Draw(self):
-        pygame.event.clear([KEYUP])
-        self.surf.fill((0,0,0))
+        self.surf.fill((0,0,250))
 
         if self.world.good==1:
             if self.world.keys[K_ESCAPE]:
@@ -73,10 +79,21 @@ class EscMenu(object):
                 self.world.go = False
 
         if self.created==0:
-            self.CreateSmallMap(str(self.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small)
+            self.small.empty()
+            #mid
+            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1])+".txt"),self.small,0,492)
+            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small,792,492)
+            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1])+".txt"),self.small,1584,492)
+
+            #top
+            #self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1]-1)+".txt"),self.small)
+            #self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1]-1)+".txt"),self.small,792)
+            #self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1]-1)+".txt"),self.small,1584)
+
             self.created=1
         else:
             self.small.draw(self.surf)
+
 
         for f in self.buttons:
             f.Update()
