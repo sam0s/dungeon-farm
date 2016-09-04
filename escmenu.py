@@ -52,13 +52,17 @@ class EscMenu(object):
                 c=(0,0,0)
                 if data[0]=='"wall"':
                     c=(100,100,100)
+                if data[0]=='"gold"':
+                    c=(255,255,0)
+                if data[0]=='"enemy"':
+                    c=(255,0,0)
                 lev.add(Square(int(data[1])+offset,int(data[2])+offsety,c))
                 data=data[3:]
             load.close()
-            lev.add(Square(self.world.player.rect.x+792,self.world.player.rect.y+492,(0,255,0)))
+            
     def Draw(self):
         self.surf.fill((0,0,250))
-
+        pygame.draw.rect(self.surf,(0,0,0),(0,0,398,250),0)
         if self.world.good==1:
             if self.world.keys[K_ESCAPE]:
                 self.world.ChangeState("game")
@@ -100,7 +104,7 @@ class EscMenu(object):
             self.created=1
         else:
             self.small.draw(self.surf)
-
+            pygame.draw.rect(self.surf,(0,255,0),((self.world.player.rect.x+792)/6,(self.world.player.rect.y+492)/6,6,6),0)
 
         for f in self.buttons:
             f.Update()

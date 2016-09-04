@@ -240,6 +240,7 @@ class World(object):
             self.bat.Draw()
    
         if self.state == "escmenu":
+            self.player.update()
             self.esc.Draw()
         
         self.hudlog.update(self.hudsurf)
@@ -252,7 +253,9 @@ class World(object):
         self.hudsurf.blit(headshots[0],(1,1))
     def Shift(self,d):
         savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt")
+        self.esc.created=0
         global logtext
+        
         if d=='n':
             self.pos=[self.pos[0],self.pos[1]-1]
             self.player.moveto[1]=self.player.rect.y=448
@@ -385,6 +388,8 @@ class Player(Entity):
                     if f.name=='gold':
                         logtext.append("gold found!")
                         self.world.containing.remove(f)
+                        savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
+                        self.world.esc.created=0
                     if f.name=='wall':
                         self.moveto=self.prev
             self.world.Draw()
