@@ -12,7 +12,7 @@ FLAGS = pygame.RESIZABLE
 screen = display.set_mode(DISPLAY, FLAGS, DEPTH)
 pygame.init()
 display.set_caption("DungeonPy")
-timer = time.Clock()
+timer = pygame.time.Clock()
 
 ent = pygame.sprite.Group()
 
@@ -20,10 +20,11 @@ ent = pygame.sprite.Group()
 hud = Surface((800,128))
 
 w=dpylib.World(ent,screen,hud)
-p=dpylib.Player(384,224,w)
+p=dpylib.Player(384.0,224.0,w)
 w.player=p
 
 def main():
+    TFPS=120 #this will be an option
     w.SetLevel("Cool Level Name")
     print w.levelname
     try:
@@ -46,11 +47,16 @@ def main():
     while w.go:
         #mse=pygame.mouse.get_pos()
         #mse=(((mse[0])/32)*32,((mse[1])/32)*32)
-        dt=timer.tick(60)
+        
         #speed = 1 / float(dt)
         #speed = 5 * speed
         #screen.fill((0,0,0))
-        w.Update()
+        
+        dt=float(timer.tick(TFPS)*1e-3)
+        #dst=timer.tick(TFPS)
+        #dt=1/float(dst)
+        #print dt
+        w.Update(dt)
         display.set_caption("DungeonPy - "+str(timer.get_fps()))
     pygame.display.quit()
     

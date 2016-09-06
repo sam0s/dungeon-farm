@@ -210,7 +210,8 @@ class World(object):
             self.esc.created=0        
         
         
-    def Update(self):
+    def Update(self,delta):
+        self.delta=delta
         #Events and Keys
         self.events=pygame.event.get()
         self.keys=pygame.key.get_pressed()
@@ -258,22 +259,22 @@ class World(object):
         
         if d=='n':
             self.pos=[self.pos[0],self.pos[1]-1]
-            self.player.moveto[1]=self.player.rect.y=448
+            self.player.prev[1]=self.player.changey=self.player.moveto[1]=self.player.rect.y=448
             
             logtext.append("going north")
         elif d=='e':
             self.pos=[self.pos[0]+1,self.pos[1]]
-            self.player.moveto[0]=self.player.rect.x=32
+            self.player.prev[0]=self.player.changex=self.player.moveto[0]=self.player.rect.x=32
 
             logtext.append("going east")
         elif d=='s':
             self.pos=[self.pos[0],self.pos[1]+1]
-            self.player.moveto[1]=self.player.rect.y=32
+            self.player.prev[1]=self.player.changey=self.player.moveto[1]=self.player.rect.y=32
 
             logtext.append("going south")
         elif d=='w':
             self.pos=[self.pos[0]-1,self.pos[1]]
-            self.player.moveto[0]=self.player.rect.x=736
+            self.player.prev[0]=self.player.changex=self.player.moveto[0]=self.player.rect.x=736
 
             logtext.append("going west")
         
@@ -343,9 +344,14 @@ class Player(Entity):
         self.prev=[]
         self.hp=25
         self.maxhp=100
+        self.changex=float(self.rect.x)
+        self.changey=float(self.rect.y)
+        self.speed=100
     def update(self):
         global logtext
+        
         if not self.moving:
+
             self.prev=[self.rect.x,self.rect.y]
             k=self.world.keys
             if k[K_w]:
@@ -365,6 +371,8 @@ class Player(Entity):
                 self.wasd=0
                 self.moving=True
             if self.moving == True:
+                self.changex=float(self.prev[0])
+                self.changey=float(self.prev[1])
                 self.world.Turn()
         else:
 
@@ -392,13 +400,29 @@ class Player(Entity):
                         self.world.esc.created=0
                     if f.name=='wall':
                         self.moveto=self.prev
+                        
             self.world.Draw()
-            if self.rect.x<self.moveto[0]: self.rect.x+=2
-            elif self.rect.x>self.moveto[0]: self.rect.x-=2
-            elif self.rect.y<self.moveto[1]: self.rect.y+=2
-            elif self.rect.y>self.moveto[1]: self.rect.y-=2
+
+
+
+
+            #move based on time delta
+            if self.rect.x<self.moveto[0]:
+                self.changex+=(self.speed)*self.world.delta
+                if self.changex>self.moveto[0]-1:self.changex=self.moveto[0]
+            elif self.rect.x>self.moveto[0]:
+                self.changex-=(self.speed)*self.world.delta
+                if self.changex<self.moveto[0]+1:self.changex=self.moveto[0]
+            elif self.rect.y<self.moveto[1]:
+                self.changey+=(self.speed)*self.world.delta
+                if self.changey>self.moveto[1]+1:self.changey=self.moveto[1]
+            elif self.rect.y>self.moveto[1]:
+                self.changey-=(self.speed)*self.world.delta
+                if self.changey<self.moveto[1]-1:self.changey=self.moveto[1]
             else: self.moving=False
             
+            self.rect.x=int(self.changex)
+            self.rect.y=int(self.changey)
         pygame.draw.rect(self.world.surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
 
 class Log(TextHolder):
