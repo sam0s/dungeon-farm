@@ -23,9 +23,22 @@ w=dpylib.World(ent,screen,hud)
 p=dpylib.Player(384.0,224.0,w)
 w.player=p
 
+
+playerName="sam"
+
+
+#Create directory of player name, then sub-directory for worlds.
+#Create file with stats
+
+
 def main():
     TFPS=120 #this will be an option
-    w.SetLevel("Cool Level Name")
+    w.SetLevel(playerName+"\\TestDungeon")
+
+    f=open(playerName+"\\"+playerName+".txt",'w')
+    f.write("stats")
+    f.close()
+    
     print w.levelname
     try:
         dpylib.loadlvl(ent,w.levelname+"\\world00.txt")
@@ -33,6 +46,7 @@ def main():
 
         #try to grab/create the level folder
         try:
+            mkdir(w.levelname.split("\\")[0])
             mkdir(w.levelname)
         except:
             pass
@@ -53,6 +67,7 @@ def main():
         #screen.fill((0,0,0))
         
         dt=float(timer.tick(TFPS)*1e-3)
+        
         #dst=timer.tick(TFPS)
         #dt=1/float(dst)
         #print dt

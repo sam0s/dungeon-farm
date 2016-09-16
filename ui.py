@@ -2,6 +2,7 @@ import pygame
 from random import choice
 from pygame import *
 
+pygame.init()
 font=pygame.font.Font(None,15)
 
 class UiObj(pygame.sprite.Sprite):

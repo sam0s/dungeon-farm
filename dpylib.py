@@ -215,7 +215,8 @@ class World(object):
         #Events and Keys
         self.events=pygame.event.get()
         self.keys=pygame.key.get_pressed()
-        
+        if self.state == "menu":
+            self.surf.fill((0,255,0))
         if self.state == "game":
             
             if self.good==1:
@@ -346,7 +347,8 @@ class Player(Entity):
         self.maxhp=100
         self.changex=float(self.rect.x)
         self.changey=float(self.rect.y)
-        self.speed=100
+        #MoveSpeed - can be lvld up (base 85)
+        self.speed=90
     def update(self):
         global logtext
         
