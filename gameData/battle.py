@@ -11,6 +11,7 @@ import ui
 
 headshots=[pygame.image.load("images\\orcheadshot.png")]
 
+
 pygame.init()
 font=pygame.font.Font(None,15)
 
@@ -25,12 +26,12 @@ class Battle(object):
         self.enemydisp = Surface((800,128))
         self.enemydisp.fill((0,0,0))
         self.buttons=[ui.Button(300,300,100,32,"Attack",self.surf),ui.Button(300,364,100,32,"Items",self.surf)]
-        
-
-
-        
+        self.enemy='orc'
+    def EnemyAttack(self):
+        if self.enemy=='orc':
+            print "enemy whacks u"
+        #ughh
     def Draw(self):
-
         self.surf.fill((0,0,220))
         self.surf.blit(self.enemydisp,(0,0,))
         self.surf.blit(headshots[0],(672,0))
@@ -40,7 +41,8 @@ class Battle(object):
                 for b in self.buttons:
                     if b.rect.collidepoint(e.pos):
                         if b==self.buttons[0]:
-                            self.world.ChangeState("game")
+                            print "yu attack!"
+                            self.EnemyAttack()
                         if b==self.buttons[1]:
                             self.world.ChangeState("menu")
             if e.type == QUIT:

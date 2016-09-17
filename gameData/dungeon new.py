@@ -24,7 +24,7 @@ p=dpylib.Player(384.0,224.0,w)
 w.player=p
 
 
-playerName="sam"
+playerName="sanm"
 
 
 #Create directory of player name, then sub-directory for worlds.
