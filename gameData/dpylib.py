@@ -10,8 +10,8 @@ import battle,escmenu
 
 pygame.init()
 font=pygame.font.Font(None,15)
-menuimg=pygame.image.load("menu.png")
-headshots=[pygame.image.load("headshot1.png")]
+menuimg=pygame.image.load("images\\menu.png")
+headshots=[pygame.image.load("images\\headshot1.png")]
 
 #################################
 # FUNCTIONS #######################

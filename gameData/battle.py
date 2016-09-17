@@ -9,7 +9,7 @@ from pygame import *
 import dpylib
 import ui
 
-headshots=[pygame.image.load("orcheadshot.png")]
+headshots=[pygame.image.load("images\\orcheadshot.png")]
 
 pygame.init()
 font=pygame.font.Font(None,15)

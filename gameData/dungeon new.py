@@ -34,12 +34,6 @@ playerName="sam"
 def main():
     TFPS=120 #this will be an option
     w.SetLevel(playerName+"\\TestDungeon")
-
-    f=open(playerName+"\\"+playerName+".txt",'w')
-    f.write("stats")
-    f.close()
-    
-    print w.levelname
     try:
         dpylib.loadlvl(ent,w.levelname+"\\world00.txt")
     except:
@@ -48,8 +42,14 @@ def main():
         try:
             mkdir(w.levelname.split("\\")[0])
             mkdir(w.levelname)
+            f=open(playerName+"\\"+playerName+".txt",'w')
+            f.write("stats")
+            f.close()
+
         except:
-            pass
+            mkdir(w.levelname.split("\\")[0])
+            mkdir(w.levelname)
+            
         
         dpylib.fill(ent)
         dpylib.carve(ent)
