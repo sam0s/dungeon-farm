@@ -29,7 +29,9 @@ class Battle(object):
         self.enemy='orc'
     def EnemyAttack(self):
         if self.enemy=='orc':
-            print "enemy whacks u"
+            global logtext
+            logtext.append("going west")
+            print "orc whacks u"
         #ughh
     def Draw(self):
         self.surf.fill((0,0,220))

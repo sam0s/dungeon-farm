@@ -185,10 +185,12 @@ class World(object):
         self.state="game"
         self.surf=surf
         self.hudsurf=hudsurf
-        self.hudlog=Log(439,1,360,125,(220,220,220),hudsurf)
+        self.hudlog=Log(self,439,1,360,125,(220,220,220),hudsurf)
         self.keys=pygame.key.get_pressed()
         self.go=True
         self.levelname="default"
+
+        self.logtext=[]
         
         #this whole deal right here might be changed later
         self.bat=battle.Battle(self.surf,self)
@@ -256,28 +258,28 @@ class World(object):
     def Shift(self,d):
         savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt")
         self.esc.created=0
-        global logtext
+        
         
         if d=='n':
             self.pos=[self.pos[0],self.pos[1]-1]
             self.player.prev[1]=self.player.changey=self.player.moveto[1]=self.player.rect.y=448
             
-            logtext.append("going north")
+            self.logtext.append("going north")
         elif d=='e':
             self.pos=[self.pos[0]+1,self.pos[1]]
             self.player.prev[0]=self.player.changex=self.player.moveto[0]=self.player.rect.x=32
 
-            logtext.append("going east")
+            self.logtext.append("going east")
         elif d=='s':
             self.pos=[self.pos[0],self.pos[1]+1]
             self.player.prev[1]=self.player.changey=self.player.moveto[1]=self.player.rect.y=32
 
-            logtext.append("going south")
+            self.logtext.append("going south")
         elif d=='w':
             self.pos=[self.pos[0]-1,self.pos[1]]
             self.player.prev[0]=self.player.changex=self.player.moveto[0]=self.player.rect.x=736
 
-            logtext.append("going west")
+            self.logtext.append("going west")
         
         changelevel(self.containing,self.levelname,self.pos)
         self.Draw()
@@ -350,7 +352,6 @@ class Player(Entity):
         #MoveSpeed - can be lvld up (base 85)
         self.speed=90
     def update(self):
-        global logtext
         
         if not self.moving:
 
@@ -394,9 +395,9 @@ class Player(Entity):
                     if f.name=='enemy':
                         self.world.ChangeState("battle")
                         self.world.containing.remove(f)
-                        logtext.append("an enemy was slain")
+                        self.world.logtext.append("an enemy was slain")
                     if f.name=='gold':
-                        logtext.append("gold found!")
+                        self.world.logtext.append("gold found!")
                         self.world.containing.remove(f)
                         savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
                         self.world.esc.created=0
@@ -428,11 +429,11 @@ class Player(Entity):
         pygame.draw.rect(self.world.surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
 
 class Log(TextHolder):
-    def __init__(self,x,y,sizex,sizey,ic,surf):
+    def __init__(self,world,x,y,sizex,sizey,ic,surf):
         TextHolder.__init__(self)
         self.rect=pygame.Rect(x,y,sizex,sizey)
-        global logtext
-        logtext=[]
+        
+        self.world=world
         self.drawntext=[]
         #INNER AND OUTER COLORS
         self.ic=ic
@@ -441,11 +442,10 @@ class Log(TextHolder):
         pygame.draw.rect(surf,(self.ic),self.rect,0)
         pygame.draw.rect(surf,(self.oc),self.rect,3)
     def update(self,surf):
-        global logtext
-        if len(logtext)>0:
-            for f in logtext:
-                self.drawntext.append(logtext[0])
-                logtext=logtext[1:]
+        if len(self.world.logtext)>0:
+            for f in self.world.logtext:
+                self.drawntext.append(self.world.logtext[0])
+                self.world.logtext=self.world.logtext[1:]
                 if len(self.drawntext)>10:
                     pygame.draw.rect(surf,(self.ic),self.rect,0)
                     pygame.draw.rect(surf,(self.oc),self.rect,3)
