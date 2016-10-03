@@ -7,11 +7,11 @@ DISPLAY = (800, 640)
 DEPTH = 16
 FLAGS = pygame.RESIZABLE
 
-
+##
 
 screen = display.set_mode(DISPLAY, FLAGS, DEPTH)
 pygame.init()
-display.set_caption("DungeonPy")
+display.set_caption("Dungeon Farm")
 timer = pygame.time.Clock()
 
 ent = pygame.sprite.Group()
@@ -20,22 +20,39 @@ ent = pygame.sprite.Group()
 hud = Surface((800,128))
 
 w=dpylib.World(ent,screen,hud)
-p=dpylib.Player(384.0,224.0,w)
-w.player=p
 
 
-playerName="sanm"
 
-
-#Create directory of player name, then sub-directory for worlds.
-#Create file with stats
-
+playerName="sanm" 
 
 def main():
     TFPS=120 #this will be an option
     w.SetLevel(playerName+"\\TestDungeon")
+    w.SetPlayer(playerName)
+    
     try:
-        dpylib.loadlvl(ent,w.levelname+"\\world00.txt")
+        #load player attributes
+        f=open(playerName+"\\"+playerName+".txt",'r')
+        n=f.read()
+        n=n.split("\n")
+        f.close()
+        
+
+        p=dpylib.Player(int(n[5].split("_")[1]),int(n[6].split("_")[1]),w)
+        w.player=p
+        w.player.hp=int(n[3].split("_")[1])
+        
+
+
+        
+        #load level
+
+        wx=n[7].split("_")[1]
+        wy=n[8].split("_")[1]
+        print wx
+        print wy
+        dpylib.loadlvl(ent,w.levelname+"\\world"+wx+wy+".txt")
+
     except:
 
         #try to grab/create the level folder
@@ -43,13 +60,16 @@ def main():
             mkdir(w.levelname.split("\\")[0])
             mkdir(w.levelname)
             f=open(playerName+"\\"+playerName+".txt",'w')
-            f.write("stats")
+            f.write("level_1\nbasedmg_10\nbasedef_10\nhealth_100\ngold_0\nposx_384\nposy_224")
             f.close()
 
         except:
             mkdir(w.levelname.split("\\")[0])
             mkdir(w.levelname)
-            
+
+
+        p=dpylib.Player(384.0,224.0,w)
+        w.player=p
         
         dpylib.fill(ent)
         dpylib.carve(ent)
@@ -72,7 +92,7 @@ def main():
         #dt=1/float(dst)
         #print dt
         w.Update(dt)
-        display.set_caption("DungeonPy - "+str(timer.get_fps()))
+        display.set_caption("Dungeon Farm - "+str(timer.get_fps()))
     pygame.display.quit()
     
 

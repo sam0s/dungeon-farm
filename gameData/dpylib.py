@@ -17,7 +17,12 @@ headshots=[pygame.image.load("images\\headshot1.png")]
 # FUNCTIONS #######################
 #################################
 
-def savelvl(ents,loc):
+def savelvl(ents,loc,world=None):
+    if world:
+        f=open(world.playerName+"\\"+world.playerName+".txt",'w')
+        f.write("level_1\nbasedmg_10\nbasedef_10\nhealth_100\ngold_0\nposx_"+str(int(world.player.moveto[0]))+"\nposy_"+str(int(world.player.moveto[1]))+"\nworldx_"+str(world.pos[0])+"\nworldy_"+str(world.pos[1]))
+        f.close()
+
     save = open(loc,"w")
     for f in ents:
         save.write('"'+f.name+'"'+"."+str(f.rect.left)+"."+str(f.rect.top)+".")
@@ -189,6 +194,8 @@ class World(object):
         self.keys=pygame.key.get_pressed()
         self.go=True
         self.levelname="default"
+        self.playerName=""
+
 
         self.logtext=[]
         
@@ -198,6 +205,8 @@ class World(object):
 
         #really prob need to find a better way to do this
         self.good=1
+
+        
     def Turn(self):
         self.turn+=1
         if self.turn%2 ==0:
@@ -205,6 +214,8 @@ class World(object):
             pass
     def SetLevel(self,lev):
         self.levelname=lev
+    def SetPlayer(self,name):
+        self.playerName=name
     def ChangeState(self,state):
         self.good=0
         self.state=state
@@ -235,7 +246,7 @@ class World(object):
                     print e.pos
                     
                 if e.type == QUIT:
-                    savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt")
+                    savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt",self)
                     self.go = False
                     
             self.player.update()
@@ -395,7 +406,7 @@ class Player(Entity):
                     if f.name=='enemy':
                         self.world.ChangeState("battle")
                         self.world.containing.remove(f)
-                        self.world.logtext.append("an enemy was slain")
+                        self.world.logtext.append("Enemy Encounter!")
                     if f.name=='gold':
                         self.world.logtext.append("gold found!")
                         self.world.containing.remove(f)
