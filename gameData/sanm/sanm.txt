@@ -1,9 +1,0 @@
-level_1
-basedmg_10
-basedef_10
-health_100
-gold_0
-posx_32
-posy_128
-worldx_0
-worldy_0

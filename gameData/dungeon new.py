@@ -49,8 +49,7 @@ def main():
 
         wx=n[7].split("_")[1]
         wy=n[8].split("_")[1]
-        print wx
-        print wy
+        
         dpylib.loadlvl(ent,w.levelname+"\\world"+wx+wy+".txt")
 
     except:
@@ -79,18 +78,7 @@ def main():
     w.Draw()
     pygame.display.flip()
     while w.go:
-        #mse=pygame.mouse.get_pos()
-        #mse=(((mse[0])/32)*32,((mse[1])/32)*32)
-        
-        #speed = 1 / float(dt)
-        #speed = 5 * speed
-        #screen.fill((0,0,0))
-        
         dt=float(timer.tick(TFPS)*1e-3)
-        
-        #dst=timer.tick(TFPS)
-        #dt=1/float(dst)
-        #print dt
         w.Update(dt)
         display.set_caption("Dungeon Farm - "+str(timer.get_fps()))
     pygame.display.quit()

@@ -356,12 +356,24 @@ class Player(Entity):
         self.prev = self.moveto = [x,y]
         self.moving=False
         self.prev=[]
-        self.hp=25
-        self.maxhp=100
+        
+        self.hp=100
+        
         self.changex=float(self.rect.x)
         self.changey=float(self.rect.y)
-        #MoveSpeed - can be lvld up (base 85)
-        self.speed=90
+
+        #Level Uppers
+
+        #Level
+        self.level=1
+        #Atk
+        self.atk=7
+        #Def
+        self.defChance=2
+        #MoveSpeed - base 62
+        self.speed=62
+        #MaxHp - base 100
+        self.maxhp=100
     def update(self):
         
         if not self.moving:
@@ -404,9 +416,11 @@ class Player(Entity):
                         elif self.rect.x<64:
                             self.world.Shift('w')
                     if f.name=='enemy':
+                        self.world.logtext.append("Enemy Encounter!")
+                        self.world.bat.NewEnemy()
                         self.world.ChangeState("battle")
                         self.world.containing.remove(f)
-                        self.world.logtext.append("Enemy Encounter!")
+                        
                     if f.name=='gold':
                         self.world.logtext.append("gold found!")
                         self.world.containing.remove(f)
