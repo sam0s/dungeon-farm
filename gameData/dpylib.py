@@ -6,7 +6,7 @@
 import pygame
 from random import choice
 from pygame import *
-import battle,escmenu
+import battle,escmenu,items
 
 pygame.init()
 font=pygame.font.Font(None,15)
@@ -16,6 +16,11 @@ headshots=[pygame.image.load("images\\headshot1.png")]
 #################################
 # FUNCTIONS #######################
 #################################
+
+
+
+
+
 
 def savelvl(ents,loc,world=None):
     if world:
@@ -40,7 +45,9 @@ def loadlvl(ents,loc):
         if data[0]=='"door"':
             w=Door(int(data[1]),int(data[2]))
         if data[0]=='"gold"':
-            w=Gold(int(data[1]),int(data[2]))
+            w=Pickup(int(data[1]),int(data[2]),"gold")
+        if data[0]=='"life"':
+            w=Pickup(int(data[1]),int(data[2]),"life")
         if data[0]=='"enemy"':
             w=Enemy(int(data[1]),int(data[2]))
         if data[0]=='"chest"':
@@ -81,13 +88,15 @@ def carve(ents):
         total+=1
 
         #generate cool stuff
-        special=choice([1,1,1,1,2,2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+        special=choice([1,1,1,1,2,2,2,3,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
         if special==1:
-            ents.add(Gold(x,y))
+            ents.add(Pickup(x,y,"gold"))
         if special==2:
             ents.add(Enemy(x,y))
         if special==3:
             ents.add(Chest(x,y))
+        if special==4:
+            ents.add(Pickup(x,y,"life"))
             
         while direction == lastdir:
             direction = choice([1,2,3,4])
@@ -296,13 +305,19 @@ class World(object):
         self.Draw()
 
 
-class Gold(Entity):
-    def __init__(self,x,y):
+class Pickup(Entity):
+    def __init__(self,x,y,ptype):
         Entity.__init__(self)
-        self.name = "gold"
+        self.name = "pickup"
+        self.ptype = ptype
         self.image = Surface((32,32))
         self.image.convert()
-        self.image.fill((255,255,0))
+        if self.ptype == "gold":
+            self.name="gold"
+            self.image.fill((255,255,0))
+        if self.ptype == "life":
+            self.name="life"
+            self.image.fill((0,195,0))
         self.rect = Rect(x,y,32,32)
         
 class Chest(Entity):
@@ -356,6 +371,8 @@ class Player(Entity):
         self.prev = self.moveto = [x,y]
         self.moving=False
         self.prev=[]
+
+        self.inventory=[]
         
         self.hp=100
         
@@ -374,8 +391,20 @@ class Player(Entity):
         self.speed=62
         #MaxHp - base 100
         self.maxhp=100
-    def update(self):
         
+    def give(self,item):
+        y=0
+        for f in self.inventory:
+            if f.name==item.name:
+                y=1
+                f.stack+=1
+                print f.stack
+        if y==0:
+            self.inventory.append(item)
+        
+        
+    def update(self):
+        #print self.inventory
         if not self.moving:
 
             self.prev=[self.rect.x,self.rect.y]
@@ -426,6 +455,12 @@ class Player(Entity):
                         self.world.containing.remove(f)
                         savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
                         self.world.esc.created=0
+                    if f.name=='life':
+                        self.world.containing.remove(f)
+                        self.world.logtext.append("health found!")
+                        self.hp+=25
+                        if self.hp>self.maxhp:
+                            self.hp=maxhp
                     if f.name=='wall':
                         self.moveto=self.prev
                         

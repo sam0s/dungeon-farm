@@ -26,7 +26,7 @@ w=dpylib.World(ent,screen,hud)
 playerName="sanm" 
 
 def main():
-    TFPS=120 #this will be an option
+    TFPS=999 #this will be an option
     w.SetLevel(playerName+"\\TestDungeon")
     w.SetPlayer(playerName)
     

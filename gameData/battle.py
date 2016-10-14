@@ -52,8 +52,6 @@ class Battle(object):
         self.world.logtext.append(self.world.playerName+" does "+str(dmg)+" damage.")
         if self.enemyhp<=0:
             self.world.logtext.append("Enemy Slain!")
-            self.world.logtext.append("Health Restored (alpha only)")
-            self.world.player.hp=100
             self.world.ChangeState("game")
             
 
