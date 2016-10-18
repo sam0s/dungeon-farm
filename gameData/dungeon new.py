@@ -4,12 +4,16 @@ import math,random
 from pygame import *
 from os import mkdir
 DISPLAY = (800, 640)
-DEPTH = 16
-FLAGS = pygame.RESIZABLE
+
+FLAGS = HWSURFACE | DOUBLEBUF
 
 ##
 
-screen = display.set_mode(DISPLAY, FLAGS, DEPTH)
+
+MASTER_SURFACE = display.set_mode(DISPLAY, FLAGS, 0)
+
+screen = pygame.Surface((800,640))
+
 pygame.init()
 display.set_caption("Dungeon Farm")
 timer = pygame.time.Clock()
@@ -29,7 +33,8 @@ def main():
     TFPS=999 #this will be an option
     w.SetLevel(playerName+"\\TestDungeon")
     w.SetPlayer(playerName)
-    
+    MASTER_SURFACE_WIDTH=800
+    MASTER_SURFACE_HEIGHT=640
     try:
         #load player attributes
         f=open(playerName+"\\"+playerName+".txt",'r')
@@ -81,6 +86,8 @@ def main():
         dt=float(timer.tick(TFPS)*1e-3)
         w.Update(dt)
         display.set_caption("Dungeon Farm - "+str(timer.get_fps()))
+        
+        MASTER_SURFACE.blit(w.surf,(0,0))
     pygame.display.quit()
     
 

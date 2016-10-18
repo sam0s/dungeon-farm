@@ -88,7 +88,12 @@ def carve(ents):
         total+=1
 
         #generate cool stuff
-        special=choice([1,1,1,1,2,2,2,3,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+        special=choice(([1]*4) #gold rate
+                       +([2]*3)#enemy rate
+                       +([3]*1)#chests rate
+                       +([4]*2)#life drop rate
+                       +([0]*101) #empty rate
+                       )
         if special==1:
             ents.add(Pickup(x,y,"gold"))
         if special==2:
@@ -253,6 +258,12 @@ class World(object):
             for e in self.events:
                 if e.type == MOUSEBUTTONDOWN:
                     print e.pos
+                    #Headshot Click
+                    if e.pos[0]<130:
+                        if e.pos[1]>512:
+                            self.esc.tab="player"
+                            self.ChangeState("escmenu") #player tab
+                            
                     
                 if e.type == QUIT:
                     savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt",self)
@@ -264,7 +275,8 @@ class World(object):
             self.bat.Draw()
    
         if self.state == "escmenu":
-            self.player.update()
+            if self.esc.tab=="map":
+                self.player.update()
             self.esc.Draw()
         
         self.hudlog.update(self.hudsurf)
@@ -318,6 +330,9 @@ class Pickup(Entity):
         if self.ptype == "life":
             self.name="life"
             self.image.fill((0,195,0))
+        if self.ptype == "food":
+            self.name="food"
+            self.image.fill((120,60,10))
         self.rect = Rect(x,y,32,32)
         
 class Chest(Entity):
@@ -375,6 +390,7 @@ class Player(Entity):
         self.inventory=[]
         
         self.hp=100
+
         
         self.changex=float(self.rect.x)
         self.changey=float(self.rect.y)
@@ -398,7 +414,6 @@ class Player(Entity):
             if f.name==item.name:
                 y=1
                 f.stack+=1
-                print f.stack
         if y==0:
             self.inventory.append(item)
         
@@ -460,7 +475,7 @@ class Player(Entity):
                         self.world.logtext.append("health found!")
                         self.hp+=25
                         if self.hp>self.maxhp:
-                            self.hp=maxhp
+                            self.hp=self.maxhp
                     if f.name=='wall':
                         self.moveto=self.prev
                         

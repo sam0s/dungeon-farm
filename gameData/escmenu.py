@@ -31,7 +31,7 @@ class EscMenu(object):
         self.world=world
         self.small = pygame.sprite.Group()
         self.small2 = pygame.sprite.Group()
-        
+        self.tab="map"
         self.created=0
         self.buttons=[ui.Button(300,300,100,32,"Go Back.",self.surf)]
         #self.CreateSmallMap(str(self.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small)
@@ -61,53 +61,56 @@ class EscMenu(object):
             load.close()
             
     def Draw(self):
-        self.surf.fill((0,0,250))
-        pygame.draw.rect(self.surf,(0,0,0),(0,0,398,250),0)
-        if self.world.good==1:
-            if self.world.keys[K_ESCAPE]:
-                self.world.ChangeState("game")
+        if self.tab=="player":
+            self.surf.fill((0,0,250))
+        if self.tab=="map":
+            self.surf.fill((0,0,250))
+            pygame.draw.rect(self.surf,(0,0,0),(0,0,398,250),0)
+            if self.world.good==1:
+                if self.world.keys[K_ESCAPE]:
+                    self.world.ChangeState("game")
+                    
+            
+            if not self.world.keys[K_ESCAPE]:
+                self.world.good=1
+        
+            
+            for e in self.world.events:
+                #button handling
+                if e.type == MOUSEBUTTONUP:
+                    for b in self.buttons:
+                        if b.rect.collidepoint(e.pos):
+                            self.world.ChangeState("game")
+                if e.type == QUIT:
+                    dpylib.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
+                    self.world.go = False
+
+            if self.created==0:
+                self.small.empty()
+
+                #top
+                self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1]-1)+".txt"),self.small,0)
+                self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1]-1)+".txt"),self.small,792)
+                self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1]-1)+".txt"),self.small,1584)
                 
-        
-        if not self.world.keys[K_ESCAPE]:
-            self.world.good=1
-    
-        
-        for e in self.world.events:
-            #button handling
-            if e.type == MOUSEBUTTONUP:
-                for b in self.buttons:
-                    if b.rect.collidepoint(e.pos):
-                        self.world.ChangeState("game")
-            if e.type == QUIT:
-                dpylib.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
-                self.world.go = False
+                #mid
+                self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1])+".txt"),self.small,0,492)
+                self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small,792,492)
+                self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1])+".txt"),self.small,1584,492)
+                
 
-        if self.created==0:
-            self.small.empty()
+                #bot
+                self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1]+1)+".txt"),self.small,0,984)
+                self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1]+1)+".txt"),self.small,792,984)
+                self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1]+1)+".txt"),self.small,1584,984)
 
-            #top
-            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1]-1)+".txt"),self.small,0)
-            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1]-1)+".txt"),self.small,792)
-            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1]-1)+".txt"),self.small,1584)
-            
-            #mid
-            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1])+".txt"),self.small,0,492)
-            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small,792,492)
-            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1])+".txt"),self.small,1584,492)
-            
+                self.created=1
+            else:
+                self.small.draw(self.surf)
+                pygame.draw.rect(self.surf,(0,255,0),((self.world.player.rect.x+792)/6,(self.world.player.rect.y+492)/6,6,6),0)
 
-            #bot
-            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1]+1)+".txt"),self.small,0,984)
-            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1]+1)+".txt"),self.small,792,984)
-            self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1]+1)+".txt"),self.small,1584,984)
-
-            self.created=1
-        else:
-            self.small.draw(self.surf)
-            pygame.draw.rect(self.surf,(0,255,0),((self.world.player.rect.x+792)/6,(self.world.player.rect.y+492)/6,6,6),0)
-
-        for f in self.buttons:
-            f.Update()
+            for f in self.buttons:
+                f.Update()
 
             
             
