@@ -52,7 +52,7 @@ class Battle(object):
             self.world.ChangeState("menu")
         dmg=randint(self.world.player.atk-5,self.world.player.atk)
         self.enemyhp-=dmg
-        self.world.logtext.append(self.world.playerName+" does "+str(dmg)+" damage.")
+        self.world.logtext.append(self.world.playername+" does "+str(dmg)+" damage.")
         if self.enemyhp<=0:
             self.world.logtext.append("Enemy Slain!")
             self.world.ChangeState("game")

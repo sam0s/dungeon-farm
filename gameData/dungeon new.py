@@ -27,17 +27,17 @@ w=dpylib.World(ent,screen,hud)
 
 
 
-playerName="sanm" 
+playername="sanm" 
 
 def main():
-    TFPS=999 #this will be an option
-    w.SetLevel(playerName+"\\TestDungeon")
-    w.SetPlayer(playerName)
+    TFPS=60 #this will be an option
+    w.SetLevel(playername+"\\TestDungeon")
+    w.SetPlayer(playername)
     MASTER_SURFACE_WIDTH=800
     MASTER_SURFACE_HEIGHT=640
     try:
         #load player attributes
-        f=open(playerName+"\\"+playerName+".txt",'r')
+        f=open(playername+"\\"+playername+".txt",'r')
         n=f.read()
         n=n.split("\n")
         f.close()
@@ -63,7 +63,7 @@ def main():
         try:
             mkdir(w.levelname.split("\\")[0])
             mkdir(w.levelname)
-            f=open(playerName+"\\"+playerName+".txt",'w')
+            f=open(playername+"\\"+playername+".txt",'w')
             f.write("level_1\nbasedmg_10\nbasedef_10\nhealth_100\ngold_0\nposx_384\nposy_224")
             f.close()
 

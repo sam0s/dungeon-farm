@@ -24,7 +24,7 @@ headshots=[pygame.image.load("images\\headshot1.png")]
 
 def savelvl(ents,loc,world=None):
     if world:
-        f=open(world.playerName+"\\"+world.playerName+".txt",'w')
+        f=open(world.playername+"\\"+world.playername+".txt",'w')
         f.write("level_1\nbasedmg_10\nbasedef_10\nhealth_100\ngold_0\nposx_"+str(int(world.player.moveto[0]))+"\nposy_"+str(int(world.player.moveto[1]))+"\nworldx_"+str(world.pos[0])+"\nworldy_"+str(world.pos[1]))
         f.close()
 
@@ -208,7 +208,7 @@ class World(object):
         self.keys=pygame.key.get_pressed()
         self.go=True
         self.levelname="default"
-        self.playerName=""
+        self.playername=""
 
 
         self.logtext=[]
@@ -229,7 +229,7 @@ class World(object):
     def SetLevel(self,lev):
         self.levelname=lev
     def SetPlayer(self,name):
-        self.playerName=name
+        self.playername=name
     def ChangeState(self,state):
         self.good=0
         self.state=state
@@ -530,7 +530,7 @@ class Log(TextHolder):
             a=0
             
             for f in self.drawntext:
-                wax=font.render(str(self.drawntext[a]),0,(255,0,0))
+                wax=font.render(str(self.drawntext[a]),0,(255,0,0),self.ic)
                 surf.blit(wax,(self.rect.x+5,y))
                 a+=1
                 y+=12

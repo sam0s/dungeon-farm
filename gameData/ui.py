@@ -12,6 +12,7 @@ class UiObj(pygame.sprite.Sprite):
 class Button(UiObj):
     def __init__(self,x,y,sizex,sizey,text,surf):
         UiObj.__init__(self)
+        self.text=text
         self.image=pygame.Surface((sizex,sizey))
         self.image.fill((255,0,0))
         self.rect=Rect(x,y,sizex,sizey)
