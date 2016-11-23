@@ -248,6 +248,7 @@ class World(object):
             
             if self.good==1:
                 if self.keys[K_ESCAPE]:
+                    self.esc.player_stats_drawn=0
                     self.ChangeState("escmenu")
             else:
                 self.Draw()
@@ -399,7 +400,9 @@ class Player(Entity):
 
         #Level
         self.level=1
-        #Atk
+        self.xp=0
+        self.nextxp=120
+        #Atk - base 7
         self.atk=7
         #Def
         self.defChance=2
@@ -408,7 +411,7 @@ class Player(Entity):
         #MaxHp - base 100
         self.maxhp=100
         
-    def give(self,item):
+    def giveItem(self,item):
         y=0
         for f in self.inventory:
             if f.name==item.name:
@@ -417,9 +420,20 @@ class Player(Entity):
         if y==0:
             self.inventory.append(item)
         
-        
+    def giveXp(self,xp):
+        self.xp+=xp
+        if self.xp>self.nextxp:
+            self.xp-=self.nextxp
+            self.level+=1
+            #CHANGE THIS LATER
+            self.nextxp+=150
+            
     def update(self):
         #print self.inventory
+        
+        #self.giveItem(items.Bread(self))
+        #self.giveXp(12)
+        
         if not self.moving:
 
             self.prev=[self.rect.x,self.rect.y]

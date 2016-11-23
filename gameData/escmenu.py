@@ -39,7 +39,7 @@ class EscMenu(object):
         self.small2 = pygame.sprite.Group()
         self.tab="map"
         self.created=0
-        self.tabs=[ui.Button(650,50,100,32,"Player",self.surf),ui.Button(650,150,100,32,"Map",self.surf),ui.Button(650,250,100,32,"Go Back",self.surf)]
+        self.tabs=[ui.Button(650,50,100,32,"Player",self.surf),ui.Button(650,100,100,32,"Items",self.surf),ui.Button(650,150,100,32,"Map",self.surf),ui.Button(650,200,100,32,"Go Back",self.surf)]
         #self.buttons=[ui.Button(300,300,100,32,"Go Back.",self.surf)]
         #self.CreateSmallMap(str(self.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small)
     def CreateSmallMap(self,loc,lev,offset=0,offsety=0):
@@ -69,36 +69,44 @@ class EscMenu(object):
             
     def Draw(self):
 
-        if self.tab=="player":
-            if self.player_stats_drawn==0:
-                x=1
-                self.surf.fill((0,0,0))
-                b=[font.render(str(self.world.playername)+": level "+str(self.world.player.level),0,(255,255,255),(0,0,0)),font.render("Attack Damage: "+str(self.world.player.atk),0,(255,255,255),(0,0,0))]
-                for f in b:
-                    self.surf.blit(f,(32,x*32))
-                    x+=1
-                self.player_stats_drawn=1
 
 
         #press ESC to exit menu
         if self.world.good==1:
             if self.world.keys[K_ESCAPE]:
                 self.player_stats_drawn=0
-                
                 self.world.ChangeState("game")    
         if not self.world.keys[K_ESCAPE]:
                 self.world.good=1
+
+        
+
+        if self.tab=="player":
+            if self.player_stats_drawn==0:
+                x=1
+                self.surf.fill((0,0,0))
+                b=[font.render(str(self.world.playername)+": level "+str(self.world.player.level),0,(255,255,255),(0,0,0)),
+                   font.render("XP: "+str(self.world.player.xp)+"/"+str(self.world.player.nextxp),0,(255,255,255),(0,0,0)),
+                   font.render("Attack Damage: "+str(self.world.player.atk),0,(255,255,255),(0,0,0))
+                   ]
+                for f in b:
+                    self.surf.blit(f,(32,x*32))
+                    x+=1
+                self.player_stats_drawn=1
+
+
+
+
+
+
+        if self.tab=="items":
+            pass
+            
         
 
         if self.tab=="map":
             self.surf.fill((0,0,250))
             pygame.draw.rect(self.surf,(0,0,0),(0,0,398,250),0)
-
-            
-            for e in self.world.events:
-                if e.type == QUIT:
-                    dpylib.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
-                    self.world.go = False
 
             if self.created==0:
                 self.small.empty()
@@ -126,6 +134,9 @@ class EscMenu(object):
                             
         for e in self.world.events:
             #button handling
+            for e in self.world.events:
+                if e.type == QUIT:
+                    self.world.Close()
             if e.type == MOUSEBUTTONUP:
                 for b in self.tabs:
                     if b.rect.collidepoint(e.pos):
@@ -136,6 +147,8 @@ class EscMenu(object):
                             self.tab="map"
                         if b.text=="Player":
                             self.tab="player"
+                        if b.text=="Items":
+                            self.tab="items"
                         
         for f in self.tabs:
             f.Update()
