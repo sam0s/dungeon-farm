@@ -10,8 +10,9 @@ import battle,escmenu,items
 
 pygame.init()
 font=pygame.font.Font(None,15)
-menuimg=pygame.image.load("images\\menu.png")
-headshots=[pygame.image.load("images\\headshot1.png")]
+
+#menuimg=pygame.image.load("images\\menu.png")
+#headshots=[pygame.image.load("images\\headshot1.png")]
 
 #################################
 # FUNCTIONS #######################
@@ -196,7 +197,10 @@ class TextHolder(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
 class World(object):
-    def __init__(self,containing,surf,hudsurf):
+    def __init__(self,containing,surf,hudsurf,images):
+
+        self.images=images
+        
         self.containing=containing
         self.turn=1
         self.pos=[0,0]
@@ -219,7 +223,10 @@ class World(object):
 
         #really prob need to find a better way to do this
         self.good=1
-
+        
+    def Close(self):
+        savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt",self)
+        self.go = False
         
     def Turn(self):
         self.turn+=1
@@ -245,15 +252,13 @@ class World(object):
         if self.state == "menu":
             self.surf.fill((0,255,0))
         if self.state == "game":
-            
             if self.good==1:
-                if self.keys[K_ESCAPE]:
-                    self.esc.player_stats_drawn=0
+                if self.keys[K_TAB]:
                     self.ChangeState("escmenu")
             else:
                 self.Draw()
                     
-            if not self.keys[K_ESCAPE]:
+            if not self.keys[K_TAB]:
                 self.good=1
             
             for e in self.events:
@@ -264,11 +269,8 @@ class World(object):
                         if e.pos[1]>512:
                             self.esc.tab="player"
                             self.ChangeState("escmenu") #player tab
-                            
-                    
                 if e.type == QUIT:
-                    savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt",self)
-                    self.go = False
+                    self.Close()
                     
             self.player.update()
            
@@ -287,7 +289,7 @@ class World(object):
         self.surf.fill((0,0,0))
         self.containing.draw(self.surf)
         bar(self.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.player.hp,self.player.maxhp)
-        self.hudsurf.blit(headshots[0],(1,1))
+        self.hudsurf.blit(self.images[2],(1,1))
     def Shift(self,d):
         savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt")
         self.esc.created=0
@@ -389,14 +391,13 @@ class Player(Entity):
         self.prev=[]
 
         self.inventory=[]
+        self.activeWeapon=[items.Dirk(self)]
         
         self.hp=100
 
         
         self.changex=float(self.rect.x)
         self.changey=float(self.rect.y)
-
-        #Level Uppers
 
         #Level
         self.level=1
@@ -429,6 +430,8 @@ class Player(Entity):
             self.nextxp+=150
             
     def update(self):
+        
+        #print self.activeWeapon[0].ad
         #print self.inventory
         
         #self.giveItem(items.Bread(self))

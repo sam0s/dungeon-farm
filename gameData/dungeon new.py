@@ -20,17 +20,22 @@ timer = pygame.time.Clock()
 
 ent = pygame.sprite.Group()
 
+#LOAD ALL IMAGES! MAYBE A BAD IDEA
+allImages=[pygame.image.load("images\\items.png").convert(),pygame.image.load("images\\menu.png").convert(),pygame.image.load("images\\headshot1.png").convert(),pygame.image.load("images\\orcheadshot.png")]
+
+
 #Connect Player and World
 hud = Surface((800,128))
 
-w=dpylib.World(ent,screen,hud)
+w=dpylib.World(ent,screen,hud,allImages)
+
 
 
 
 playername="sanm" 
 
 def main():
-    TFPS=60 #this will be an option
+    TFPS=999 #this will be an option
     w.SetLevel(playername+"\\TestDungeon")
     w.SetPlayer(playername)
     MASTER_SURFACE_WIDTH=800
@@ -46,7 +51,6 @@ def main():
         p=dpylib.Player(int(n[5].split("_")[1]),int(n[6].split("_")[1]),w)
         w.player=p
         w.player.hp=int(n[3].split("_")[1])
-        
 
 
         

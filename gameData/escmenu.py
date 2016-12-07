@@ -9,10 +9,6 @@ from pygame import *
 import dpylib
 import ui
 
-
-icons=[pygame.image.load("images\\playericon.png"),pygame.image.load("images\\mapicon.png")]
-
-
 pygame.init()
 font=pygame.font.Font(None,15)
 
@@ -68,40 +64,39 @@ class EscMenu(object):
             load.close()
             
     def Draw(self):
-
-
-
         #press ESC to exit menu
         if self.world.good==1:
-            if self.world.keys[K_ESCAPE]:
+            if self.world.keys[K_TAB]:
                 self.player_stats_drawn=0
                 self.world.ChangeState("game")    
-        if not self.world.keys[K_ESCAPE]:
+        if not self.world.keys[K_TAB]:
                 self.world.good=1
 
-        
+        if self.tab=="items":
+            self.surf.fill((0,0,0))
+            self.surf.blit(self.world.images[0],(0,0))
+            x=32
+            y=100
+            for f in self.world.player.inventory:
+                y+=0
+                x+=55
+                if x>300:
+                    x=32
+                    y=100
+                pygame.draw.rect(self.surf,(255,0,0),(x,y,32,32),0)
+                self.surf.blit(font.render(str(f.stack),0,(255,255,255),(0,0,0)),(x,y))
 
         if self.tab=="player":
-            if self.player_stats_drawn==0:
-                x=1
-                self.surf.fill((0,0,0))
-                b=[font.render(str(self.world.playername)+": level "+str(self.world.player.level),0,(255,255,255),(0,0,0)),
-                   font.render("XP: "+str(self.world.player.xp)+"/"+str(self.world.player.nextxp),0,(255,255,255),(0,0,0)),
-                   font.render("Attack Damage: "+str(self.world.player.atk),0,(255,255,255),(0,0,0))
-                   ]
-                for f in b:
-                    self.surf.blit(f,(32,x*32))
-                    x+=1
-                self.player_stats_drawn=1
-
-
-
-
-
-
-        if self.tab=="items":
-            pass
-            
+            x=1
+            self.surf.fill((0,0,0))
+            b=[font.render(str(self.world.playername)+": level "+str(self.world.player.level),0,(255,255,255),(0,0,0)),
+               font.render("XP: "+str(self.world.player.xp)+"/"+str(self.world.player.nextxp),0,(255,255,255),(0,0,0)),
+               font.render("Attack Damage: "+str(self.world.player.atk),0,(255,255,255),(0,0,0))
+               ]
+            for f in b:
+                self.surf.blit(f,(32,x*32))
+                x+=1
+            self.player_stats_drawn=1
         
 
         if self.tab=="map":
@@ -146,6 +141,7 @@ class EscMenu(object):
                         if b.text=="Map":
                             self.tab="map"
                         if b.text=="Player":
+                            self.player_stats_drawn=0
                             self.tab="player"
                         if b.text=="Items":
                             self.tab="items"

@@ -9,8 +9,6 @@ from pygame import *
 import dpylib
 import ui
 
-headshots=[pygame.image.load("images\\orcheadshot.png")]
-
 
 pygame.init()
 font=pygame.font.Font(None,15)
@@ -41,7 +39,6 @@ class Battle(object):
         self.enemy='orc'
         self.enemylvl=self.world.player.level+choice([1,2,3,-1,-2,-3])
         self.enemyhp=100
-        print self.enemylvl
     def Attack(self):
         if self.enemy=='orc':
             dmg=self.baseDamageMatrix[0]
@@ -62,12 +59,12 @@ class Battle(object):
         if self.mode == 'fight':
             self.surf.fill((0,0,220))
             self.surf.blit(self.enemydisp,(0,0,))
-            self.surf.blit(headshots[0],(672,0))
+            self.surf.blit(self.world.images[3],(672,0))
 
 
             dpylib.bar(self.enemydisp,(0,210,0),(210,0,0),130,4,165,25,self.enemyhp,self.world.player.maxhp)
             dpylib.bar(self.world.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.world.player.hp,self.world.player.maxhp)
-            self.world.hudsurf.blit(dpylib.headshots[0],(1,1))
+            self.world.hudsurf.blit(self.world.images[2],(1,1))
 
             for e in self.world.events:
                 #button handling
@@ -79,14 +76,13 @@ class Battle(object):
                             if b==self.buttons[1]:
                                 self.mode = 'items'
                 if e.type == QUIT:
-                    dpylib.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
-                    self.world.go = False
+                    self.world.Close()
             for b in self.buttons:
                 b.Update()
         else:
             self.surf.fill((255,0,220))
             self.surf.blit(self.enemydisp,(0,0,))
-            self.surf.blit(headshots[0],(672,0))
+            self.surf.blit(self.world.images[3],(672,0))
 
 
             dpylib.bar(self.enemydisp,(0,210,0),(210,0,0),130,4,165,25,self.enemyhp,self.world.player.maxhp)
@@ -103,8 +99,7 @@ class Battle(object):
                             if b==self.buttons[1]:
                                 self.mode = 'fight'
                 if e.type == QUIT:
-                    dpylib.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
-                    self.world.go = False
+                    self.world.Close()
             for b in self.buttons:
                 b.Update()
             
