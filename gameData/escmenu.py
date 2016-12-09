@@ -36,6 +36,9 @@ class EscMenu(object):
         self.tab="map"
         self.created=0
         self.tabs=[ui.Button(650,50,100,32,"Player",self.surf),ui.Button(650,100,100,32,"Items",self.surf),ui.Button(650,150,100,32,"Map",self.surf),ui.Button(650,200,100,32,"Go Back",self.surf)]
+
+        self.drawn=0
+
         #self.buttons=[ui.Button(300,300,100,32,"Go Back.",self.surf)]
         #self.CreateSmallMap(str(self.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small)
     def CreateSmallMap(self,loc,lev,offset=0,offsety=0):
@@ -71,33 +74,35 @@ class EscMenu(object):
                 self.world.ChangeState("game")    
         if not self.world.keys[K_TAB]:
                 self.world.good=1
+        if self.drawn==0:
+            if self.tab=="items":
+                self.surf.fill((0,0,0))
+                self.surf.blit(self.world.images[0],(0,0))
+                x=30
+                y=229
+                for f in self.world.player.inventory:
+                    
 
-        if self.tab=="items":
-            self.surf.fill((0,0,0))
-            self.surf.blit(self.world.images[0],(0,0))
-            x=32
-            y=100
-            for f in self.world.player.inventory:
-                y+=0
-                x+=55
-                if x>300:
-                    x=32
-                    y=100
-                pygame.draw.rect(self.surf,(255,0,0),(x,y,32,32),0)
-                self.surf.blit(font.render(str(f.stack),0,(255,255,255),(0,0,0)),(x,y))
+                    pygame.draw.rect(self.surf,(255,0,0),(x,y,26,26),0)
+                    self.surf.blit(font.render(str(f.stack),0,(255,255,255),(0,0,0)),(x,y))
 
-        if self.tab=="player":
-            x=1
-            self.surf.fill((0,0,0))
-            b=[font.render(str(self.world.playername)+": level "+str(self.world.player.level),0,(255,255,255),(0,0,0)),
-               font.render("XP: "+str(self.world.player.xp)+"/"+str(self.world.player.nextxp),0,(255,255,255),(0,0,0)),
-               font.render("Attack Damage: "+str(self.world.player.atk),0,(255,255,255),(0,0,0))
-               ]
-            for f in b:
-                self.surf.blit(f,(32,x*32))
-                x+=1
-            self.player_stats_drawn=1
-        
+                    x+=38
+                    if x>470:
+                        x=30
+                        y+=41
+
+            if self.tab=="player":
+                x=1
+                self.surf.fill((0,0,0))
+                b=[font.render(str(self.world.playername)+": level "+str(self.world.player.level),0,(255,255,255),(0,0,0)),
+                   font.render("XP: "+str(self.world.player.xp)+"/"+str(self.world.player.nextxp),0,(255,255,255),(0,0,0)),
+                   font.render("Attack Damage: "+str(self.world.player.atk),0,(255,255,255),(0,0,0))
+                   ]
+                for f in b:
+                    self.surf.blit(f,(32,x*32))
+                    x+=1
+                self.player_stats_drawn=1
+            self.drawn=1
 
         if self.tab=="map":
             self.surf.fill((0,0,250))
@@ -133,6 +138,7 @@ class EscMenu(object):
                 if e.type == QUIT:
                     self.world.Close()
             if e.type == MOUSEBUTTONUP:
+                self.drawn=0
                 for b in self.tabs:
                     if b.rect.collidepoint(e.pos):
                         self.player_stats_drawn=0

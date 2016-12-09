@@ -413,7 +413,12 @@ class Player(Entity):
         self.maxhp=100
         
     def giveItem(self,item):
-        y=0
+        if len(self.inventory)==72:
+            pass
+        else:
+            y=0
+            self.inventory.append(item)
+            
         for f in self.inventory:
             if f.name==item.name:
                 y=1
