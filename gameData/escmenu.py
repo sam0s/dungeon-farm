@@ -70,7 +70,6 @@ class EscMenu(object):
         #press ESC to exit menu
         if self.world.good==1:
             if self.world.keys[K_TAB]:
-                self.player_stats_drawn=0
                 self.world.ChangeState("game")    
         if not self.world.keys[K_TAB]:
                 self.world.good=1
@@ -111,6 +110,9 @@ class EscMenu(object):
             if self.created==0:
                 self.small.empty()
 
+
+                #SEND NUDES
+                
                 #top
                 self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1]-1)+".txt"),self.small,0)
                 self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1]-1)+".txt"),self.small,792)

@@ -51,9 +51,8 @@ def loadlvl(ents,loc):
             w=Pickup(int(data[1]),int(data[2]),"life")
         if data[0]=='"enemy"':
             w=Enemy(int(data[1]),int(data[2]))
-        if data[0]=='"chest"':
-            #load the contents of the chest, stored in a file
-            pass
+        if data[0]=='"randombox"':
+            w=Pickup(int(data[1]),int(data[2]),"randombox")
         ents.add(w)
         data=data[3:]
     load.close()
@@ -91,16 +90,16 @@ def carve(ents):
         #generate cool stuff
         special=choice(([1]*4) #gold rate
                        +([2]*3)#enemy rate
-                       +([3]*1)#chests rate
+                       +([3]*1)#random box rate
                        +([4]*2)#life drop rate
-                       +([0]*101) #empty rate
+                       +([0]*104) #empty rate
                        )
         if special==1:
             ents.add(Pickup(x,y,"gold"))
         if special==2:
             ents.add(Enemy(x,y))
         if special==3:
-            ents.add(Chest(x,y))
+            ents.add(Pickup(x,y,"randombox"))
         if special==4:
             ents.add(Pickup(x,y,"life"))
             
@@ -200,7 +199,6 @@ class World(object):
     def __init__(self,containing,surf,hudsurf,images):
 
         self.images=images
-        
         self.containing=containing
         self.turn=1
         self.pos=[0,0]
@@ -245,6 +243,7 @@ class World(object):
         
         
     def Update(self,delta):
+        print self.pos
         self.delta=delta
         #Events and Keys
         self.events=pygame.event.get()
@@ -336,17 +335,11 @@ class Pickup(Entity):
         if self.ptype == "food":
             self.name="food"
             self.image.fill((120,60,10))
+        if self.ptype == "randombox":
+            self.name="randombox"
+            self.image.fill((0,50,200))
         self.rect = Rect(x,y,32,32)
         
-class Chest(Entity):
-    def __init__(self,x,y):
-        Entity.__init__(self)
-        self.name = "chest"
-        self.contents=[]
-        self.image = Surface((32,32))
-        self.image.convert()
-        self.image.fill((120,60,10))
-        self.rect = Rect(x,y,32,32)
 
 
 class Enemy(Entity):
@@ -403,7 +396,7 @@ class Player(Entity):
         self.level=1
         self.xp=0
         self.nextxp=120
-        #Atk - base 7
+        #Atk - base 7 
         self.atk=7
         #Def
         self.defChance=2
@@ -498,6 +491,9 @@ class Player(Entity):
                         self.hp+=25
                         if self.hp>self.maxhp:
                             self.hp=self.maxhp
+                    if f.name=="randombox":
+                        self.giveItem(items.Bread(self))
+                        self.world.containing.remove(f)
                     if f.name=='wall':
                         self.moveto=self.prev
                         

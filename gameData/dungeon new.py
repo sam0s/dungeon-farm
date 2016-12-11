@@ -1,8 +1,8 @@
-import pygame
+import pygame,sys
 import dpylib
 import math,random
 from pygame import *
-from os import mkdir
+from os import mkdir,path
 DISPLAY = (800, 640)
 
 FLAGS = HWSURFACE | DOUBLEBUF
@@ -40,7 +40,7 @@ def main():
     w.SetPlayer(playername)
     MASTER_SURFACE_WIDTH=800
     MASTER_SURFACE_HEIGHT=640
-    try:
+    if path.isfile(playername+"\\"+playername+".txt"):
         #load player attributes
         f=open(playername+"\\"+playername+".txt",'r')
         n=f.read()
@@ -58,11 +58,12 @@ def main():
 
         wx=n[7].split("_")[1]
         wy=n[8].split("_")[1]
-        
+        w.pos=[int(wx),int(wy)]
         dpylib.loadlvl(ent,w.levelname+"\\world"+wx+wy+".txt")
 
-    except:
-
+    else:
+        #e = sys.exc_info()
+        #print e
         #try to grab/create the level folder
         try:
             mkdir(w.levelname.split("\\")[0])
