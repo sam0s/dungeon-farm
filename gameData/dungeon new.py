@@ -55,7 +55,6 @@ def main():
 
         
         #load level
-
         wx=n[7].split("_")[1]
         wy=n[8].split("_")[1]
         w.pos=[int(wx),int(wy)]

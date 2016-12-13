@@ -197,7 +197,6 @@ class TextHolder(pygame.sprite.Sprite):
 
 class World(object):
     def __init__(self,containing,surf,hudsurf,images):
-
         self.images=images
         self.containing=containing
         self.turn=1
@@ -221,7 +220,7 @@ class World(object):
 
         #really prob need to find a better way to do this
         self.good=1
-        
+
     def Close(self):
         savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt",self)
         self.go = False
@@ -243,7 +242,6 @@ class World(object):
         
         
     def Update(self,delta):
-        print self.pos
         self.delta=delta
         #Events and Keys
         self.events=pygame.event.get()
@@ -289,10 +287,10 @@ class World(object):
         self.containing.draw(self.surf)
         bar(self.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.player.hp,self.player.maxhp)
         self.hudsurf.blit(self.images[2],(1,1))
+
     def Shift(self,d):
         savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt")
         self.esc.created=0
-        
         
         if d=='n':
             self.pos=[self.pos[0],self.pos[1]-1]
@@ -382,7 +380,7 @@ class Player(Entity):
         self.prev = self.moveto = [x,y]
         self.moving=False
         self.prev=[]
-
+        self.direct="w"
         self.inventory=[]
         self.activeWeapon=[items.Dirk(self)]
         
@@ -396,7 +394,7 @@ class Player(Entity):
         self.level=1
         self.xp=0
         self.nextxp=120
-        #Atk - base 7 
+        #Atk - base 7
         self.atk=7
         #Def
         self.defChance=2
@@ -436,22 +434,25 @@ class Player(Entity):
         #self.giveXp(12)
         
         if not self.moving:
-
             self.prev=[self.rect.x,self.rect.y]
             k=self.world.keys
             if k[K_w]:
+                self.direct="w"
                 self.moveto[1]-=32
                 self.wasd=0
                 self.moving=True
             elif k[K_a]:
+                self.direct="a"
                 self.moveto[0]-=32
                 self.wasd=0
                 self.moving=True
             elif k[K_s]:
+                self.direct="s"
                 self.moveto[1]+=32
                 self.wasd=0
                 self.moving=True
             elif k[K_d]:
+                self.direct="d"
                 self.moveto[0]+=32
                 self.wasd=0
                 self.moving=True
@@ -460,7 +461,6 @@ class Player(Entity):
                 self.changey=float(self.prev[1])
                 self.world.Turn()
         else:
-
             #collision
             cl=pygame.sprite.spritecollide(self, self.world.containing, False)
             if cl:
@@ -479,7 +479,6 @@ class Player(Entity):
                         self.world.bat.NewEnemy()
                         self.world.ChangeState("battle")
                         self.world.containing.remove(f)
-                        
                     if f.name=='gold':
                         self.world.logtext.append("gold found!")
                         self.world.containing.remove(f)
@@ -497,10 +496,7 @@ class Player(Entity):
                     if f.name=='wall':
                         self.moveto=self.prev
                         
-            self.world.Draw()
-
-
-
+            
 
             #move based on time delta
             if self.rect.x<self.moveto[0]:
@@ -515,11 +511,26 @@ class Player(Entity):
             elif self.rect.y>self.moveto[1]:
                 self.changey-=(self.speed)*self.world.delta
                 if self.changey<self.moveto[1]-1:self.changey=self.moveto[1]
-            else: self.moving=False
-            
+            else:
+                self.moving=False
+                self.world.Draw()
+
+
+            pygame.draw.rect(self.world.surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
+
+            #blackster
+            if self.direct=="w":
+                pygame.draw.rect(self.world.surf,(0,0,0),(self.rect.x,self.rect.y+32,32,2),0)
+            if self.direct=="a":
+                pygame.draw.rect(self.world.surf,(0,0,0),(self.rect.x+32,self.rect.y,2,32),0)
+            if self.direct=="s":
+                pygame.draw.rect(self.world.surf,(0,0,0),(self.rect.x,self.rect.y-2,32,2),0)
+            if self.direct=="d":
+                pygame.draw.rect(self.world.surf,(0,0,0),(self.rect.x-2,self.rect.y,2,32),0)
+
             self.rect.x=int(self.changex)
             self.rect.y=int(self.changey)
-        pygame.draw.rect(self.world.surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
+        
 
 class Log(TextHolder):
     def __init__(self,world,x,y,sizex,sizey,ic,surf):
