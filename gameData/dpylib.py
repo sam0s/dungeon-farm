@@ -146,6 +146,7 @@ def fill(ents):
             x+=32
         x=0
         y+=32
+
 def doors(ents):
     x=384
     y=224
@@ -251,6 +252,7 @@ class World(object):
         if self.state == "game":
             if self.good==1:
                 if self.keys[K_TAB]:
+                    self.esc.drawn=0
                     self.ChangeState("escmenu")
             else:
                 self.Draw()
@@ -408,14 +410,14 @@ class Player(Entity):
             pass
         else:
             y=0
-            self.inventory.append(item)
+            for f in self.inventory:
+                if f.name==item.name:
+                    f.stack+=1
+                    y=1
+            if y==0:
+                self.inventory.append(item)
             
-        for f in self.inventory:
-            if f.name==item.name:
-                y=1
-                f.stack+=1
-        if y==0:
-            self.inventory.append(item)
+        
         
     def giveXp(self,xp):
         self.xp+=xp
@@ -426,7 +428,7 @@ class Player(Entity):
             self.nextxp+=150
             
     def update(self):
-        
+        pygame.draw.rect(self.world.surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
         #print self.activeWeapon[0].ad
         #print self.inventory
         
@@ -491,10 +493,13 @@ class Player(Entity):
                         if self.hp>self.maxhp:
                             self.hp=self.maxhp
                     if f.name=="randombox":
-                        self.giveItem(items.Bread(self))
+
                         self.world.containing.remove(f)
+                        self.giveItem(items.Bread(self))
+                        
                     if f.name=='wall':
                         self.moveto=self.prev
+                    self.world.Draw()
                         
             
 

@@ -35,7 +35,7 @@ w=dpylib.World(ent,screen,hud,allImages)
 playername="sanm" 
 
 def main():
-    TFPS=999 #this will be an option
+    TFPS=1000 #this will be an option
     w.SetLevel(playername+"\\TestDungeon")
     w.SetPlayer(playername)
     MASTER_SURFACE_WIDTH=800

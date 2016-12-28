@@ -141,9 +141,11 @@ class EscMenu(object):
                     self.world.Close()
             if e.type == MOUSEBUTTONUP:
                 self.drawn=0
+                if self.tab=="items":
+                    print "lets interact"
                 for b in self.tabs:
                     if b.rect.collidepoint(e.pos):
-                        self.player_stats_drawn=0
+                        self.drawn=0
                         if b.text=="Go Back":
                             self.world.ChangeState("game")
                         if b.text=="Map":
