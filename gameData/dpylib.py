@@ -261,7 +261,7 @@ class World(object):
                 self.good=1
             
             for e in self.events:
-                if e.type == MOUSEBUTTONDOWN:
+                if e.type == MOUSEBUTTONDOWN and e.button == 1:
                     print e.pos
                     #Headshot Click
                     if e.pos[0]<130:

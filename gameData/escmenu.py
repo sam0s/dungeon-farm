@@ -37,6 +37,9 @@ class EscMenu(object):
         self.created=0
         self.tabs=[ui.Button(650,50,100,32,"Player",self.surf),ui.Button(650,100,100,32,"Items",self.surf),ui.Button(650,150,100,32,"Map",self.surf),ui.Button(650,200,100,32,"Go Back",self.surf)]
 
+        self.invx=0
+        self.invy=0
+        
         self.drawn=0
 
         #self.buttons=[ui.Button(300,300,100,32,"Go Back.",self.surf)]
@@ -75,8 +78,16 @@ class EscMenu(object):
                 self.world.good=1
         if self.drawn==0:
             if self.tab=="items":
+                #230
+                
+                oef=230+(self.invy*42)
+                oef2=43+(self.invx*38)
+
+
+                
                 self.surf.fill((0,0,0))
                 self.surf.blit(self.world.images[0],(0,0))
+                pygame.draw.circle(self.surf,(255,0,0),(oef2,oef),5,0)
                 x=30
                 y=229
                 for f in self.world.player.inventory:
@@ -139,10 +150,56 @@ class EscMenu(object):
             for e in self.world.events:
                 if e.type == QUIT:
                     self.world.Close()
-            if e.type == MOUSEBUTTONUP:
+            if e.type == MOUSEBUTTONUP and e.button == 1:
                 self.drawn=0
+                
                 if self.tab=="items":
-                    print "lets interact"
+                    mse = mouse.get_pos()
+                    #INVENTORY DOT
+                    if mse[0]<485:
+                        if mse[1]>228:
+                            if mse[1]>426:
+                                self.invy=5
+                            elif mse[1]>385:
+                                self.invy=4
+                            elif mse[1]>343:
+                                self.invy=3
+                            elif mse[1]>303:
+                                self.invy=2
+                            elif mse[1]>262:
+                                self.invy=1
+                            else:
+                                self.invy=0 
+                        
+                        if mse[0]>21:
+                            if mse[0]>442:
+                                self.invx=11
+                            elif mse[0]>405:
+                                self.invx=10
+                            elif mse[0]>366:
+                                self.invx=9
+                            elif mse[0]>328:
+                                self.invx=8
+                            elif mse[0]>290:
+                                self.invx=7
+                            elif mse[0]>252:
+                                self.invx=6
+                            elif mse[0]>213:
+                                self.invx=5
+                            elif mse[0]>175:
+                                self.invx=4
+                            elif mse[0]>136:
+                                self.invx=3
+                            elif mse[0]>100:
+                                self.invx=2
+                            elif mse[0]>61:
+                                self.invx=1
+                            else:
+                                self.invx=0
+
+                            
+
+                    
                 for b in self.tabs:
                     if b.rect.collidepoint(e.pos):
                         self.drawn=0

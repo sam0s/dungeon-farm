@@ -75,22 +75,6 @@ class Bread(Item):
         self.stack=1
         self.imgnum=0
 
-class OrcSteak(Item):
-    def __init__(self,setp,setpc=None):
-        self.parent=setp
-        self.parentContain=setpc
-
-        self.val = 10
-        self.itemType="food"
-        self.name="orc steak"
-        self.consumeVal = 25
-        self.ad = 0
-        self.ap = 0
-        self.weight = 1
-        
-        self.stack=1
-        self.imgnum=0
-
 
 
 
