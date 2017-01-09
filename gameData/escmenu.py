@@ -78,7 +78,7 @@ class EscMenu(object):
                 self.world.good=1
         if self.drawn==0:
             if self.tab=="items":
-                #230
+                
                 
                 oef=230+(self.invy*42)
                 oef2=43+(self.invx*38)
@@ -93,7 +93,8 @@ class EscMenu(object):
                 for f in self.world.player.inventory:
                     
 
-                    pygame.draw.rect(self.surf,(255,0,0),(x,y,26,26),0)
+                    #pygame.draw.rect(self.surf,(255,0,0),(x,y,26,26),0)
+                    self.surf.blit(f.image,(x,y))
                     self.surf.blit(font.render(str(f.stack),0,(255,255,255),(0,0,0)),(x,y))
 
                     x+=38

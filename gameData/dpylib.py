@@ -102,7 +102,7 @@ def carve(ents):
             ents.add(Pickup(x,y,"randombox"))
         if special==4:
             ents.add(Pickup(x,y,"life"))
-            
+
         while direction == lastdir:
             direction = choice([1,2,3,4])
         lastdir = direction
@@ -191,7 +191,7 @@ def doors(ents):
 class Entity(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        
+
 class TextHolder(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -214,7 +214,7 @@ class World(object):
 
 
         self.logtext=[]
-        
+
         #this whole deal right here might be changed later
         self.bat=battle.Battle(self.surf,self)
         self.esc=escmenu.EscMenu(self.surf,self)
@@ -225,7 +225,7 @@ class World(object):
     def Close(self):
         savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt",self)
         self.go = False
-        
+
     def Turn(self):
         self.turn+=1
         if self.turn%2 ==0:
@@ -239,9 +239,9 @@ class World(object):
         self.good=0
         self.state=state
         if state=="escmenu":
-            self.esc.created=0        
-        
-        
+            self.esc.created=0
+
+
     def Update(self,delta):
         self.delta=delta
         #Events and Keys
@@ -256,10 +256,10 @@ class World(object):
                     self.ChangeState("escmenu")
             else:
                 self.Draw()
-                    
+
             if not self.keys[K_TAB]:
                 self.good=1
-            
+
             for e in self.events:
                 if e.type == MOUSEBUTTONDOWN and e.button == 1:
                     print e.pos
@@ -270,17 +270,17 @@ class World(object):
                             self.ChangeState("escmenu") #player tab
                 if e.type == QUIT:
                     self.Close()
-                    
+
             self.player.update()
-           
+
         if self.state == "battle":
             self.bat.Draw()
-   
+
         if self.state == "escmenu":
             if self.esc.tab=="map":
                 self.player.update()
             self.esc.Draw()
-        
+
         self.hudlog.update(self.hudsurf)
         self.surf.blit(self.hudsurf, (0,512))
         pygame.display.flip()
@@ -293,11 +293,11 @@ class World(object):
     def Shift(self,d):
         savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt")
         self.esc.created=0
-        
+
         if d=='n':
             self.pos=[self.pos[0],self.pos[1]-1]
             self.player.prev[1]=self.player.changey=self.player.moveto[1]=self.player.rect.y=448
-            
+
             self.logtext.append("going north")
         elif d=='e':
             self.pos=[self.pos[0]+1,self.pos[1]]
@@ -314,7 +314,7 @@ class World(object):
             self.player.prev[0]=self.player.changex=self.player.moveto[0]=self.player.rect.x=736
 
             self.logtext.append("going west")
-        
+
         changelevel(self.containing,self.levelname,self.pos)
         self.Draw()
 
@@ -339,7 +339,7 @@ class Pickup(Entity):
             self.name="randombox"
             self.image.fill((0,50,200))
         self.rect = Rect(x,y,32,32)
-        
+
 
 
 class Enemy(Entity):
@@ -383,12 +383,12 @@ class Player(Entity):
         self.moving=False
         self.prev=[]
         self.direct="w"
-        self.inventory=[]
-        self.activeWeapon=[items.Dirk(self)]
-        
+        self.inventory=[items.Dirk(self)]
+        self.activeWeapon=[self.inventory[0]]
+
         self.hp=100
 
-        
+
         self.changex=float(self.rect.x)
         self.changey=float(self.rect.y)
 
@@ -404,7 +404,7 @@ class Player(Entity):
         self.speed=62
         #MaxHp - base 100
         self.maxhp=100
-        
+
     def giveItem(self,item):
         if len(self.inventory)==72:
             pass
@@ -416,9 +416,9 @@ class Player(Entity):
                     y=1
             if y==0:
                 self.inventory.append(item)
-            
-        
-        
+
+
+
     def giveXp(self,xp):
         self.xp+=xp
         if self.xp>self.nextxp:
@@ -426,15 +426,15 @@ class Player(Entity):
             self.level+=1
             #CHANGE THIS LATER
             self.nextxp+=150
-            
+
     def update(self):
         pygame.draw.rect(self.world.surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
         #print self.activeWeapon[0].ad
         #print self.inventory
-        
+
         #self.giveItem(items.Bread(self))
         #self.giveXp(12)
-        
+
         if not self.moving:
             self.prev=[self.rect.x,self.rect.y]
             k=self.world.keys
@@ -493,15 +493,21 @@ class Player(Entity):
                         if self.hp>self.maxhp:
                             self.hp=self.maxhp
                     if f.name=="randombox":
+                        #Give a random item from this here list !
+                        randomitem=choice([1,2])
+                        if randomitem==1:
+                            self.giveItem(items.Bread(self))
+                        if randomitem==2:
+                            self.giveItem(items.Apple(self))
 
                         self.world.containing.remove(f)
-                        self.giveItem(items.Bread(self))
-                        
+
+
                     if f.name=='wall':
                         self.moveto=self.prev
                     self.world.Draw()
-                        
-            
+
+
 
             #move based on time delta
             if self.rect.x<self.moveto[0]:
@@ -535,13 +541,13 @@ class Player(Entity):
 
             self.rect.x=int(self.changex)
             self.rect.y=int(self.changey)
-        
+
 
 class Log(TextHolder):
     def __init__(self,world,x,y,sizex,sizey,ic,surf):
         TextHolder.__init__(self)
         self.rect=pygame.Rect(x,y,sizex,sizey)
-        
+
         self.world=world
         self.drawntext=[]
         #INNER AND OUTER COLORS
@@ -559,19 +565,12 @@ class Log(TextHolder):
                     pygame.draw.rect(surf,(self.ic),self.rect,0)
                     pygame.draw.rect(surf,(self.oc),self.rect,3)
                     self.drawntext=self.drawntext[1:]
-                    
+
             y=4
             a=0
-            
+
             for f in self.drawntext:
                 wax=font.render(str(self.drawntext[a]),0,(255,0,0),self.ic)
                 surf.blit(wax,(self.rect.x+5,y))
                 a+=1
                 y+=12
-                
-
-            
-            
-            
-            
-        

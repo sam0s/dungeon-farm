@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 """
 items. py
 
@@ -6,6 +7,10 @@ items. py
 __author__ = "Sam Tubb (sam0s)"
 __copyright__ = "None"
 __credits__ = []
+
+import pygame
+
+itemsheet = pygame.image.load("images\\item.png")
 
 class Item:
     def __init__(self):
@@ -32,7 +37,9 @@ class Dirk(Item):
         self.parentContain=setpc
         self.itemType="weapon"
         self.name="dirk"
-
+        
+        self.id = 0
+        
         self.val = 15
         self.consumeVal = 0
         self.ad = 10
@@ -40,31 +47,18 @@ class Dirk(Item):
         self.weight = 1
         
         self.stack=1
-        self.imgnum=0
+
+        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26))
 
 #EAT
-class Apple(Item):
-    def __init__(self,setp,setpc=None):
-        self.parent=setp
-        self.parentContain=setpc
-        self.itemType="food"
-
-        self.val = 2
-        self.name="apple"
-        self.consumeVal = 15
-        self.ad = 0
-        self.ap = 0
-        self.weight = 1
-        
-        self.stack=1
-        self.imgnum=0
-
 class Bread(Item):
     def __init__(self,setp,setpc=None):
         self.parent=setp
         self.parentContain=setpc
         self.itemType="food"
 
+        self.id=1
+        
         self.val=5
         self.name="bread"
         self.consumeVal = 20
@@ -73,7 +67,30 @@ class Bread(Item):
         self.weight = 0.5
         
         self.stack=1
-        self.imgnum=0
+
+        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26))
+
+
+        
+class Apple(Item):
+    def __init__(self,setp,setpc=None):
+        self.parent=setp
+        self.parentContain=setpc
+        self.itemType="food"
+
+        self.id=2
+        
+        self.val = 2
+        self.name="apple"
+        self.consumeVal = 15
+        self.ad = 0
+        self.ap = 0
+        self.weight = 1
+        
+        self.stack=1
+
+        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26))
+
 
 
 
