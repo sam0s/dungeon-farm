@@ -32,10 +32,10 @@ w=dpylib.World(ent,screen,hud,allImages)
 
 
 
-playername="sanm" 
+playername="playername"
 
 def main():
-    TFPS=1000 #this will be an option
+    TFPS=120 #this will be an option
     w.SetLevel(playername+"\\TestDungeon")
     w.SetPlayer(playername)
     MASTER_SURFACE_WIDTH=800
@@ -46,14 +46,14 @@ def main():
         n=f.read()
         n=n.split("\n")
         f.close()
-        
+
 
         p=dpylib.Player(int(n[5].split("_")[1]),int(n[6].split("_")[1]),w)
         w.player=p
         w.player.hp=int(n[3].split("_")[1])
 
 
-        
+
         #load level
         wx=n[7].split("_")[1]
         wy=n[8].split("_")[1]
@@ -78,7 +78,7 @@ def main():
 
         p=dpylib.Player(384.0,224.0,w)
         w.player=p
-        
+
         dpylib.fill(ent)
         dpylib.carve(ent)
         dpylib.doors(ent)
@@ -90,10 +90,10 @@ def main():
         dt=float(timer.tick(TFPS)*1e-3)
         w.Update(dt)
         display.set_caption("Dungeon Farm - "+str(timer.get_fps()))
-        
+
         MASTER_SURFACE.blit(w.surf,(0,0))
     pygame.display.quit()
-    
+
 
 
 if(__name__ == "__main__"):

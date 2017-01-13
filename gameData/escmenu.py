@@ -22,24 +22,28 @@ class Square(Entity):
         self.image=pygame.Surface((6,6))
         self.image.fill(c)
         self.rect=(x/6,y/6,5,5)
-    
+
 
 class EscMenu(object):
     def __init__(self,surf,world):
 
         self.player_stats_drawn=0
-        
+
         self.surf=surf
         self.world=world
         self.small = pygame.sprite.Group()
         self.small2 = pygame.sprite.Group()
         self.tab="map"
         self.created=0
+
+        #BUTTONS INIT
         self.tabs=[ui.Button(650,50,100,32,"Player",self.surf),ui.Button(650,100,100,32,"Items",self.surf),ui.Button(650,150,100,32,"Map",self.surf),ui.Button(650,200,100,32,"Go Back",self.surf)]
+        self.invbuttons=[ui.Button(500,430,100,32,"Drop",self.surf),ui.Button(500,385,100,32,"Use",self.surf)]
+
 
         self.invx=0
         self.invy=0
-        
+
         self.drawn=0
 
         #self.buttons=[ui.Button(300,300,100,32,"Go Back.",self.surf)]
@@ -56,7 +60,7 @@ class EscMenu(object):
             data = load.read()
             data=data.split(".")
             data=data[:-1]
-            
+
             while len(data) > 0:
                 c=(0,0,0)
                 if data[0]=='"wall"':
@@ -68,30 +72,30 @@ class EscMenu(object):
                 lev.add(Square(int(data[1])+offset,int(data[2])+offsety,c))
                 data=data[3:]
             load.close()
-            
+
     def Draw(self):
         #press ESC to exit menu
         if self.world.good==1:
             if self.world.keys[K_TAB]:
-                self.world.ChangeState("game")    
+                self.world.ChangeState("game")
         if not self.world.keys[K_TAB]:
                 self.world.good=1
         if self.drawn==0:
             if self.tab=="items":
-                
-                
+
+
                 oef=230+(self.invy*42)
                 oef2=43+(self.invx*38)
 
 
-                
+
                 self.surf.fill((0,0,0))
                 self.surf.blit(self.world.images[0],(0,0))
                 pygame.draw.circle(self.surf,(255,0,0),(oef2,oef),5,0)
                 x=30
                 y=229
                 for f in self.world.player.inventory:
-                    
+
 
                     #pygame.draw.rect(self.surf,(255,0,0),(x,y,26,26),0)
                     self.surf.blit(f.image,(x,y))
@@ -122,19 +126,16 @@ class EscMenu(object):
             if self.created==0:
                 self.small.empty()
 
-
-                #SEND NUDES
-                
                 #top
                 self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1]-1)+".txt"),self.small,0)
                 self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1]-1)+".txt"),self.small,792)
                 self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1]-1)+".txt"),self.small,1584)
-                
+
                 #mid
                 self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1])+".txt"),self.small,0,492)
                 self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small,792,492)
                 self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1])+".txt"),self.small,1584,492)
-                
+
 
                 #bot
                 self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]-1)+str(self.world.pos[1]+1)+".txt"),self.small,0,984)
@@ -145,17 +146,26 @@ class EscMenu(object):
             else:
                 self.small.draw(self.surf)
                 pygame.draw.rect(self.surf,(0,255,0),((self.world.player.rect.x+792)/6,(self.world.player.rect.y+492)/6,6,6),0)
-                            
+
         for e in self.world.events:
-            #button handling
             for e in self.world.events:
                 if e.type == QUIT:
                     self.world.Close()
             if e.type == MOUSEBUTTONUP and e.button == 1:
                 self.drawn=0
-                
+                mse = e.pos
+
+                #Handle inventory related buttons
                 if self.tab=="items":
-                    mse = mouse.get_pos()
+                    for b in self.invbuttons:
+                        if b.rect.collidepoint(mse):
+                            self.drawn=0
+                            if b.text=="Use":
+                                print self.world.player.inventory[0].name
+                            if b.text=="Drop":
+                                print "dropped item"
+
+
                     #INVENTORY DOT
                     if mse[0]<485:
                         if mse[1]>228:
@@ -170,8 +180,8 @@ class EscMenu(object):
                             elif mse[1]>262:
                                 self.invy=1
                             else:
-                                self.invy=0 
-                        
+                                self.invy=0
+
                         if mse[0]>21:
                             if mse[0]>442:
                                 self.invx=11
@@ -198,12 +208,11 @@ class EscMenu(object):
                             else:
                                 self.invx=0
 
-                            
 
-                    
+                #Handle the general buttons
                 for b in self.tabs:
                     if b.rect.collidepoint(e.pos):
-                        self.drawn=0
+                        #self.drawn=0
                         if b.text=="Go Back":
                             self.world.ChangeState("game")
                         if b.text=="Map":
@@ -213,12 +222,9 @@ class EscMenu(object):
                             self.tab="player"
                         if b.text=="Items":
                             self.tab="items"
-                        
+        #DRAW BUTTONS
         for f in self.tabs:
             f.Update()
-        #self.surf.blit()
-
-            
-            
-            
-        
+        if self.tab=="items":
+            for f in self.invbuttons:
+                f.Update()

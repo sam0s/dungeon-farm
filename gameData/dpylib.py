@@ -361,6 +361,7 @@ class Wall(Entity):
         self.image.convert()
         self.image.fill((100,100,100))
         self.rect = Rect(x,y,32,32)
+
 class Door(Entity):
     def __init__(self,x,y):
         Entity.__init__(self)
@@ -494,12 +495,8 @@ class Player(Entity):
                             self.hp=self.maxhp
                     if f.name=="randombox":
                         #Give a random item from this here list !
-                        randomitem=choice([1,2])
-                        if randomitem==1:
-                            self.giveItem(items.Bread(self))
-                        if randomitem==2:
-                            self.giveItem(items.Apple(self))
-
+                        randomitem=choice([1,2,3,4,5])
+                        self.giveItem(items.fromId(randomitem,self))
                         self.world.containing.remove(f)
 
 

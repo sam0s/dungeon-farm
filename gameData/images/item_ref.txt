@@ -1,2 +1,6 @@
 1_dirk
 2_bread
+3_apple
+4_pizza
+5_cheese
+6_fish

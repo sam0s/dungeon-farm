@@ -14,11 +14,6 @@ pygame.init()
 font=pygame.font.Font(None,15)
 
 
-
-
-
-
-
 class Entity(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -34,7 +29,7 @@ class Battle(object):
         self.baseDamageMatrix=[6,8]
 
         self.mode = 'fight'
-        
+
     def NewEnemy(self):
         self.enemy='orc'
         self.enemylvl=self.world.player.level+choice([1,2,3,-1,-2,-3])
@@ -53,7 +48,7 @@ class Battle(object):
         if self.enemyhp<=0:
             self.world.logtext.append("Enemy Slain!")
             self.world.ChangeState("game")
-            
+
 
     def Draw(self):
         if self.mode == 'fight':
@@ -87,7 +82,6 @@ class Battle(object):
 
             dpylib.bar(self.enemydisp,(0,210,0),(210,0,0),130,4,165,25,self.enemyhp,self.world.player.maxhp)
             dpylib.bar(self.world.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.world.player.hp,self.world.player.maxhp)
-            self.world.hudsurf.blit(dpylib.headshots[0],(1,1))
 
             for e in self.world.events:
                 #button handling
@@ -102,13 +96,8 @@ class Battle(object):
                     self.world.Close()
             for b in self.buttons:
                 b.Update()
-            
+
 
 class Button(Entity):
     def __init__(self,surf):
         pass
-
-            
-            
-            
-        
