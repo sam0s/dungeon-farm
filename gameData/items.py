@@ -22,10 +22,6 @@ class Item:
     def destroy(self):
         test=self.parentContain
         print self.name
-    def Use(self):
-        if isinstance(self,Food):
-            print self.parentContain.index(self)
-            self.parent.food-=self.consumeVal
 
 #TYPES
 

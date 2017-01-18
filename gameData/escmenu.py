@@ -83,11 +83,8 @@ class EscMenu(object):
         if self.drawn==0:
             if self.tab=="items":
 
-
                 oef=230+(self.invy*42)
                 oef2=43+(self.invx*38)
-
-
 
                 self.surf.fill((0,0,0))
                 self.surf.blit(self.world.images[0],(0,0))
@@ -95,12 +92,9 @@ class EscMenu(object):
                 x=30
                 y=229
                 for f in self.world.player.inventory:
-
-
                     #pygame.draw.rect(self.surf,(255,0,0),(x,y,26,26),0)
                     self.surf.blit(f.image,(x,y))
                     self.surf.blit(font.render(str(f.stack),0,(255,255,255),(0,0,0)),(x,y))
-
                     x+=38
                     if x>470:
                         x=30
@@ -161,9 +155,10 @@ class EscMenu(object):
                         if b.rect.collidepoint(mse):
                             self.drawn=0
                             if b.text=="Use":
-                                print self.world.player.inventory[0].name
+                                print self.world.player.inventory[self.invx+(self.invy)*12].consumeVal
                             if b.text=="Drop":
                                 print "dropped item"
+                                self.world.player.inventory=self.world.player.inventory[:(self.invx+(self.invy)*12)]
 
 
                     #INVENTORY DOT
