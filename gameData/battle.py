@@ -25,7 +25,6 @@ class Battle(object):
         self.enemydisp = Surface((800,128))
         self.enemydisp.fill((0,0,0))
         self.buttons=[ui.Button(300,300,100,32,"Attack",self.surf),ui.Button(300,364,100,32,"Items",self.surf)]
-        # [ orc , elf ,
         self.baseDamageMatrix=[6,8]
 
         self.mode = 'fight'
@@ -70,32 +69,15 @@ class Battle(object):
                                 self.Attack()
                             if b==self.buttons[1]:
                                 self.mode = 'items'
+
                 if e.type == QUIT:
                     self.world.Close()
             for b in self.buttons:
                 b.Update()
+        #items mode
         else:
-            self.surf.fill((255,0,220))
-            self.surf.blit(self.enemydisp,(0,0,))
-            self.surf.blit(self.world.images[3],(672,0))
-
-
-            dpylib.bar(self.enemydisp,(0,210,0),(210,0,0),130,4,165,25,self.enemyhp,self.world.player.maxhp)
-            dpylib.bar(self.world.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.world.player.hp,self.world.player.maxhp)
-
-            for e in self.world.events:
-                #button handling
-                if e.type == MOUSEBUTTONUP:
-                    for b in self.buttons:
-                        if b.rect.collidepoint(e.pos):
-                            if b==self.buttons[0]:
-                                self.Attack()
-                            if b==self.buttons[1]:
-                                self.mode = 'fight'
-                if e.type == QUIT:
-                    self.world.Close()
-            for b in self.buttons:
-                b.Update()
+            self.world.esc.tab="items"
+            self.world.ChangeState("escmenu")
 
 
 class Button(Entity):

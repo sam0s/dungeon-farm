@@ -20,8 +20,7 @@ class Item:
     def setName(self, name):
         self.name = name
     def destroy(self):
-        test=self.parentContain
-        print self.name
+        self.parent.inventory.remove(self)
 
 #TYPES
 

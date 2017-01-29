@@ -212,6 +212,9 @@ class World(object):
         self.levelname="default"
         self.playername=""
 
+        #are you in a battle?
+        self.battle=False
+        
 
         self.logtext=[]
 
@@ -480,6 +483,7 @@ class Player(Entity):
                     if f.name=='enemy':
                         self.world.logtext.append("Enemy Encounter!")
                         self.world.bat.NewEnemy()
+                        self.world.battle=True
                         self.world.ChangeState("battle")
                         self.world.containing.remove(f)
                     if f.name=='gold':

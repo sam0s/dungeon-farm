@@ -158,7 +158,7 @@ class EscMenu(object):
                                 print self.world.player.inventory[self.invx+(self.invy)*12].consumeVal
                             if b.text=="Drop":
                                 print "dropped item"
-                                self.world.player.inventory=self.world.player.inventory[:(self.invx+(self.invy)*12)]
+                                self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
 
 
                     #INVENTORY DOT
@@ -209,7 +209,11 @@ class EscMenu(object):
                     if b.rect.collidepoint(e.pos):
                         #self.drawn=0
                         if b.text=="Go Back":
-                            self.world.ChangeState("game")
+                            if self.world.battle==False:
+                                self.world.ChangeState("game")
+                            else:
+                                self.world.bat.mode="fight"
+                                self.world.ChangeState("battle")
                         if b.text=="Map":
                             self.tab="map"
                         if b.text=="Player":
@@ -218,8 +222,11 @@ class EscMenu(object):
                         if b.text=="Items":
                             self.tab="items"
         #DRAW BUTTONS
-        for f in self.tabs:
-            f.Update()
+        if not self.world.battle:
+            for f in self.tabs:
+                f.Update()
+        else:
+            self.tabs[3].Update()
         if self.tab=="items":
             for f in self.invbuttons:
                 f.Update()
