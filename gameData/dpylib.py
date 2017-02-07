@@ -19,10 +19,6 @@ font=pygame.font.Font(None,15)
 #################################
 
 
-
-
-
-
 def savelvl(ents,loc,world=None):
     if world:
         f=open(world.playername+"\\"+world.playername+".txt",'w')
@@ -203,7 +199,7 @@ class World(object):
         self.turn=1
         self.pos=[0,0]
         self.player=None
-        self.state="game"
+        self.state="menu"
         self.surf=surf
         self.hudsurf=hudsurf
         self.hudlog=Log(self,439,1,360,125,(220,220,220),hudsurf)
@@ -214,7 +210,7 @@ class World(object):
 
         #are you in a battle?
         self.battle=False
-        
+
 
         self.logtext=[]
 
@@ -225,9 +221,12 @@ class World(object):
         #really prob need to find a better way to do this
         self.good=1
 
-    def Close(self):
-        savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt",self)
-        self.go = False
+    def Close(self,save=True):
+        if save:
+            savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt",self)
+            self.go = False
+        else:
+            self.go = False
 
     def Turn(self):
         self.turn+=1
@@ -243,6 +242,7 @@ class World(object):
         self.state=state
         if state=="escmenu":
             self.esc.created=0
+            self.Draw()
 
 
     def Update(self,delta):
@@ -251,7 +251,17 @@ class World(object):
         self.events=pygame.event.get()
         self.keys=pygame.key.get_pressed()
         if self.state == "menu":
-            self.surf.fill((0,255,0))
+            #menu routine
+            self.hudsurf.fill((0,0,0))
+            self.surf.blit(self.images[1],(0,0))
+            pygame.display.flip()
+            for e in self.events:
+                if e.type==KEYUP:
+                    if e.key==K_SPACE:
+                        self.state="game"
+                        self.Draw()
+                if e.type==QUIT:
+                    self.Close(False)    
         if self.state == "game":
             if self.good==1:
                 if self.keys[K_TAB]:
@@ -279,7 +289,10 @@ class World(object):
         if self.state == "battle":
             self.bat.Draw()
 
+
+        #draw the in game menu
         if self.state == "escmenu":
+            #if the player 
             if self.esc.tab=="map":
                 self.player.update()
             self.esc.Draw()
@@ -291,6 +304,7 @@ class World(object):
         self.surf.fill((0,0,0))
         self.containing.draw(self.surf)
         bar(self.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.player.hp,self.player.maxhp)
+        bar(self.hudsurf,(75,0,130),(210,0,0),130,32,165,25,self.player.xp,self.player.nextxp)
         self.hudsurf.blit(self.images[2],(1,1))
 
     def Shift(self,d):
@@ -487,6 +501,7 @@ class Player(Entity):
                         self.world.ChangeState("battle")
                         self.world.containing.remove(f)
                     if f.name=='gold':
+                        self.giveXp(3+self.level*2)
                         self.world.logtext.append("gold found!")
                         self.world.containing.remove(f)
                         savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
@@ -499,7 +514,7 @@ class Player(Entity):
                             self.hp=self.maxhp
                     if f.name=="randombox":
                         #Give a random item from this here list !
-                        randomitem=choice([1,2,3,4,5])
+                        randomitem=choice([1,2,3,4,5,6])
                         self.giveItem(items.fromId(randomitem,self))
                         self.world.containing.remove(f)
 

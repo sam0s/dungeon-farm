@@ -144,6 +144,26 @@ class Fish(Item):
 
         self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26))
 
+
+class HealthPot(Item):
+    def __init__(self,setp,setpc=None):
+        self.parent=setp
+        self.parentContain=setpc
+        self.itemType="food"
+
+        self.id=6
+
+        self.val = 2
+        self.name="healthpot"
+        self.consumeVal = 50
+        self.ad = 0
+        self.ap = 0
+        self.weight = 1
+
+        self.stack=1
+
+        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26))
+
 def fromId(idn,parent):
     if idn==1:
         return Bread(parent)
@@ -155,3 +175,5 @@ def fromId(idn,parent):
         return Cheese(parent)
     if idn==5:
         return Fish(parent)
+    if idn==6:
+        return HealthPot(parent)

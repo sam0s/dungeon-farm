@@ -26,7 +26,6 @@ allImages=[pygame.image.load("images\\items.png").convert(),pygame.image.load("i
 
 #Connect Player and World
 hud = Surface((800,128))
-
 w=dpylib.World(ent,screen,hud,allImages)
 
 

@@ -30,22 +30,32 @@ class Battle(object):
         self.mode = 'fight'
 
     def NewEnemy(self):
+        #set level of enemy
         self.enemy='orc'
         self.enemylvl=self.world.player.level+choice([1,2,3,-1,-2,-3])
+        print self.enemylvl
+        if self.enemylvl<=1:
+            self.enemylvl=2
         self.enemyhp=100
     def Attack(self):
+        #enemy damage
         if self.enemy=='orc':
             dmg=self.baseDamageMatrix[0]
             dmg=randint(dmg-5,dmg)
             self.world.player.hp-=dmg
             self.world.logtext.append("The orc does "+str(dmg)+" damage.")
+        #player death
         if self.world.player.hp<=0:
             self.world.ChangeState("menu")
+        #player attack
         dmg=randint(self.world.player.atk-5,self.world.player.atk)
         self.enemyhp-=dmg
         self.world.logtext.append(self.world.playername+" does "+str(dmg)+" damage.")
         if self.enemyhp<=0:
-            self.world.logtext.append("Enemy Slain!")
+            xpgive=15*(2^(self.enemylvl-1))
+            self.world.logtext.append("Enemy Slain! "+"You get "+str(xpgive))
+            self.world.player.giveXp(xpgive)
+            self.world.battle=False
             self.world.ChangeState("game")
 
 

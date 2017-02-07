@@ -148,14 +148,16 @@ class EscMenu(object):
             if e.type == MOUSEBUTTONUP and e.button == 1:
                 self.drawn=0
                 mse = e.pos
-
+                
                 #Handle inventory related buttons
                 if self.tab=="items":
                     for b in self.invbuttons:
                         if b.rect.collidepoint(mse):
                             self.drawn=0
                             if b.text=="Use":
-                                print self.world.player.inventory[self.invx+(self.invy)*12].consumeVal
+                                self.world.player.hp+=self.world.player.inventory[self.invx+(self.invy)*12].consumeVal
+                                if self.world.player.hp>self.world.player.maxhp:self.world.player.hp=self.world.player.maxhp
+                                self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
                             if b.text=="Drop":
                                 print "dropped item"
                                 self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
