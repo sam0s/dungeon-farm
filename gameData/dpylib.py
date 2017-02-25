@@ -246,6 +246,7 @@ class World(object):
 
 
     def Update(self,delta):
+
         self.delta=delta
         #Events and Keys
         self.events=pygame.event.get()
@@ -260,8 +261,10 @@ class World(object):
                     if e.key==K_SPACE:
                         self.state="game"
                         self.Draw()
+                        for f in range(20):
+                            self.logtext.append(".")
                 if e.type==QUIT:
-                    self.Close(False)    
+                    self.Close(False)
         if self.state == "game":
             if self.good==1:
                 if self.keys[K_TAB]:
@@ -289,10 +292,9 @@ class World(object):
         if self.state == "battle":
             self.bat.Draw()
 
-
         #draw the in game menu
         if self.state == "escmenu":
-            #if the player 
+            #if the player
             if self.esc.tab=="map":
                 self.player.update()
             self.esc.Draw()
@@ -412,7 +414,7 @@ class Player(Entity):
 
         #Level
         self.level=1
-        self.xp=0
+        self.xp=119
         self.nextxp=120
         #Atk - base 7
         self.atk=7
@@ -440,8 +442,10 @@ class Player(Entity):
     def giveXp(self,xp):
         self.xp+=xp
         if self.xp>self.nextxp:
+            #LEVEL UP
             self.xp-=self.nextxp
             self.level+=1
+            self.atk+=(self.level+3)
             #CHANGE THIS LATER
             self.nextxp+=150
 
@@ -570,9 +574,9 @@ class Log(TextHolder):
         self.ic=ic
         self.oc=(0,0,0)
         self.textY=4
-        pygame.draw.rect(surf,(self.ic),self.rect,0)
-        pygame.draw.rect(surf,(self.oc),self.rect,3)
+
     def update(self,surf):
+
         if len(self.world.logtext)>0:
             for f in self.world.logtext:
                 self.drawntext.append(self.world.logtext[0])
@@ -586,6 +590,7 @@ class Log(TextHolder):
             a=0
 
             for f in self.drawntext:
+
                 wax=font.render(str(self.drawntext[a]),0,(255,0,0),self.ic)
                 surf.blit(wax,(self.rect.x+5,y))
                 a+=1
