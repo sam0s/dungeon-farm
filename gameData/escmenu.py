@@ -32,7 +32,6 @@ class EscMenu(object):
         self.surf=surf
         self.world=world
         self.small = pygame.sprite.Group()
-        self.small2 = pygame.sprite.Group()
         self.tab="map"
         self.created=0
 
@@ -142,25 +141,26 @@ class EscMenu(object):
                 pygame.draw.rect(self.surf,(0,255,0),((self.world.player.rect.x+792)/6,(self.world.player.rect.y+492)/6,6,6),0)
 
         for e in self.world.events:
-            for e in self.world.events:
-                if e.type == QUIT:
-                    self.world.Close()
             if e.type == MOUSEBUTTONUP and e.button == 1:
                 self.drawn=0
                 mse = e.pos
-                
+
                 #Handle inventory related buttons
                 if self.tab=="items":
                     for b in self.invbuttons:
                         if b.rect.collidepoint(mse):
                             self.drawn=0
-                            if b.text=="Use":
-                                self.world.player.hp+=self.world.player.inventory[self.invx+(self.invy)*12].consumeVal
-                                if self.world.player.hp>self.world.player.maxhp:self.world.player.hp=self.world.player.maxhp
-                                self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
-                            if b.text=="Drop":
-                                print "dropped item"
-                                self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
+                            try:item=self.world.player.inventory[(self.invx+(self.invy)*12)]
+                            except IndexError:print "no item selected";item=None
+                            if item:
+                                if b.text=="Use":
+                                    if item.itemType=="food":
+                                        self.world.player.hp+=item.consumeVal
+                                        if self.world.player.hp>self.world.player.maxhp:self.world.player.hp=self.world.player.maxhp
+                                        self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
+                                if b.text=="Drop":
+                                        print "dropped item"
+                                        self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
 
 
                     #INVENTORY DOT
@@ -224,6 +224,10 @@ class EscMenu(object):
                         if b.text=="Items":
                             self.tab="items"
         #DRAW BUTTONS
+        for e in self.world.events:
+            for e in self.world.events:
+                if e.type == QUIT:
+                    self.world.Close()
         if not self.world.battle:
             for f in self.tabs:
                 f.Update()

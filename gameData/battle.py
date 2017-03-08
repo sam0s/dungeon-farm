@@ -48,6 +48,7 @@ class Battle(object):
         if self.world.player.hp<=0:
             self.world.ChangeState("menu")
         #player attack
+        print self.world.player.activeWeapon.ad
         dmg=randint(self.world.player.atk-5,self.world.player.atk)
         self.enemyhp-=dmg
         self.world.logtext.append(self.world.playername+" does "+str(dmg)+" damage.")

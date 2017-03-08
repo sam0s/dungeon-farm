@@ -2,7 +2,6 @@
 # sam0s #######################
 #################################
 
-
 import pygame
 from random import choice
 from pygame import *
@@ -23,6 +22,9 @@ def savelvl(ents,loc,world=None):
     if world:
         f=open(world.playername+"\\"+world.playername+".txt",'w')
         f.write("level_1\nbasedmg_10\nbasedef_10\nhealth_100\ngold_0\nposx_"+str(int(world.player.moveto[0]))+"\nposy_"+str(int(world.player.moveto[1]))+"\nworldx_"+str(world.pos[0])+"\nworldy_"+str(world.pos[1]))
+        f.close()
+        f=open(world.playername+"\\""inv.txt",'w')
+        f.write(str(world.player.inventory[0]))
         f.close()
 
     save = open(loc,"w")
@@ -228,11 +230,6 @@ class World(object):
         else:
             self.go = False
 
-    def Turn(self):
-        self.turn+=1
-        if self.turn%2 ==0:
-            #turn
-            pass
     def SetLevel(self,lev):
         self.levelname=lev
     def SetPlayer(self,name):
@@ -246,7 +243,6 @@ class World(object):
 
 
     def Update(self,delta):
-
         self.delta=delta
         #Events and Keys
         self.events=pygame.event.get()
@@ -414,7 +410,7 @@ class Player(Entity):
 
         #Level
         self.level=1
-        self.xp=119
+        self.xp=0
         self.nextxp=120
         #Atk - base 7
         self.atk=7
@@ -483,7 +479,6 @@ class Player(Entity):
             if self.moving == True:
                 self.changex=float(self.prev[0])
                 self.changey=float(self.prev[1])
-                self.world.Turn()
         else:
             #collision
             cl=pygame.sprite.spritecollide(self, self.world.containing, False)
