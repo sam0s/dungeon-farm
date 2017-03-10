@@ -298,9 +298,10 @@ class World(object):
         self.hudlog.update(self.hudsurf)
         self.surf.blit(self.hudsurf, (0,512))
         pygame.display.flip()
-    def Draw(self):
+    def Draw(self,yesworld=True):
         self.surf.fill((0,0,0))
-        self.containing.draw(self.surf)
+        if yesworld:
+            self.containing.draw(self.surf)
         bar(self.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.player.hp,self.player.maxhp)
         bar(self.hudsurf,(75,0,130),(210,0,0),130,32,165,25,self.player.xp,self.player.nextxp)
         self.hudsurf.blit(self.images[2],(1,1))
@@ -403,7 +404,6 @@ class Player(Entity):
         self.activeWeapon=[self.inventory[0]]
 
         self.hp=100
-
 
         self.changex=float(self.rect.x)
         self.changey=float(self.rect.y)

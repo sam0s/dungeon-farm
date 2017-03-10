@@ -161,6 +161,7 @@ class EscMenu(object):
                                 if b.text=="Drop":
                                         print "dropped item"
                                         self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
+                            self.world.Draw(False)
 
 
                     #INVENTORY DOT
