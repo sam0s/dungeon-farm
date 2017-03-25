@@ -43,19 +43,24 @@ def main():
         #load player attributes
         f=open(playername+"\\"+playername+".txt",'r')
         n=f.read()
-        n=n.split("\n")
+
+        n=n.split(".")
+        print n
+
         f.close()
 
 
-        p=dpylib.Player(int(n[5].split("_")[1]),int(n[6].split("_")[1]),w)
+        p=dpylib.Player(int(n[7]),int(n[8]),w)
         w.player=p
-        w.player.hp=int(n[3].split("_")[1])
+        #set attributes 4=gold
+        #level,xp,nextxp,hp,maxhp,atk,gold,posx,posy,worldx,worldy
+        p.setAttrs(n[0],n[1],n[2],n[3],n[4],n[5],n[6])
 
 
 
         #load level
-        wx=n[7].split("_")[1]
-        wy=n[8].split("_")[1]
+        wx=n[9]
+        wy=n[10]
         w.pos=[int(wx),int(wy)]
         dpylib.loadlvl(ent,w.levelname+"\\world"+wx+wy+".txt")
 

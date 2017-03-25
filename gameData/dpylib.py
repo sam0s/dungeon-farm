@@ -20,12 +20,28 @@ font=pygame.font.Font(None,15)
 
 def savelvl(ents,loc,world=None):
     if world:
+
+        #save stats
         f=open(world.playername+"\\"+world.playername+".txt",'w')
-        f.write("level_1\nbasedmg_10\nbasedef_10\nhealth_100\ngold_0\nposx_"+str(int(world.player.moveto[0]))+"\nposy_"+str(int(world.player.moveto[1]))+"\nworldx_"+str(world.pos[0])+"\nworldy_"+str(world.pos[1]))
+        #level,xp,nextxp,hp,maxhp,atk,gold,posx,posy,worldx,worldy
+        allstuff=str(world.player.level)+"."
+        allstuff+=str(world.player.xp)+"."
+        allstuff+=str(world.player.nextxp)+"."
+        allstuff+=str(world.player.hp)+"."
+        allstuff+=str(world.player.maxhp)+"."
+        allstuff+=str(world.player.atk)+"."
+        allstuff+=str(world.player.gold)+"."
+        allstuff+=str(int(world.player.moveto[0]))+"."
+        allstuff+=str(int(world.player.moveto[1]))+"."
+        allstuff+=str(world.pos[0])+"."
+        allstuff+=str(world.pos[1])
+        f.write(str(allstuff))
         f.close()
-        f=open(world.playername+"\\""inv.txt",'w')
-        f.write(str(world.player.inventory[0]))
-        f.close()
+
+        #save inventory
+        #f=open(world.playername+"\\""inv.txt",'w')
+        #f.write(str(world.player.inventory[0]))
+        #f.close()
 
     save = open(loc,"w")
     for f in ents:
@@ -210,6 +226,9 @@ class World(object):
         self.levelname="default"
         self.playername=""
 
+        self.dungeonLevelCap = 5
+
+
         #are you in a battle?
         self.battle=False
 
@@ -298,6 +317,7 @@ class World(object):
         self.hudlog.update(self.hudsurf)
         self.surf.blit(self.hudsurf, (0,512))
         pygame.display.flip()
+
     def Draw(self,yesworld=True):
         self.surf.fill((0,0,0))
         if yesworld:
@@ -400,13 +420,15 @@ class Player(Entity):
         self.moving=False
         self.prev=[]
         self.direct="w"
-        self.inventory=[items.Dirk(self)]
-        self.activeWeapon=[self.inventory[0]]
+        self.inventory=[items.Bread(self)]
+        self.activeWeapon=[items.Dirk(self)]
 
         self.hp=100
 
         self.changex=float(self.rect.x)
         self.changey=float(self.rect.y)
+
+        self.gold=0
 
         #Level
         self.level=1
@@ -417,10 +439,18 @@ class Player(Entity):
         #Def
         self.defChance=2
         #MoveSpeed - base 62
-        self.speed=62
+        self.speed=70
         #MaxHp - base 100
         self.maxhp=100
 
+    def setAttrs(self,level,xp,nextxp,hp,maxhp,atk,gold):
+        self.hp=int(hp)
+        self.maxhp=int(maxhp)
+        self.level=int(level)
+        self.atk=int(atk)
+        self.xp=int(xp)
+        self.nextxp=int(nextxp)
+        self.gold=int(gold)
     def giveItem(self,item):
         if len(self.inventory)==72:
             pass
@@ -434,24 +464,28 @@ class Player(Entity):
                 self.inventory.append(item)
 
 
+    def levelUp(self,rollover=0):
+        #LEVEL UP
+        self.level+=1
+        self.atk+=(self.level+3)
+        #CHANGE THIS LATER
+        self.nextxp+=150
+        if rollover>0:
+            self.giveXp(rollover)
 
     def giveXp(self,xp):
-        self.xp+=xp
-        if self.xp>self.nextxp:
-            #LEVEL UP
-            self.xp-=self.nextxp
-            self.level+=1
-            self.atk+=(self.level+3)
-            #CHANGE THIS LATER
-            self.nextxp+=150
+        if xp>=self.nextxp:
+            xp=xp-self.nextxp
+            self.levelUp(xp)
+        else:
+            self.xp+=xp
+
+
 
     def update(self):
         pygame.draw.rect(self.world.surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
         #print self.activeWeapon[0].ad
         #print self.inventory
-
-        #self.giveItem(items.Bread(self))
-        #self.giveXp(12)
 
         if not self.moving:
             self.prev=[self.rect.x,self.rect.y]
@@ -500,11 +534,13 @@ class Player(Entity):
                         self.world.ChangeState("battle")
                         self.world.containing.remove(f)
                     if f.name=='gold':
-                        self.giveXp(3+self.level*2)
+                        #self.giveXp(3+self.level*2)
+                        self.giveXp(1000)
                         self.world.logtext.append("gold found!")
                         self.world.containing.remove(f)
                         savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
-                        self.world.esc.created=0
+                        self.gold+=1
+                        #self.world.esc.created=0
                     if f.name=='life':
                         self.world.containing.remove(f)
                         self.world.logtext.append("health found!")

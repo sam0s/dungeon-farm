@@ -25,35 +25,47 @@ class Battle(object):
         self.enemydisp = Surface((800,128))
         self.enemydisp.fill((0,0,0))
         self.buttons=[ui.Button(300,300,100,32,"Attack",self.surf),ui.Button(300,364,100,32,"Items",self.surf)]
-        self.baseDamageMatrix=[6,8]
+        self.baseDamageMatrix=[12,15]
 
         self.mode = 'fight'
 
     def NewEnemy(self):
         #set level of enemy
         self.enemy='orc'
-        self.enemylvl=self.world.player.level+choice([1,2,3,-1,-2,-3])
-        print self.enemylvl
-        if self.enemylvl<=1:
-            self.enemylvl=2
-        self.enemyhp=100
+
+
+        #Use the dungeon level cap to create the enemies level
+        self.enemyLevel=randint(self.world.dungeonLevelCap-4,self.world.dungeonLevelCap+1)
+
+        #this will be changed to have MONSTER_BASE_HEALTH * MONSTER_LEVEL (in some way or another)
+        self.enemyHp=self.enemyMaxHp=self.enemyLevel*18
+
+
+        self.enemyNum=0
+        self.enemyName="Orc"
+        self.world.logtext.append("The "+self.enemyName+" is level "+str(self.enemyLevel)+".")
+
     def Attack(self):
-        #enemy damage
-        if self.enemy=='orc':
-            dmg=self.baseDamageMatrix[0]
-            dmg=randint(dmg-5,dmg)
-            self.world.player.hp-=dmg
-            self.world.logtext.append("The orc does "+str(dmg)+" damage.")
-        #player death
+
+        #ENEMY ATTACK
+        dmg=self.baseDamageMatrix[self.enemyNum]+self.enemyLevel*2
+        dmg=(randint(0,5*dmg))/6
+        self.world.player.hp-=dmg
+        self.world.logtext.append("The "+self.enemyName+" does "+str(dmg)+" damage.")
+
+
+        #test player death
         if self.world.player.hp<=0:
             self.world.ChangeState("menu")
+
+
         #player attack
-        print self.world.player.activeWeapon[0].ad
-        dmg=randint(self.world.player.atk-5,self.world.player.atk)
-        self.enemyhp-=dmg
+        #print self.world.player.activeWeapon[0].ad
+        dmg=randint(0,self.world.player.atk+self.world.player.activeWeapon[0].ad)
+        self.enemyHp-=dmg
         self.world.logtext.append(self.world.playername+" does "+str(dmg)+" damage.")
-        if self.enemyhp<=0:
-            xpgive=15*(2^(self.enemylvl-1))
+        if self.enemyHp<=0:
+            xpgive=15*(2^(self.enemyLevel-1))
             self.world.logtext.append("Enemy Slain! "+"You get "+str(xpgive))
             self.world.player.giveXp(xpgive)
             self.world.battle=False
@@ -67,7 +79,7 @@ class Battle(object):
             self.surf.blit(self.world.images[3],(672,0))
 
 
-            dpylib.bar(self.enemydisp,(0,210,0),(210,0,0),130,4,165,25,self.enemyhp,self.world.player.maxhp)
+            dpylib.bar(self.enemydisp,(0,210,0),(210,0,0),130,4,165,25,self.enemyHp,self.enemyMaxHp)
             dpylib.bar(self.world.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.world.player.hp,self.world.player.maxhp)
             self.world.hudsurf.blit(self.world.images[2],(1,1))
 

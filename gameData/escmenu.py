@@ -90,6 +90,8 @@ class EscMenu(object):
                 pygame.draw.circle(self.surf,(255,0,0),(oef2,oef),5,0)
                 x=30
                 y=229
+                for f in self.world.player.activeWeapon:
+                    self.surf.blit(f.image,(30,16))
                 for f in self.world.player.inventory:
                     #pygame.draw.rect(self.surf,(255,0,0),(x,y,26,26),0)
                     self.surf.blit(f.image,(x,y))
