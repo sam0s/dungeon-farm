@@ -257,7 +257,6 @@ class World(object):
         self.good=0
         self.state=state
         if state=="escmenu":
-            self.esc.created=0
             self.Draw()
 
 
@@ -284,6 +283,7 @@ class World(object):
             if self.good==1:
                 if self.keys[K_TAB]:
                     self.esc.drawn=0
+                    self.esc.created=0
                     self.ChangeState("escmenu")
             else:
                 self.Draw()
@@ -306,6 +306,10 @@ class World(object):
 
         if self.state == "battle":
             self.bat.Draw()
+
+        if self.state == "levelup":
+            self.lvlup.Draw()
+
 
         #draw the in game menu
         if self.state == "escmenu":
@@ -423,25 +427,24 @@ class Player(Entity):
         self.inventory=[items.Bread(self)]
         self.activeWeapon=[items.Dirk(self)]
 
-        self.hp=100
-
         self.changex=float(self.rect.x)
         self.changey=float(self.rect.y)
 
-        self.gold=0
+        
 
-        #Level
+        #Stats
         self.level=1
+        self.hp=100
         self.xp=0
         self.nextxp=120
-        #Atk - base 7
+        self.gold=0
+        #Skills
+        self.skillpoints=0
         self.atk=7
-        #Def
-        self.defChance=2
-        #MoveSpeed - base 62
         self.speed=70
-        #MaxHp - base 100
         self.maxhp=100
+
+        
 
     def setAttrs(self,level,xp,nextxp,hp,maxhp,atk,gold):
         self.hp=int(hp)
@@ -517,6 +520,7 @@ class Player(Entity):
             #collision
             cl=pygame.sprite.spritecollide(self, self.world.containing, False)
             if cl:
+                self.world.esc.created=0
                 for f in cl:
                     if f.name=='door':
                         if self.rect.y<64:
@@ -540,7 +544,6 @@ class Player(Entity):
                         self.world.containing.remove(f)
                         savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
                         self.gold+=1
-                        #self.world.esc.created=0
                     if f.name=='life':
                         self.world.containing.remove(f)
                         self.world.logtext.append("health found!")

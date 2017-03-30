@@ -53,7 +53,7 @@ def main():
         p=dpylib.Player(int(n[7]),int(n[8]),w)
         w.player=p
         #set attributes 4=gold
-        #level,xp,nextxp,hp,maxhp,atk,gold,posx,posy,worldx,worldy
+        #level,xp,nextxp,hp,maxhp,atk,gold
         p.setAttrs(n[0],n[1],n[2],n[3],n[4],n[5],n[6])
 
 

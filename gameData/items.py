@@ -37,7 +37,7 @@ class Dirk(Item):
 
         self.val = 15
         self.consumeVal = 0
-        self.ad = 10
+        self.ad = 8
         self.ap = 0
         self.weight = 1
 

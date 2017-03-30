@@ -104,10 +104,19 @@ class EscMenu(object):
             if self.tab=="player":
                 x=1
                 self.surf.fill((0,0,0))
-                b=[font.render(str(self.world.playername)+": level "+str(self.world.player.level),0,(255,255,255),(0,0,0)),
-                   font.render("XP: "+str(self.world.player.xp)+"/"+str(self.world.player.nextxp),0,(255,255,255),(0,0,0)),
-                   font.render("Attack Damage: "+str(self.world.player.atk),0,(255,255,255),(0,0,0))
-                   ]
+
+                b=[
+                font.render(str(self.world.playername)+": level "+str(self.world.player.level),0,(255,255,255),(0,0,0)),
+                font.render("XP: "+str(self.world.player.xp)+"/"+str(self.world.player.nextxp),0,(255,255,255),(0,0,0)),
+                font.render("Skill Points: "+str(self.world.player.skillpoints),0,(0,0,0),(0,0,0)),
+                font.render("",0,(0,0,0),(0,0,0)),
+                font.render("",0,(0,0,0),(0,0,0)),
+                font.render("Attack Damage: "+str(self.world.player.atk),0,(255,255,255),(0,0,0)),
+                font.render("Move Speed: "+str(self.world.player.speed),0,(255,255,255),(0,0,0)),
+                font.render("Max Health: "+str(self.world.player.maxhp),0,(255,255,255),(0,0,0))
+                ]
+                if self.world.player.skillpoints>0:
+                    b[4]=font.render("Skill Points: "+str(self.world.player.skillpoints),0,(25,255,50),(0,0,0))
                 for f in b:
                     self.surf.blit(f,(32,x*32))
                     x+=1
