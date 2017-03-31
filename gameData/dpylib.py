@@ -34,7 +34,8 @@ def savelvl(ents,loc,world=None):
         allstuff+=str(int(world.player.moveto[0]))+"."
         allstuff+=str(int(world.player.moveto[1]))+"."
         allstuff+=str(world.pos[0])+"."
-        allstuff+=str(world.pos[1])
+        allstuff+=str(world.pos[1])+"."
+        allstuff+=str(world.player.speed)
         f.write(str(allstuff))
         f.close()
 
@@ -213,7 +214,11 @@ class TextHolder(pygame.sprite.Sprite):
 class World(object):
     def __init__(self,containing,surf,hudsurf,images):
         self.images=images
+
         self.containing=containing
+        self.drawnlevel=pygame.Surface((800,640))
+        self.containing.draw(self.drawnlevel)
+
         self.turn=1
         self.pos=[0,0]
         self.player=None
@@ -274,24 +279,27 @@ class World(object):
                 if e.type==KEYUP:
                     if e.key==K_SPACE:
                         self.state="game"
-                        self.Draw()
+                        self.ReDraw()
                         for f in range(20):
                             self.logtext.append(".")
                 if e.type==QUIT:
                     self.Close(False)
         if self.state == "game":
+            self.Draw()
             if self.good==1:
                 if self.keys[K_TAB]:
                     self.esc.drawn=0
                     self.esc.created=0
                     self.ChangeState("escmenu")
-            else:
-                self.Draw()
 
             if not self.keys[K_TAB]:
                 self.good=1
 
             for e in self.events:
+                if e.type == MOUSEMOTION:
+                    #CREATE TOP LAYER
+                    pygame.draw.rect(self.surf,(255,0,0),(
+                    ((e.pos[0])/32)*32,((e.pos[1])/32)*32,32,32),2)
                 if e.type == MOUSEBUTTONDOWN and e.button == 1:
                     print e.pos
                     #Headshot Click
@@ -323,12 +331,15 @@ class World(object):
         pygame.display.flip()
 
     def Draw(self,yesworld=True):
-        self.surf.fill((0,0,0))
+        #self.surf.fill((0,0,0))
         if yesworld:
-            self.containing.draw(self.surf)
+            self.surf.blit(self.drawnlevel,(0,0))
         bar(self.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.player.hp,self.player.maxhp)
         bar(self.hudsurf,(75,0,130),(210,0,0),130,32,165,25,self.player.xp,self.player.nextxp)
         self.hudsurf.blit(self.images[2],(1,1))
+    def ReDraw(self):
+        self.drawnlevel.fill((0,0,0))
+        self.containing.draw(self.drawnlevel)
 
     def Shift(self,d):
         savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt")
@@ -356,7 +367,7 @@ class World(object):
             self.logtext.append("going west")
 
         changelevel(self.containing,self.levelname,self.pos)
-        self.Draw()
+        self.ReDraw()
 
 
 class Pickup(Entity):
@@ -430,7 +441,7 @@ class Player(Entity):
         self.changex=float(self.rect.x)
         self.changey=float(self.rect.y)
 
-        
+
 
         #Stats
         self.level=1
@@ -444,9 +455,9 @@ class Player(Entity):
         self.speed=70
         self.maxhp=100
 
-        
 
-    def setAttrs(self,level,xp,nextxp,hp,maxhp,atk,gold):
+
+    def setAttrs(self,level,xp,nextxp,hp,maxhp,atk,gold,movespeed):
         self.hp=int(hp)
         self.maxhp=int(maxhp)
         self.level=int(level)
@@ -454,6 +465,7 @@ class Player(Entity):
         self.xp=int(xp)
         self.nextxp=int(nextxp)
         self.gold=int(gold)
+        self.speed=int(movespeed)
     def giveItem(self,item):
         if len(self.inventory)==72:
             pass
@@ -467,21 +479,24 @@ class Player(Entity):
                 self.inventory.append(item)
 
 
-    def levelUp(self,rollover=0):
+    def levelUp(self):
         #LEVEL UP
         self.level+=1
+        self.skillpoints+=3
         self.atk+=(self.level+3)
         #CHANGE THIS LATER
         self.nextxp+=150
-        if rollover>0:
-            self.giveXp(rollover)
+        if self.xp>=self.nextxp:
+            self.xp=self.xp-self.nextxp
+            self.levelUp()
 
     def giveXp(self,xp):
-        if xp>=self.nextxp:
-            xp=xp-self.nextxp
-            self.levelUp(xp)
-        else:
-            self.xp+=xp
+        self.xp+=xp
+        print self.xp
+        print self.nextxp
+        if self.xp>=self.nextxp:
+            self.xp=self.xp-self.nextxp
+            self.levelUp()
 
 
 
@@ -539,7 +554,7 @@ class Player(Entity):
                         self.world.containing.remove(f)
                     if f.name=='gold':
                         #self.giveXp(3+self.level*2)
-                        self.giveXp(1000)
+                        self.giveXp(2*self.level+1)
                         self.world.logtext.append("gold found!")
                         self.world.containing.remove(f)
                         savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
@@ -559,7 +574,7 @@ class Player(Entity):
 
                     if f.name=='wall':
                         self.moveto=self.prev
-                    self.world.Draw()
+                    self.world.ReDraw()
 
 
 
@@ -578,20 +593,10 @@ class Player(Entity):
                 if self.changey<self.moveto[1]-1:self.changey=self.moveto[1]
             else:
                 self.moving=False
-                self.world.Draw()
+                #self.world.ReDraw()
 
 
             pygame.draw.rect(self.world.surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
-
-            #blackster
-            if self.direct=="w":
-                pygame.draw.rect(self.world.surf,(0,0,0),(self.rect.x,self.rect.y+32,32,2),0)
-            if self.direct=="a":
-                pygame.draw.rect(self.world.surf,(0,0,0),(self.rect.x+32,self.rect.y,2,32),0)
-            if self.direct=="s":
-                pygame.draw.rect(self.world.surf,(0,0,0),(self.rect.x,self.rect.y-2,32,2),0)
-            if self.direct=="d":
-                pygame.draw.rect(self.world.surf,(0,0,0),(self.rect.x-2,self.rect.y,2,32),0)
 
             self.rect.x=int(self.changex)
             self.rect.y=int(self.changey)

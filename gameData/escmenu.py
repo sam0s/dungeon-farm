@@ -38,6 +38,7 @@ class EscMenu(object):
         #BUTTONS INIT
         self.tabs=[ui.Button(650,50,100,32,"Player",self.surf),ui.Button(650,100,100,32,"Items",self.surf),ui.Button(650,150,100,32,"Map",self.surf),ui.Button(650,200,100,32,"Go Back",self.surf)]
         self.invbuttons=[ui.Button(500,430,100,32,"Drop",self.surf),ui.Button(500,385,100,32,"Use",self.surf)]
+        self.levelbuttons=[ui.Button(132,188,16,16,"+",self.surf),ui.Button(132,220,16,16,"+",self.surf),ui.Button(132,252,16,16,"+",self.surf)]
 
 
         self.invx=0
@@ -156,6 +157,18 @@ class EscMenu(object):
                 self.drawn=0
                 mse = e.pos
 
+                if self.tab=="player":
+                    if self.world.player.skillpoints>0:
+                        for b in self.levelbuttons:
+                            if b.rect.collidepoint(mse):
+                                self.world.player.skillpoints-=1
+                                if self.levelbuttons.index(b)==0:
+                                    self.world.player.atk+=1
+                                if self.levelbuttons.index(b)==1:
+                                    self.world.player.speed+=1
+                                if self.levelbuttons.index(b)==2:
+                                    self.world.player.maxhp+=3
+
                 #Handle inventory related buttons
                 if self.tab=="items":
                     for b in self.invbuttons:
@@ -240,11 +253,17 @@ class EscMenu(object):
             for e in self.world.events:
                 if e.type == QUIT:
                     self.world.Close()
+
         if not self.world.battle:
             for f in self.tabs:
                 f.Update()
         else:
             self.tabs[3].Update()
+
+        if self.tab=="player":
+            if self.world.player.skillpoints>0:
+                for f in self.levelbuttons:
+                    f.Update()
         if self.tab=="items":
             for f in self.invbuttons:
                 f.Update()

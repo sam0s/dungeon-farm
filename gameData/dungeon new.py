@@ -37,8 +37,7 @@ def main():
     TFPS=120 #this will be an option
     w.SetLevel(playername+"\\TestDungeon")
     w.SetPlayer(playername)
-    MASTER_SURFACE_WIDTH=800
-    MASTER_SURFACE_HEIGHT=640
+
     if path.isfile(playername+"\\"+playername+".txt"):
         #load player attributes
         f=open(playername+"\\"+playername+".txt",'r')
@@ -53,8 +52,8 @@ def main():
         p=dpylib.Player(int(n[7]),int(n[8]),w)
         w.player=p
         #set attributes 4=gold
-        #level,xp,nextxp,hp,maxhp,atk,gold
-        p.setAttrs(n[0],n[1],n[2],n[3],n[4],n[5],n[6])
+        #level,xp,nextxp,hp,maxhp,atk,gold,movespeed
+        p.setAttrs(n[0],n[1],n[2],n[3],n[4],n[5],n[6],n[11])
 
 
 
