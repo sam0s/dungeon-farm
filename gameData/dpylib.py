@@ -6,7 +6,7 @@ import pygame
 from random import choice
 from pygame import *
 import battle,escmenu,items
-
+from math import sqrt
 pygame.init()
 font=pygame.font.Font(None,15)
 
@@ -196,6 +196,84 @@ def doors(ents):
     ents.add(Door(384,0))
     ents.add(Door(0,224))
 
+def findpath(s,e,world):
+    #world.drawPath.empty()
+    s=[s[0],s[1]]
+    e=[e[0],e[1]]
+
+    dontuse=[[s[0],s[1]]]
+    movelist=[]
+
+    current=[s[0],s[1]]
+
+    t=Pathfinder(world.mse32[0],world.mse32[1],world,1,e)
+    if len(pygame.sprite.spritecollide(t,world.containing,False))>0:
+        if pygame.sprite.spritecollide(t,world.containing,False)[0].name=="wall":
+            #world.drawPath.empty()
+            movelist=[[s[0],s[1]]]
+            return movelist
+
+    #YOU ARE A*
+    ds=0
+    while current != e:
+
+        ds+=1
+        u=Pathfinder(current[0],current[1]-32,world,ds,e)
+        d=Pathfinder(current[0],current[1]+32,world,ds,e)
+        l=Pathfinder(current[0]-32,current[1],world,ds,e)
+        r=Pathfinder(current[0]+32,current[1],world,ds,e)
+        #world.drawPath.add(u);world.drawPath.add(d);world.drawPath.add(l);world.drawPath.add(r)
+        scores=[u,d,l,r]
+        scoresnum=[]
+
+        #SIFT REAL GOOD
+        if len(pygame.sprite.spritecollide(u,world.containing,False))>0:
+            if pygame.sprite.spritecollide(u,world.containing,False)[0].name=="wall":scores.pop(scores.index(u));#world.drawPath.remove(u)
+        if len(pygame.sprite.spritecollide(d,world.containing,False))>0:
+            if pygame.sprite.spritecollide(d,world.containing,False)[0].name=="wall":scores.pop(scores.index(d));#world.drawPath.remove(d)
+        if len(pygame.sprite.spritecollide(l,world.containing,False))>0:
+            if pygame.sprite.spritecollide(l,world.containing,False)[0].name=="wall":scores.pop(scores.index(l));#world.drawPath.remove(l)
+        if len(pygame.sprite.spritecollide(r,world.containing,False))>0:
+            if pygame.sprite.spritecollide(r,world.containing,False)[0].name=="wall":scores.pop(scores.index(r));#world.drawPath.remove(r)
+
+        if [u.rect.x,u.rect.y] in dontuse:scores.pop(scores.index(u));#world.drawPath.remove(u)
+        if [d.rect.x,d.rect.y] in dontuse:scores.pop(scores.index(d));#world.drawPath.remove(d)
+        if [l.rect.x,l.rect.y] in dontuse:scores.pop(scores.index(l));#world.drawPath.remove(l)
+        if [r.rect.x,r.rect.y] in dontuse:scores.pop(scores.index(r));#world.drawPath.remove(r)
+        print scores
+        if len(scores)==0:
+            #world.drawPath.empty()
+            movelist=[[s[0],s[1]]]
+            return movelist
+
+        for f in scores:
+            scoresnum.append(f.score)
+        for f in scores:
+            if f.score==min(scoresnum):
+                current=[f.rect.x,f.rect.y]
+                dontuse.append(current)
+        movelist.append(current)
+    return movelist
+
+def mdistance(s,e):
+    ns=[s[0],s[1]]
+    ne=[e[0],e[1]]
+    total=0
+    while ne!=ns:
+        if ns[0]<ne[0]:
+            ns[0]+=32
+            total+=32
+        if ns[0]>ne[0]:
+            ns[0]-=32
+            total+=32
+        if ns[1]<ne[1]:
+            ns[1]+=32
+            total+=32
+        if ns[1]>ne[1]:
+            ns[1]-=32
+            total+=32
+    return total/32
+
 
 
 #################################
@@ -211,6 +289,26 @@ class TextHolder(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
+
+class Pathfinder(Entity):
+    def __init__(self,x,y,world,ds,e):
+        Entity.__init__(self)
+        self.name = "pfinder"
+        self.image = Surface((32,32))
+        self.image.convert()
+        self.image.fill((255,25,25))
+        self.rect = Rect(x,y,32,32)
+        self.world=world
+        self.ending=e
+        self.ds=ds
+        self.de=mdistance((self.rect.x,self.rect.y),e)
+        self.score=self.ds+self.de
+
+    def update(self):
+        s=font.render(str(self.score),0,(255,255,255),(0,0,0))
+        pygame.draw.rect(self.world.surf,(255,0,0),(self.rect.x,self.rect.y,32,32),1)
+        self.world.surf.blit(s,(self.rect.x+16,self.rect.y+16))
+
 class World(object):
     def __init__(self,containing,surf,hudsurf,images):
         self.images=images
@@ -218,6 +316,9 @@ class World(object):
         self.containing=containing
         self.drawnlevel=pygame.Surface((800,640))
         self.containing.draw(self.drawnlevel)
+
+
+        #self.drawPath = pygame.sprite.Group()
 
         self.turn=1
         self.pos=[0,0]
@@ -246,6 +347,7 @@ class World(object):
 
         #really prob need to find a better way to do this
         self.good=1
+        self.mse32=(0,0)
 
     def Close(self,save=True):
         if save:
@@ -270,6 +372,7 @@ class World(object):
         #Events and Keys
         self.events=pygame.event.get()
         self.keys=pygame.key.get_pressed()
+        mse=pygame.mouse.get_pos()
         if self.state == "menu":
             #menu routine
             self.hudsurf.fill((0,0,0))
@@ -285,6 +388,7 @@ class World(object):
                 if e.type==QUIT:
                     self.Close(False)
         if self.state == "game":
+            self.mse32=(((mse[0])/32)*32,((mse[1])/32)*32)
             self.Draw()
             if self.good==1:
                 if self.keys[K_TAB]:
@@ -296,12 +400,9 @@ class World(object):
                 self.good=1
 
             for e in self.events:
-                if e.type == MOUSEMOTION:
-                    #CREATE TOP LAYER
-                    pygame.draw.rect(self.surf,(255,0,0),(
-                    ((e.pos[0])/32)*32,((e.pos[1])/32)*32,32,32),2)
                 if e.type == MOUSEBUTTONDOWN and e.button == 1:
-                    print e.pos
+                    if self.player.moving==False:
+                        self.player.moveto=[self.mse32[0],self.mse32[1]]
                     #Headshot Click
                     if e.pos[0]<130:
                         if e.pos[1]>512:
@@ -311,6 +412,8 @@ class World(object):
                     self.Close()
 
             self.player.update()
+            #self.drawPath.update()
+            self.mouse.update()
 
         if self.state == "battle":
             self.bat.Draw()
@@ -422,25 +525,39 @@ class Door(Entity):
         self.image.fill((139,69,19))
         self.rect = Rect(x,y,32,32)
 
+class Mouse(Entity):
+    def __init__(self,x,y,world):
+        Entity.__init__(self)
+        self.name = "mouse"
+        self.image = Surface((32,32))
+        self.image.convert()
+        self.image.fill((255,25,25))
+        self.rect = Rect(x,y,32,32)
+        self.world=world
+    def update(self):
+        self.rect.x=self.world.mse32[0]
+        self.rect.y=self.world.mse32[1]
+        pygame.draw.rect(self.world.surf,(255,0,0),(self.rect.x,self.rect.y,32,32),1)
+
 class Player(Entity):
     def __init__(self,x,y,world):
         Entity.__init__(self)
-        self.world=world
+        self.world = world
         self.name = "player"
         self.image = Surface((32,32))
         self.image.convert()
         self.image.fill((0,250,0))
         self.rect = Rect(x,y,32,32)
         self.prev = self.moveto = [x,y]
-        self.moving=False
-        self.prev=[]
-        self.direct="w"
-        self.inventory=[items.Bread(self)]
-        self.activeWeapon=[items.Dirk(self)]
+        self.movelist = []
+        self.moving = False
+        self.prev = []
+        self.direct = "w"
+        self.inventory = [items.Bread(self)]
+        self.activeWeapon = [items.Dirk(self)]
 
-        self.changex=float(self.rect.x)
-        self.changey=float(self.rect.y)
-
+        self.changex = float(self.rect.x)
+        self.changey = float(self.rect.y)
 
 
         #Stats
@@ -466,6 +583,7 @@ class Player(Entity):
         self.nextxp=int(nextxp)
         self.gold=int(gold)
         self.speed=int(movespeed)
+
     def giveItem(self,item):
         if len(self.inventory)==72:
             pass
@@ -507,26 +625,8 @@ class Player(Entity):
 
         if not self.moving:
             self.prev=[self.rect.x,self.rect.y]
-            k=self.world.keys
-            if k[K_w]:
-                self.direct="w"
-                self.moveto[1]-=32
-                self.wasd=0
-                self.moving=True
-            elif k[K_a]:
-                self.direct="a"
-                self.moveto[0]-=32
-                self.wasd=0
-                self.moving=True
-            elif k[K_s]:
-                self.direct="s"
-                self.moveto[1]+=32
-                self.wasd=0
-                self.moving=True
-            elif k[K_d]:
-                self.direct="d"
-                self.moveto[0]+=32
-                self.wasd=0
+            if self.moveto!=self.prev:
+                self.movelist=findpath(self.prev,self.moveto,self.world)
                 self.moving=True
             if self.moving == True:
                 self.changex=float(self.prev[0])
@@ -577,23 +677,26 @@ class Player(Entity):
                     self.world.ReDraw()
 
 
-
             #move based on time delta
-            if self.rect.x<self.moveto[0]:
-                self.changex+=(self.speed)*self.world.delta
-                if self.changex>self.moveto[0]-1:self.changex=self.moveto[0]
-            elif self.rect.x>self.moveto[0]:
-                self.changex-=(self.speed)*self.world.delta
-                if self.changex<self.moveto[0]+1:self.changex=self.moveto[0]
-            elif self.rect.y<self.moveto[1]:
-                self.changey+=(self.speed)*self.world.delta
-                if self.changey>self.moveto[1]+1:self.changey=self.moveto[1]
-            elif self.rect.y>self.moveto[1]:
-                self.changey-=(self.speed)*self.world.delta
-                if self.changey<self.moveto[1]-1:self.changey=self.moveto[1]
+            if len(self.movelist)>0:
+                self.moveto=self.movelist[0]
+                if self.rect.x<self.moveto[0]:
+                    self.changex+=(self.speed)*self.world.delta
+                    if self.changex>self.moveto[0]-1:self.changex=self.moveto[0]
+                elif self.rect.x>self.moveto[0]:
+                    self.changex-=(self.speed)*self.world.delta
+                    if self.changex<self.moveto[0]+1:self.changex=self.moveto[0]
+                elif self.rect.y<self.moveto[1]:
+                    self.changey+=(self.speed)*self.world.delta
+                    if self.changey>self.moveto[1]+1:self.changey=self.moveto[1]
+                elif self.rect.y>self.moveto[1]:
+                    self.changey-=(self.speed)*self.world.delta
+                    if self.changey<self.moveto[1]-1:self.changey=self.moveto[1]
+                else:
+                    self.movelist.pop(0)
+                    #self.world.ReDraw()
             else:
                 self.moving=False
-                #self.world.ReDraw()
 
 
             pygame.draw.rect(self.world.surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)

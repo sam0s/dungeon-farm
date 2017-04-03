@@ -181,7 +181,10 @@ class EscMenu(object):
                                     if item.itemType=="food":
                                         self.world.player.hp+=item.consumeVal
                                         if self.world.player.hp>self.world.player.maxhp:self.world.player.hp=self.world.player.maxhp
-                                        self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
+                                        if item.stack==1:
+                                            self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
+                                        else:
+                                            item.stack-=1
                                 if b.text=="Drop":
                                         print "dropped item"
                                         self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()

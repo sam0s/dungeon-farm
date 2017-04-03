@@ -34,7 +34,7 @@ w=dpylib.World(ent,screen,hud,allImages)
 playername="playername"
 
 def main():
-    TFPS=120 #this will be an option
+    TFPS=9999 #this will be an option
     w.SetLevel(playername+"\\TestDungeon")
     w.SetPlayer(playername)
 
@@ -44,7 +44,6 @@ def main():
         n=f.read()
 
         n=n.split(".")
-        print n
 
         f.close()
 
@@ -86,6 +85,7 @@ def main():
         dpylib.carve(ent)
         dpylib.doors(ent)
         dpylib.savelvl(ent,w.levelname+"\\world"+str(w.pos[0])+str(w.pos[1])+".txt")
+    w.mouse=dpylib.Mouse(0,0,w)
     go=True
     w.Draw()
     pygame.display.flip()
