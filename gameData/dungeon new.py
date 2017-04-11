@@ -65,17 +65,13 @@ def main():
     else:
         mkdir(w.levelname.split("\\")[0])
         mkdir(w.levelname)
-        f=open(path.join(playername,playername+".txt"),'w')
-        f.write("level_1\nbasedmg_10\nbasedef_10\nhealth_100\ngold_0\nposx_384\nposy_224")
-        f.close()
-
         p=player.Player(384.0,224.0,w)
         w.player=p
 
         dpylib.fill(ent)
         dpylib.carve(ent)
         dpylib.doors(ent)
-        dpylib.savelvl(ent,path.join(w.levelname,"world"+str(w.pos[0])+str(w.pos[1])+".txt"))
+        dpylib.savelvl(ent,path.join(w.levelname,"world"+str(w.pos[0])+str(w.pos[1])+".txt"),w)
     w.mouse=dpylib.Mouse(0,0,w)
     go=True
     w.Draw()

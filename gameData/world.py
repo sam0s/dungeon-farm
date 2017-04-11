@@ -53,11 +53,7 @@ class World(object):
         self.mse32=(0,0)
 
     def Close(self,save=True):
-        if save:
-            dl.savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt",self)
-            self.go = False
-        else:
-            self.go = False
+        self.go = False
 
     def SetLevel(self,lev):
         self.levelname=lev
@@ -148,7 +144,6 @@ class World(object):
         self.containing.draw(self.drawnlevel)
 
     def Shift(self,d):
-        dl.savelvl(self.containing,self.levelname+"\\world"+str(self.pos[0])+str(self.pos[1])+".txt")
         self.esc.created=0
 
         if d=='n':

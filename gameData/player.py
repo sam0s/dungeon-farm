@@ -66,9 +66,11 @@ class Player(dl.Entity):
 
     def levelUp(self):
         #LEVEL UP
+        self.world.logtext.append("Level Up!")
         self.level+=1
         self.skillpoints+=3
-        self.atk+=(self.level+3)
+        #If player's health is below zero upon leveling up, restore it to halfway.
+        if self.hp<(self.maxp/2):self.hp=self.hp=self.maxp/2
         #CHANGE THIS LATER
         self.nextxp+=150
         if self.xp>=self.nextxp:
@@ -95,9 +97,7 @@ class Player(dl.Entity):
             if self.moveto!=self.prev:
                 self.movelist=dl.findpath(self.prev,self.moveto,self.world)
                 self.moving=True
-            if self.moving == True:
-                self.changex=float(self.prev[0])
-                self.changey=float(self.prev[1])
+
         else:
             #collision
             cl=pygame.sprite.spritecollide(self, self.world.containing, False)
@@ -114,7 +114,6 @@ class Player(dl.Entity):
                         elif self.rect.x<64:
                             self.world.Shift('w')
                     if f.name=='enemy':
-                        self.world.logtext.append("Enemy Encounter!")
                         self.world.bat.NewEnemy()
                         self.world.battle=True
                         self.world.ChangeState("battle")
@@ -124,7 +123,6 @@ class Player(dl.Entity):
                         self.giveXp(2*self.level+1)
                         self.world.logtext.append("gold found!")
                         self.world.containing.remove(f)
-                        dl.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt")
                         self.gold+=1
                     if f.name=='life':
                         self.world.containing.remove(f)
@@ -136,11 +134,9 @@ class Player(dl.Entity):
                         #Give a random item from this here list !
                         randomitem=choice([1,2,3,4,5,6])
                         self.giveItem(items.fromId(randomitem,self))
+                        self.world.logtext.append("You found "+items.fromId(randomitem,None,True))
                         self.world.containing.remove(f)
 
-
-                    if f.name=='wall':
-                        self.moveto=self.prev
                     self.world.ReDraw()
 
 

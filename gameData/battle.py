@@ -64,8 +64,9 @@ class Battle(object):
         dmg=randint(0,self.world.player.atk+self.world.player.activeWeapon[0].ad)
         self.enemyHp-=dmg
         self.world.logtext.append(self.world.playername+" does "+str(dmg)+" damage.")
+        #check for enemy death, and xp algorithim
         if self.enemyHp<=0:
-            xpgive=15*(2^(self.enemyLevel-1))
+            xpgive=18*(self.enemyLevel/2)+4
             self.world.logtext.append("Enemy Slain! "+"You get "+str(xpgive))
             self.world.player.giveXp(xpgive)
             self.world.battle=False

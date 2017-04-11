@@ -6,7 +6,7 @@
 import pygame
 from random import choice
 from pygame import *
-import dpylib
+import dpylib as dl
 import ui
 
 pygame.init()
@@ -36,9 +36,17 @@ class EscMenu(object):
         self.created=0
 
         #BUTTONS INIT
-        self.tabs=[ui.Button(650,50,100,32,"Player",self.surf),ui.Button(650,100,100,32,"Items",self.surf),ui.Button(650,150,100,32,"Map",self.surf),ui.Button(650,200,100,32,"Go Back",self.surf)]
-        self.invbuttons=[ui.Button(500,430,100,32,"Drop",self.surf),ui.Button(500,385,100,32,"Use",self.surf)]
-        self.levelbuttons=[ui.Button(132,188,16,16,"+",self.surf),ui.Button(132,220,16,16,"+",self.surf),ui.Button(132,252,16,16,"+",self.surf)]
+        self.tabs=[ui.Button(650,50,100,32,"Player",self.surf),ui.Button(650,100,100,32,"Items",self.surf),
+                    ui.Button(650,150,100,32,"Map",self.surf),
+                    ui.Button(650,200,100,32,"Go Back",self.surf),
+                    ui.Button(650,300,100,32,"Save",self.surf)]
+
+        self.invbuttons=[ui.Button(500,430,100,32,"Drop",self.surf),
+                            ui.Button(500,385,100,32,"Use",self.surf)]
+
+        self.levelbuttons=[ui.Button(132,188,16,16,"+",self.surf),
+                            ui.Button(132,220,16,16,"+",self.surf),
+                            ui.Button(132,252,16,16,"+",self.surf)]
 
 
         self.invx=0
@@ -238,6 +246,9 @@ class EscMenu(object):
                 for b in self.tabs:
                     if b.rect.collidepoint(e.pos):
                         #self.drawn=0
+                        if b.text=="Save":
+                            print "fef"
+                            dl.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt",self.world)
                         if b.text=="Go Back":
                             if self.world.battle==False:
                                 self.world.ChangeState("game")

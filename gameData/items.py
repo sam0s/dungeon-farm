@@ -164,16 +164,29 @@ class HealthPot(Item):
 
         self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26))
 
-def fromId(idn,parent):
+def fromId(idn,parent,justname=False):
+
     if idn==1:
-        return Bread(parent)
+        if not justname:
+            return Bread(parent)
+        return "Bread"
     if idn==2:
-        return Apple(parent)
+        if not justname:
+            return Apple(parent)
+        return "Apple"
     if idn==3:
-        return Pizza(parent)
+        if not justname:
+            return Pizza(parent)
+        return "Pizza"
     if  idn==4:
-        return Cheese(parent)
+        if not justname:
+            return Cheese(parent)
+        return "Cheese"
     if idn==5:
-        return Fish(parent)
+        if not justname:
+            return Fish(parent)
+        return "Fish"
     if idn==6:
-        return HealthPot(parent)
+        if not justname:
+            return HealthPot(parent)
+        return "Health Potion"
