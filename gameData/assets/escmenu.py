@@ -173,9 +173,9 @@ class EscMenu(object):
                                 if self.levelbuttons.index(b)==0:
                                     self.world.player.atk+=1
                                 if self.levelbuttons.index(b)==1:
-                                    self.world.player.speed+=1
+                                    self.world.player.speed+=2
                                 if self.levelbuttons.index(b)==2:
-                                    self.world.player.maxhp+=3
+                                    self.world.player.maxhp+=8
 
                 #Handle inventory related buttons
                 if self.tab=="items":

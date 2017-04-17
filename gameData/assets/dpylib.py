@@ -8,6 +8,7 @@ from pygame import *
 import battle,escmenu,items
 from math import sqrt
 import world
+from os import path
 
 pygame.init()
 font=pygame.font.Font(None,15)
@@ -22,7 +23,6 @@ font=pygame.font.Font(None,15)
 #save game
 def savelvl(ents,loc,world=None):
     if world:
-
         #save stats
         f=open(world.playername+"\\"+world.playername+".txt",'w')
         #level,xp,nextxp,hp,maxhp,atk,gold,posx,posy,worldx,worldy
@@ -42,9 +42,15 @@ def savelvl(ents,loc,world=None):
         f.close()
 
         #save inventory
-        #f=open(world.playername+"\\""inv.txt",'w')
-        #f.write(str(world.player.inventory[0]))
-        #f.close()
+        f=open(path.join(world.playername,"inv.txt"),'w')
+        itemNum=0
+        for a in world.player.inventory:
+            if itemNum+1!=len(world.player.inventory):
+                f.write(str(world.player.inventory[itemNum].id)+"_"+str(world.player.inventory[itemNum].stack)+".")
+            else:
+                f.write(str(world.player.inventory[itemNum].id)+"_"+str(world.player.inventory[itemNum].stack))
+            itemNum+=1
+        f.close()
 
     save = open(loc,"w")
     for f in ents:

@@ -4,7 +4,8 @@ from pygame import *
 import battle,escmenu,items
 from math import sqrt
 import dpylib as dl
-
+from assets.gamelib import AnimationSet, Animator
+from os import path
 
 class Player(dl.Entity):
     def __init__(self,x,y,world):
@@ -13,14 +14,13 @@ class Player(dl.Entity):
         self.name = "player"
         self.image = Surface((32,32))
         self.image.convert()
-        self.image.fill((0,250,0))
         self.rect = Rect(x,y,32,32)
         self.prev = self.moveto = [x,y]
         self.movelist = []
         self.moving = False
         self.prev = []
         self.direct = "w"
-        self.inventory = [items.Bread(self)]
+        self.inventory = []
         self.activeWeapon = [items.Dirk(self)]
 
         self.changex = float(self.rect.x)
@@ -39,6 +39,14 @@ class Player(dl.Entity):
         self.speed=70
         self.maxhp=100
 
+
+        self.player_anim = AnimationSet(path.join("images\player_14.png"), (16, 24))
+        self.player_anim.addAnim("walk_down", 0, 3)
+        self.player_anim.addAnim("walk_right", 4, 7)
+        self.player_anim.addAnim("walk_left", 8, 11)
+        self.player_anim.addAnim("walk_up", 12, 15)
+        self.animator = Animator(self.player_anim, Animator.MODE_LOOP, 15.0)
+        self.animator.setAnim("walk_down")
 
 
     def setAttrs(self,level,xp,nextxp,hp,maxhp,atk,gold,movespeed):
@@ -68,9 +76,12 @@ class Player(dl.Entity):
         #LEVEL UP
         self.world.logtext.append("Level Up!")
         self.level+=1
-        self.skillpoints+=3
-        #If player's health is below zero upon leveling up, restore it to halfway.
-        if self.hp<(self.maxp/2):self.hp=self.hp=self.maxp/2
+        self.skillpoints+=5
+
+        #Restore Player Health
+        self.maxhp+=15
+        self.hp=self.maxhp
+
         #CHANGE THIS LATER
         self.nextxp+=150
         if self.xp>=self.nextxp:
@@ -88,9 +99,7 @@ class Player(dl.Entity):
 
 
     def update(self):
-        pygame.draw.rect(self.world.surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
-        #print self.activeWeapon[0].ad
-        #print self.inventory
+        self.animator.render(self.world.surf, (self.rect.x+8,self.rect.y+4))
 
         if not self.moving:
             self.prev=[self.rect.x,self.rect.y]
@@ -119,8 +128,8 @@ class Player(dl.Entity):
                         self.world.ChangeState("battle")
                         self.world.containing.remove(f)
                     if f.name=='gold':
-                        #self.giveXp(3+self.level*2)
-                        self.giveXp(2*self.level+1)
+                        self.giveXp(3002)
+                        #self.giveXp(2*self.level+1)
                         self.world.logtext.append("gold found!")
                         self.world.containing.remove(f)
                         self.gold+=1
@@ -144,15 +153,19 @@ class Player(dl.Entity):
             if len(self.movelist)>0:
                 self.moveto=self.movelist[0]
                 if self.rect.x<self.moveto[0]:
+                    self.animator.setAnim("walk_right")
                     self.changex+=(self.speed)*self.world.delta
                     if self.changex>self.moveto[0]-1:self.changex=self.moveto[0]
                 elif self.rect.x>self.moveto[0]:
+                    self.animator.setAnim("walk_left")
                     self.changex-=(self.speed)*self.world.delta
                     if self.changex<self.moveto[0]+1:self.changex=self.moveto[0]
                 elif self.rect.y<self.moveto[1]:
+                    self.animator.setAnim("walk_down")
                     self.changey+=(self.speed)*self.world.delta
                     if self.changey>self.moveto[1]+1:self.changey=self.moveto[1]
                 elif self.rect.y>self.moveto[1]:
+                    self.animator.setAnim("walk_up")
                     self.changey-=(self.speed)*self.world.delta
                     if self.changey<self.moveto[1]-1:self.changey=self.moveto[1]
                 else:
@@ -161,8 +174,9 @@ class Player(dl.Entity):
             else:
                 self.moving=False
 
+            #draw player
+            self.animator.update(self.world.delta)
 
-            pygame.draw.rect(self.world.surf,(0,255,0),(self.rect.x,self.rect.y,32,32),0)
 
             self.rect.x=int(self.changex)
             self.rect.y=int(self.changey)

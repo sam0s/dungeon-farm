@@ -140,7 +140,7 @@ class World(object):
         dl.bar(self.hudsurf,(75,0,130),(210,0,0),130,32,165,25,self.player.xp,self.player.nextxp)
         self.hudsurf.blit(self.images[2],(1,1))
     def ReDraw(self):
-        self.drawnlevel.fill((0,0,0))
+        self.drawnlevel.fill((0,32,0))
         self.containing.draw(self.drawnlevel)
 
     def Shift(self,d):

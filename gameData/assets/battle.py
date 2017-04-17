@@ -36,7 +36,7 @@ class Battle(object):
 
         #Use the dungeon level cap to create the enemies level
         self.enemyLevel=randint(self.world.dungeonLevelCap-4,self.world.dungeonLevelCap+1)
-
+        #self.enemyLevel=20
         #this will be changed to have MONSTER_BASE_HEALTH * MONSTER_LEVEL (in some way or another)
         self.enemyHp=self.enemyMaxHp=self.enemyLevel*18
 
@@ -46,18 +46,6 @@ class Battle(object):
         self.world.logtext.append("The "+self.enemyName+" is level "+str(self.enemyLevel)+".")
 
     def Attack(self):
-
-        #ENEMY ATTACK
-        dmg=self.baseDamageMatrix[self.enemyNum]+self.enemyLevel*2
-        dmg=(randint(0,5*dmg))/6
-        self.world.player.hp-=dmg
-        self.world.logtext.append("The "+self.enemyName+" does "+str(dmg)+" damage.")
-
-
-        #test player death
-        if self.world.player.hp<=0:
-            self.world.ChangeState("menu")
-
 
         #player attack
         #print self.world.player.activeWeapon[0].ad
@@ -71,6 +59,21 @@ class Battle(object):
             self.world.player.giveXp(xpgive)
             self.world.battle=False
             self.world.ChangeState("game")
+
+
+
+        #ENEMY ATTACK
+        dmg=self.baseDamageMatrix[self.enemyNum]+self.enemyLevel*2
+        dmg=(randint(0,5*dmg))/6
+        self.world.player.hp-=dmg
+        self.world.logtext.append("The "+self.enemyName+" does "+str(dmg)+" damage.")
+
+
+        #test player death
+        if self.world.player.hp<=0:
+            self.world.ChangeState("menu")
+
+
 
 
     def Draw(self):
