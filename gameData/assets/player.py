@@ -1,3 +1,15 @@
+#!/usr/bin/env python
+
+"""
+player.py
+
+"""
+__author__ = "Sam Tubb (sam0s)"
+__copyright__ = "None"
+__credits__ = []
+
+
+
 import pygame
 from random import choice
 from pygame import *
@@ -6,6 +18,8 @@ from math import sqrt
 import dpylib as dl
 from assets.gamelib import AnimationSet, Animator
 from os import path
+
+
 
 class Player(dl.Entity):
     def __init__(self,x,y,world):
@@ -18,14 +32,12 @@ class Player(dl.Entity):
         self.prev = self.moveto = [x,y]
         self.movelist = []
         self.moving = False
-        self.prev = []
         self.direct = "w"
-        self.inventory = []
+        self.inventory = [items.Sword(self)]
         self.activeWeapon = [items.Dirk(self)]
 
         self.changex = float(self.rect.x)
         self.changey = float(self.rect.y)
-
 
         #Stats
         self.level=1
@@ -114,6 +126,7 @@ class Player(dl.Entity):
                 self.world.esc.created=0
                 for f in cl:
                     if f.name=='door':
+
                         if self.rect.y<64:
                             self.world.Shift('n')
                         elif self.rect.x>704:
@@ -128,8 +141,7 @@ class Player(dl.Entity):
                         self.world.ChangeState("battle")
                         self.world.containing.remove(f)
                     if f.name=='gold':
-                        self.giveXp(3002)
-                        #self.giveXp(2*self.level+1)
+                        self.giveXp(2*self.level+1)
                         self.world.logtext.append("gold found!")
                         self.world.containing.remove(f)
                         self.gold+=1
@@ -169,6 +181,7 @@ class Player(dl.Entity):
                     self.changey-=(self.speed)*self.world.delta
                     if self.changey<self.moveto[1]-1:self.changey=self.moveto[1]
                 else:
+                    self.prev=self.movelist[0]
                     self.movelist.pop(0)
                     #self.world.ReDraw()
             else:

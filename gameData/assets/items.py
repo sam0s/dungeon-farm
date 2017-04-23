@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-items. py
+items.py
 
 """
 __author__ = "Sam Tubb (sam0s)"
@@ -9,8 +9,9 @@ __copyright__ = "None"
 __credits__ = []
 
 import pygame
+from os import path
 
-itemsheet = pygame.image.load("images\\item.png")
+itemsheet = pygame.image.load(path.join("images","item.png")).convert()
 
 class Item:
     def __init__(self):
@@ -43,7 +44,26 @@ class Dirk(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26))
+        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
+
+class Sword(Item):
+    def __init__(self,setp,setpc=None):
+        self.parent=setp
+        self.parentContain=setpc
+        self.itemType="weapon"
+        self.name="sword"
+
+        self.id = 8
+
+        self.val = 25
+        self.consumeVal = 0
+        self.ad = 12
+        self.ap = 0
+        self.weight = 1
+
+        self.stack=1
+
+        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
 
 #EAT
 class Bread(Item):
@@ -63,7 +83,7 @@ class Bread(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26))
+        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
 
 
 
@@ -84,7 +104,7 @@ class Apple(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26))
+        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
 
 
 class Pizza(Item):
@@ -104,7 +124,7 @@ class Pizza(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26))
+        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
 
 class Cheese(Item):
     def __init__(self,setp,setpc=None):
@@ -123,7 +143,7 @@ class Cheese(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26))
+        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
 
 class Fish(Item):
     def __init__(self,setp,setpc=None):
@@ -142,7 +162,7 @@ class Fish(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26))
+        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
 
 
 class HealthPot(Item):
@@ -162,7 +182,7 @@ class HealthPot(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26))
+        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
 
 def fromId(idn,parent,justname=False):
 
@@ -190,3 +210,7 @@ def fromId(idn,parent,justname=False):
         if not justname:
             return HealthPot(parent)
         return "Health Potion"
+    if idn==8:
+        if not justname:
+            return Sword(parent)
+        return "Sword"

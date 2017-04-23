@@ -1,25 +1,32 @@
-#################################
-# sam0s #######################
-#################################
+#!/usr/bin/env python
+
+"""
+world.py
+
+"""
+__author__ = "Sam Tubb (sam0s)"
+__copyright__ = "None"
+__credits__ = []
+
+
 
 import pygame
 from random import choice
 from pygame import *
-import battle,escmenu,items
+import battle,escmenu,items,mainmenu
 from math import sqrt
 import dpylib as dl
+from os import path
 
 pygame.init()
 font=pygame.font.Font(None,15)
 
-class World(object):
-    def __init__(self,containing,surf,hudsurf,images):
-        self.images=images
 
+class World(object):
+    def __init__(self,containing,surf,hudsurf):
         self.containing=containing
         self.drawnlevel=pygame.Surface((800,640))
         self.containing.draw(self.drawnlevel)
-
 
         #self.drawPath = pygame.sprite.Group()
 
@@ -47,6 +54,7 @@ class World(object):
         #this whole deal right here might be changed later
         self.bat=battle.Battle(self.surf,self)
         self.esc=escmenu.EscMenu(self.surf,self)
+        self.mm=mainmenu.Menu(self.surf,self)
 
         #really prob need to find a better way to do this
         self.good=1
@@ -73,19 +81,8 @@ class World(object):
         self.keys=pygame.key.get_pressed()
         mse=pygame.mouse.get_pos()
         if self.state == "menu":
-            #menu routine
-            self.hudsurf.fill((0,0,0))
-            self.surf.blit(self.images[1],(0,0))
-            pygame.display.flip()
-            for e in self.events:
-                if e.type==KEYUP:
-                    if e.key==K_SPACE:
-                        self.state="game"
-                        self.ReDraw()
-                        for f in range(20):
-                            self.logtext.append(".")
-                if e.type==QUIT:
-                    self.Close(False)
+            self.mm.Draw()
+
         if self.state == "game":
             self.mse32=(((mse[0])/32)*32,((mse[1])/32)*32)
             self.Draw()
@@ -138,14 +135,13 @@ class World(object):
             self.surf.blit(self.drawnlevel,(0,0))
         dl.bar(self.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.player.hp,self.player.maxhp)
         dl.bar(self.hudsurf,(75,0,130),(210,0,0),130,32,165,25,self.player.xp,self.player.nextxp)
-        self.hudsurf.blit(self.images[2],(1,1))
     def ReDraw(self):
         self.drawnlevel.fill((0,32,0))
         self.containing.draw(self.drawnlevel)
 
     def Shift(self,d):
-        self.esc.created=0
-
+        #self.esc.created=0
+        dl.savelvl(self.containing,path.join(self.levelname,"world"+str(self.pos[0])+str(self.pos[1])+".txt"))
         if d=='n':
             self.pos=[self.pos[0],self.pos[1]-1]
             self.player.prev[1]=self.player.changey=self.player.moveto[1]=self.player.rect.y=448

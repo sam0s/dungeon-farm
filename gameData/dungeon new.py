@@ -1,21 +1,28 @@
 import pygame,sys
+from pygame import *
+
+DISPLAY = (800, 640)
+FLAGS = HWSURFACE | DOUBLEBUF
+MASTER_SURFACE = display.set_mode(DISPLAY, FLAGS, 0)
+
 import math,random
 
 import assets.world as world
 import assets.player as player
 import assets.dpylib as dl
 import assets.items as items
+import assets.mainmenu as mainmenu
 
-from pygame import *
+
 from os import mkdir,path
 
-DISPLAY = (800, 640)
 
-FLAGS = HWSURFACE | DOUBLEBUF
 
-##
 
-MASTER_SURFACE = display.set_mode(DISPLAY, FLAGS, 0)
+
+##set up stuff for gameworld
+
+
 
 screen = pygame.Surface((800,640))
 
@@ -25,21 +32,19 @@ timer = pygame.time.Clock()
 
 ent = pygame.sprite.Group()
 
-#LOAD ALL IMAGES! MAYBE A BAD IDEA
-allImages=[pygame.image.load(path.join("images","items.png")).convert(),pygame.image.load(path.join("images","menu.png")).convert(),pygame.image.load(path.join("images","headshot1.png")).convert(),pygame.image.load(path.join("images","orcheadshot.png"))]
-
 
 #Connect Player and World
 hud = Surface((800,128))
-w=world.World(ent,screen,hud,allImages)
-
-
+w=world.World(ent,screen,hud)
 
 
 playername="playername"
 
+
+
+
 def main():
-    TFPS=600 #this will be an option
+    TFPS=999 #this will be an option
     w.SetLevel(path.join(playername,"TestDungeon"))
     w.SetPlayer(playername)
 
@@ -67,13 +72,17 @@ def main():
 
         #divide up by item
         n2=n2.split(".")
-        for f in n2:
-            #divide up by name and stack
-            f2=f.split("_")
-            #give the item
-            for f3 in range(int(f2[1])):
-                it=items.fromId(int(f2[0]),p)
-                p.giveItem(it)
+        if n2[0]!='':
+            for f in n2:
+                #divide up by name and stack
+                f2=f.split("_")
+                #give the item
+                for f3 in range(int(f2[1])):
+                    print f3
+                    print f2
+                    it=items.fromId(int(f2[0]),p)
+                    print it
+                    p.giveItem(it)
 
 
         #load level
@@ -95,8 +104,6 @@ def main():
         dl.savelvl(ent,path.join(w.levelname,"world"+str(w.pos[0])+str(w.pos[1])+".txt"),w)
     w.mouse=dl.Mouse(0,0,w)
     go=True
-    w.Draw()
-    pygame.display.flip()
     while w.go:
         dt=float(timer.tick(TFPS)*1e-3)
         w.Update(dt)
@@ -108,3 +115,5 @@ def main():
 
 if(__name__ == "__main__"):
     main()
+
+dl.savelvl(w.containing,path.join(w.levelname,"world"+str(w.pos[0])+str(w.pos[1])+".txt"),w)

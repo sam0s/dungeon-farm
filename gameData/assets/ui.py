@@ -1,3 +1,15 @@
+#!/usr/bin/env python
+
+"""
+ui.py
+
+"""
+__author__ = "Sam Tubb (sam0s)"
+__copyright__ = "None"
+__credits__ = []
+
+
+
 import pygame
 from random import choice
 from pygame import *
@@ -21,5 +33,3 @@ class Button(UiObj):
     def Update(self):
         self.surf.blit(self.image,(self.rect.x,self.rect.y))
         self.surf.blit(self.textimg,((self.rect.x+(self.rect.right-self.rect.left)/2) - self.textimg.get_width()/2, (self.rect.y+(self.rect.bottom-self.rect.top)/2) - self.textimg.get_height()/2))
-        
-        

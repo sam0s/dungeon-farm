@@ -1,6 +1,14 @@
-#################################
-# sam0s #######################
-#################################
+#!/usr/bin/env python
+
+"""
+dpylib.py
+
+"""
+__author__ = "Sam Tubb (sam0s)"
+__copyright__ = "None"
+__credits__ = []
+
+
 
 import pygame
 from random import choice
@@ -23,6 +31,7 @@ font=pygame.font.Font(None,15)
 #save game
 def savelvl(ents,loc,world=None):
     if world:
+        print world.player.prev
         #save stats
         f=open(world.playername+"\\"+world.playername+".txt",'w')
         #level,xp,nextxp,hp,maxhp,atk,gold,posx,posy,worldx,worldy
@@ -92,14 +101,16 @@ def bar(surface,color1,color2,x,y,width,height,value,maxvalue):
 
 #used to load into a new level
 def changelevel(ents,loc,pos):
-    try:
+    #change this to test if file exists
+    loc=path.join(loc,"world"+str(pos[0])+str(pos[1])+".txt")
+    if path.isfile(loc):
         ents.empty()
-        loadlvl(ents,loc+"\\world"+str(pos[0])+str(pos[1])+".txt")
-    except:
+        loadlvl(ents,loc)
+    else:
         fill(ents)
         carve(ents)
         doors(ents)
-        savelvl(ents,loc+"\\world"+str(pos[0])+str(pos[1])+".txt")
+        savelvl(ents,loc)
 
 #carve out the level
 def carve(ents):

@@ -1,6 +1,12 @@
-#################################
-# sam0s #######################
-#################################
+#!/usr/bin/env python
+
+"""
+escmenu.py
+
+"""
+__author__ = "Sam Tubb (sam0s)"
+__copyright__ = "None"
+__credits__ = []
 
 
 import pygame
@@ -8,9 +14,13 @@ from random import choice
 from pygame import *
 import dpylib as dl
 import ui
+from os import path
 
 pygame.init()
 font=pygame.font.Font(None,15)
+
+itemFrame=pygame.image.load(path.join("images","items.png")).convert()
+
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self):
@@ -95,7 +105,7 @@ class EscMenu(object):
                 oef2=43+(self.invx*38)
 
                 self.surf.fill((0,0,0))
-                self.surf.blit(self.world.images[0],(0,0))
+                self.surf.blit(itemFrame,(0,0))
                 pygame.draw.circle(self.surf,(255,0,0),(oef2,oef),5,0)
                 x=30
                 y=229
@@ -193,6 +203,18 @@ class EscMenu(object):
                                             self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
                                         else:
                                             item.stack-=1
+                                    if item.itemType=="weapon":
+                                        if item.name!=self.world.player.activeWeapon[0].name:
+                                            if item.stack>1:
+                                                item.stack-=1
+                                                self.world.player.giveItem(self.world.player.activeWeapon[0])
+                                                self.world.player.activeWeapon=[item]
+                                            else:
+                                                self.world.player.giveItem(self.world.player.activeWeapon[0])
+                                                self.world.player.activeWeapon=[item]
+                                                self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
+
+
                                 if b.text=="Drop":
                                         print "dropped item"
                                         self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
