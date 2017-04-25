@@ -1,7 +1,7 @@
 # dungeon-farm
  _A small infinite rogueish rpg dungeon crawler_
 
-##Get started
+## Get started
 
 [_Change Log_](https://github.com/sam0s/dungeon-farm/wiki/Change-Log) - news about new releases.
 
