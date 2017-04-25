@@ -3,7 +3,7 @@
 
 ##Get started
 
-[_About_](https://github.com/sam0s/dungeon-farm/wiki/About) - about the current version.
+[_Change Log_](https://github.com/sam0s/dungeon-farm/wiki/Change-Log) - news about new releases.
 
 [_Story_](https://github.com/sam0s/dungeon-farm/wiki/Story) - about the in-game world.
 
