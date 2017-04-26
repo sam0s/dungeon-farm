@@ -269,8 +269,8 @@ class EscMenu(object):
                     if b.rect.collidepoint(e.pos):
                         #self.drawn=0
                         if b.text=="Save":
-                            print "fef"
-                            dl.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt",self.world)
+                            dl.savelvl(self.world)
+                            #dl.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt",self.world)
                         if b.text=="Go Back":
                             if self.world.battle==False:
                                 self.world.ChangeState("game")

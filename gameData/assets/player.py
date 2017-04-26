@@ -20,10 +20,9 @@ from assets.gamelib import AnimationSet, Animator
 from os import path
 
 
-
-class Player(dl.Entity):
+class Player(object):
     def __init__(self,x,y,world):
-        dl.Entity.__init__(self)
+        #dl.Entity.__init__(self)
         self.world = world
         self.name = "player"
         self.image = Surface((32,32))
@@ -33,7 +32,7 @@ class Player(dl.Entity):
         self.movelist = []
         self.moving = False
         self.direct = "w"
-        self.inventory = [items.Sword(self)]
+        self.inventory = []
         self.activeWeapon = [items.Dirk(self)]
 
         self.changex = float(self.rect.x)
@@ -126,7 +125,7 @@ class Player(dl.Entity):
                 self.world.esc.created=0
                 for f in cl:
                     if f.name=='door':
-
+                        self.movelist=[]
                         if self.rect.y<64:
                             self.world.Shift('n')
                         elif self.rect.x>704:

@@ -13,18 +13,19 @@ __credits__ = []
 import pygame
 from random import choice
 from pygame import *
-import battle,escmenu,items,mainmenu
+import battle,escmenu,items
 from math import sqrt
 import dpylib as dl
 from os import path
+import time
 
 pygame.init()
 font=pygame.font.Font(None,15)
 
 
 class World(object):
-    def __init__(self,containing,surf,hudsurf):
-        self.containing=containing
+    def __init__(self,surf):
+        self.containing=pygame.sprite.Group()
         self.drawnlevel=pygame.Surface((800,640))
         self.containing.draw(self.drawnlevel)
 
@@ -33,14 +34,15 @@ class World(object):
         self.turn=1
         self.pos=[0,0]
         self.player=None
-        self.state="menu"
+        self.state="game"
+        self.game=None
         self.surf=surf
-        self.hudsurf=hudsurf
-        self.hudlog=dl.Log(self,439,1,360,125,(220,220,220),hudsurf)
+        self.hudsurf=Surface((800,128))
+        self.hudlog=dl.Log(self,439,1,360,125,(220,220,220),self.hudsurf)
         self.keys=pygame.key.get_pressed()
         self.go=True
         self.levelname="default"
-        self.playername=""
+        self.playername="playername"
 
         self.dungeonLevelCap = 5
 
@@ -54,17 +56,14 @@ class World(object):
         #this whole deal right here might be changed later
         self.bat=battle.Battle(self.surf,self)
         self.esc=escmenu.EscMenu(self.surf,self)
-        self.mm=mainmenu.Menu(self.surf,self)
 
         #really prob need to find a better way to do this
         self.good=1
         self.mse32=(0,0)
 
     def Close(self,save=True):
-        self.go = False
-
-    def SetLevel(self,lev):
-        self.levelname=lev
+        dl.savelvl(self)
+        self.game.go=False
     def SetPlayer(self,name):
         self.playername=name
     def ChangeState(self,state):
@@ -80,8 +79,6 @@ class World(object):
         self.events=pygame.event.get()
         self.keys=pygame.key.get_pressed()
         mse=pygame.mouse.get_pos()
-        if self.state == "menu":
-            self.mm.Draw()
 
         if self.state == "game":
             self.mse32=(((mse[0])/32)*32,((mse[1])/32)*32)
@@ -114,9 +111,6 @@ class World(object):
         if self.state == "battle":
             self.bat.Draw()
 
-        if self.state == "levelup":
-            self.lvlup.Draw()
-
 
         #draw the in game menu
         if self.state == "escmenu":
@@ -127,7 +121,7 @@ class World(object):
 
         self.hudlog.update(self.hudsurf)
         self.surf.blit(self.hudsurf, (0,512))
-        pygame.display.flip()
+        #pygame.display.flip()
 
     def Draw(self,yesworld=True):
         #self.surf.fill((0,0,0))
@@ -141,7 +135,7 @@ class World(object):
 
     def Shift(self,d):
         #self.esc.created=0
-        dl.savelvl(self.containing,path.join(self.levelname,"world"+str(self.pos[0])+str(self.pos[1])+".txt"))
+        dl.savelvl(self)
         if d=='n':
             self.pos=[self.pos[0],self.pos[1]-1]
             self.player.prev[1]=self.player.changey=self.player.moveto[1]=self.player.rect.y=448
@@ -163,5 +157,5 @@ class World(object):
 
             self.logtext.append("going west")
 
-        dl.changelevel(self.containing,self.levelname,self.pos)
+        dl.changelevel(self)
         self.ReDraw()

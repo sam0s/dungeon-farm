@@ -13,27 +13,28 @@ __credits__ = []
 import pygame
 from random import choice
 from pygame import *
-import battle,escmenu,items
 from math import sqrt
-import world
-from os import path
+import player,items
+from shutil import rmtree
+from time import sleep
+from os import path,mkdir
 
 pygame.init()
 font=pygame.font.Font(None,15)
 
-#menuimg=pygame.image.load("images\\menu.png")
-#headshots=[pygame.image.load("images\\headshot1.png")]
 
 #################################
 # FUNCTIONS #######################
 #################################
 
 #save game
-def savelvl(ents,loc,world=None):
+def savelvl(world):
+    ents=world.containing
+    loc=path.join(world.levelname,"world"+str(world.pos[0])+str(world.pos[1])+".txt")
     if world:
         print world.player.prev
         #save stats
-        f=open(world.playername+"\\"+world.playername+".txt",'w')
+        f=open(path.join(world.playername,world.playername+".txt"),'w')
         #level,xp,nextxp,hp,maxhp,atk,gold,posx,posy,worldx,worldy
         allstuff=str(world.player.level)+"."
         allstuff+=str(world.player.xp)+"."
@@ -100,17 +101,19 @@ def bar(surface,color1,color2,x,y,width,height,value,maxvalue):
     surface.blit(font.render(str(value)+"/"+str(maxvalue),0,(0,0,0)),(x+width/2-11,y+height/2-5))
 
 #used to load into a new level
-def changelevel(ents,loc,pos):
+def changelevel(w):
     #change this to test if file exists
-    loc=path.join(loc,"world"+str(pos[0])+str(pos[1])+".txt")
+    w.containing.empty()
+    loc=path.join(w.levelname,"world"+str(w.pos[0])+str(w.pos[1])+".txt")
+
     if path.isfile(loc):
-        ents.empty()
-        loadlvl(ents,loc)
+        loadlvl(w.containing,loc)
+        savelvl(w)
     else:
-        fill(ents)
-        carve(ents)
-        doors(ents)
-        savelvl(ents,loc)
+        fill(w.containing)
+        carve(w.containing)
+        doors(w.containing)
+        savelvl(w)
 
 #carve out the level
 def carve(ents):
@@ -125,20 +128,13 @@ def carve(ents):
         total+=1
 
         #generate cool stuff
-        special=choice(([1]*4) #gold rate
+        special=choice(([1]*16) #gold rate
                        +([2]*3)#enemy rate
                        +([3]*1)#random box rate
                        +([4]*2)#life drop rate
                        +([0]*104) #empty rate
                        )
-        if special==1:
-            ents.add(Pickup(x,y,"gold"))
-        if special==2:
-            ents.add(Enemy(x,y))
-        if special==3:
-            ents.add(Pickup(x,y,"randombox"))
-        if special==4:
-            ents.add(Pickup(x,y,"life"))
+
 
         while direction == lastdir:
             direction = choice([1,2,3,4])
@@ -174,6 +170,20 @@ def carve(ents):
                 for ff in ents:
                     if rect.colliderect(ff.rect):
                         ents.remove(ff)
+
+        if special>0:
+            rect = pygame.Rect(x,y,16,16)
+            for ff in ents:
+                if rect.colliderect(ff.rect):
+                    ents.remove(ff)
+            if special==1:
+                ents.add(Pickup(x,y,"gold"))
+            if special==2:
+                ents.add(Enemy(x,y))
+            if special==3:
+                ents.add(Pickup(x,y,"randombox"))
+            if special==4:
+                ents.add(Pickup(x,y,"life"))
 
 #fill the room with blocks, before carving it
 def fill(ents):
@@ -305,6 +315,92 @@ def mdistance(s,e):
             ns[1]-=32
             total+=32
     return total/32
+
+
+
+def LoadGame(w):
+    playername=w.playername
+    levelname=w.levelname
+    levelpath=path.join(playername,w.levelname)
+    ent=w.containing
+    if path.isfile(path.join(playername,playername+".txt")):
+        w.levelname=levelpath
+        #load player attributes
+        f=open(path.join(playername,playername+".txt"),'r')
+        n=f.read()
+
+        n=n.split(".")
+
+        f.close()
+
+
+        p=player.Player(int(n[7]),int(n[8]),w)
+        w.player=p
+        #set attributes 4=gold
+        #level,xp,nextxp,hp,maxhp,atk,gold,movespeed
+        p.setAttrs(n[0],n[1],n[2],n[3],n[4],n[5],n[6],n[11])
+
+
+        #loading inventory
+        f=open(path.join(playername,"inv.txt"),'r')
+        n2=f.read()
+        f.close()
+
+        #divide up by item
+        n2=n2.split(".")
+        if n2[0]!='':
+            for f in n2:
+                #divide up by name and stack
+                f2=f.split("_")
+                #give the item
+                for f3 in range(int(f2[1])):
+                    it=items.fromId(int(f2[0]),p)
+                    p.giveItem(it)
+
+
+        #load level
+        wx=n[9]
+        wy=n[10]
+        w.pos=[int(wx),int(wy)]
+
+        w.mouse=Mouse(0,0,w)
+
+        loadlvl(ent,path.join(w.levelname,"world"+wx+wy+".txt"))
+
+        w.ReDraw()
+        for f in range(15):
+            w.logtext.append(".")
+
+
+    else:
+        NewGame(w,True)
+
+def NewGame(w,skip=False):
+        playername=w.playername
+        levelname=w.levelname
+        levelpath=path.join(playername,w.levelname)
+        ent=w.containing
+        if path.isdir(playername):rmtree(playername)
+        while path.exists(playername):
+            sleep(1)
+        if not path.isdir(playername):
+            w.levelname=levelpath
+            mkdir(playername)
+            mkdir(path.join(playername,levelname))
+
+            p=player.Player(384.0,224.0,w)
+            w.player=p
+            w.mouse=Mouse(0,0,w)
+
+
+            fill(ent)
+            carve(ent)
+            doors(ent)
+            savelvl(w)
+            w.ReDraw()
+            for f in range(15):
+                w.logtext.append(".")
+
 
 
 

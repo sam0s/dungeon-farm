@@ -12,36 +12,48 @@ __credits__ = []
 import pygame
 from random import choice
 from pygame import *
-import dpylib as dl
 import ui
-from os import path
+from os import path,mkdir
+from shutil import rmtree
+import dpylib as dl
 
 mainmenu=pygame.image.load(path.join("images","menu.png")).convert()
 
 
 class Menu(object):
-    def __init__(self,surf,world):
+    def __init__(self,surf):
         self.screen="main"
         self.surf=surf
-        self.world=world
         self.go=True
         self.drawn=False
+        self.game=None
         self.menuimg=mainmenu
+        self.mainbuttons=[ui.Button(650,50,100,32,"Continue",self.surf),
+                    ui.Button(650,100,100,32,"New",self.surf),
+                    ui.Button(650,150,100,32,"Options",self.surf),
+                    ui.Button(650,200,100,32,"Quit",self.surf)]
     def Draw(self):
         if self.screen=="main":
             #menu routine
             if not self.drawn:
-                self.surf.fill((0,0,0))
+                #self.surf.fill((0,0,0))
                 self.surf.blit(self.menuimg,(0,0))
                 pygame.display.update()
                 self.drawn=True
-            for e in self.world.events:
-                if e.type==KEYUP:
-                    if e.key==K_SPACE:
-                        self.world.state="game"
-                        self.world.ReDraw()
-                        for f in range(15):
-                            self.world.logtext.append(".")
+            for f in self.mainbuttons:
+                f.Update()
+            for e in pygame.event.get():
+                if e.type == MOUSEBUTTONUP and e.button == 1:
+                    for b in self.mainbuttons:
+                        if b.rect.collidepoint(e.pos):
+                            if b.text == "Continue":
+                                dl.LoadGame(self.game.gw)
+                                self.game.state="game"
+                            if b.text == "New":
+                                dl.NewGame(self.game.gw)
+                                self.game.state="game"
+
+
 
                 if e.type==QUIT:
-                    self.world.Close()
+                    self.game.go=False

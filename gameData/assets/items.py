@@ -185,7 +185,10 @@ class HealthPot(Item):
         self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
 
 def fromId(idn,parent,justname=False):
-
+    if idn==0:
+        if not justname:
+            return Dirk(parent)
+        return "Dirk"
     if idn==1:
         if not justname:
             return Bread(parent)
