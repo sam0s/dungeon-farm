@@ -18,9 +18,10 @@ import player,items
 from shutil import rmtree
 from time import sleep
 from os import path,mkdir
+from ui import LoadFont
 
 pygame.init()
-font=pygame.font.Font(None,15)
+font = LoadFont()
 
 
 #################################
@@ -101,7 +102,7 @@ def bar(surface,color1,color2,x,y,width,height,value,maxvalue):
     surface.blit(font.render(str(value)+"/"+str(maxvalue),0,(0,0,0)),(x+width/2-11,y+height/2-5))
 
 #used to load into a new level
-def changelevel(w):
+def changelevel(w,fromd="new"):
     #change this to test if file exists
     w.containing.empty()
     loc=path.join(w.levelname,"world"+str(w.pos[0])+str(w.pos[1])+".txt")
@@ -112,7 +113,7 @@ def changelevel(w):
     else:
         fill(w.containing)
         carve(w.containing)
-        doors(w.containing)
+        doors(w.containing,fromd)
         savelvl(w)
 
 #carve out the level
@@ -197,7 +198,7 @@ def fill(ents):
         y+=32
 
 #create doors on each side of the room
-def doors(ents):
+def doors(ents,fromd="new"):
     x=384
     y=224
     while x<900:
@@ -226,10 +227,11 @@ def doors(ents):
         for ff in ents:
             if rect.colliderect(ff.rect):
                 ents.remove(ff)
-    ents.add(Door(768,224))
-    ents.add(Door(384,480))
-    ents.add(Door(384,0))
-    ents.add(Door(0,224))
+
+    if choice([1,2])==1:ents.add(Door(768,224))
+    if choice([1,2])==1:ents.add(Door(384,480))
+    if choice([1,2])==1:ents.add(Door(384,0))
+    if choice([1,2])==1:ents.add(Door(0,224))
 
 #varition of A* pathfinding
 def findpath(s,e,world):

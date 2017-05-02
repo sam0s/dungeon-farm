@@ -13,9 +13,18 @@ __credits__ = []
 import pygame
 from random import choice
 from pygame import *
-
+from os import path
 pygame.init()
-font=pygame.font.Font(None,15)
+
+
+fontpath=path.split(path.realpath("ui.py"))
+fontpath=path.join(fontpath[0],"digfont.ttf")
+print fontpath
+font=pygame.font.Font(fontpath,11)
+
+
+def LoadFont():
+    return font
 
 class UiObj(pygame.sprite.Sprite):
     def __init__(self):

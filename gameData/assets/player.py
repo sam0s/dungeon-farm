@@ -56,7 +56,7 @@ class Player(object):
         self.player_anim.addAnim("walk_right", 4, 7)
         self.player_anim.addAnim("walk_left", 8, 11)
         self.player_anim.addAnim("walk_up", 12, 15)
-        self.animator = Animator(self.player_anim, Animator.MODE_LOOP, 15.0)
+        self.animator = Animator(self.player_anim, Animator.MODE_LOOP, 5)
         self.animator.setAnim("walk_down")
 
 

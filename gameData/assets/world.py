@@ -19,9 +19,6 @@ import dpylib as dl
 from os import path
 import time
 
-pygame.init()
-font=pygame.font.Font(None,15)
-
 
 class World(object):
     def __init__(self,surf):

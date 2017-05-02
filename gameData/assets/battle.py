@@ -20,7 +20,7 @@ import enemies
 
 
 pygame.init()
-font=pygame.font.Font(None,15)
+font = ui.LoadFont()
 
 
 class Entity(pygame.sprite.Sprite):
