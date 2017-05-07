@@ -15,6 +15,7 @@ from random import choice
 from pygame import *
 import assets.mainmenu as mainmenu
 import assets.overworld as overworld
+import assets.player as player
 import assets.world as world
 from math import sqrt
 import dpylib as dl
@@ -24,7 +25,7 @@ pygame.init()
 
 class Game(object):
     def __init__(self,surf):
-        self.state="overworld"
+        self.state="menu"
         self.surf=surf
 
         #mainmenu objects
@@ -39,6 +40,9 @@ class Game(object):
         self.ow=overworld.Overworld(self.surf)
         self.ow.game=self
         self.go=True
+
+        #player
+        self.player=player.Player(384.0,224.0,self.gw)
 
     def Update(self,dt):
         if self.state == "menu":

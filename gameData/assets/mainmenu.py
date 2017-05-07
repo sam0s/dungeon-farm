@@ -48,12 +48,9 @@ class Menu(object):
                         if b.rect.collidepoint(e.pos):
                             if b.text == "Continue":
                                 dl.LoadGame(self.game.gw)
-                                self.game.state="game"
+                                self.game.state="overworld"
                             if b.text == "New":
                                 dl.NewGame(self.game.gw)
-                                self.game.state="game"
-
-
-
+                                self.game.state="overworld"
                 if e.type==QUIT:
                     self.game.go=False

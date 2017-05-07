@@ -29,6 +29,24 @@ font = LoadFont()
 #################################
 
 #save game
+def saveplayer(player):
+        f=open(path.join(world.playername,world.playername+".txt"),'w')
+        #level,xp,nextxp,hp,maxhp,atk,gold,posx,posy,worldx,worldy
+        allstuff=str(world.player.level)+"."
+        allstuff+=str(world.player.xp)+"."
+        allstuff+=str(world.player.nextxp)+"."
+        allstuff+=str(world.player.hp)+"."
+        allstuff+=str(world.player.maxhp)+"."
+        allstuff+=str(world.player.atk)+"."
+        allstuff+=str(world.player.gold)+"."
+        allstuff+=str(int(world.player.moveto[0]))+"."
+        allstuff+=str(int(world.player.moveto[1]))+"."
+        allstuff+=str(world.pos[0])+"."
+        allstuff+=str(world.pos[1])+"."
+        allstuff+=str(world.player.speed)
+        f.write(str(allstuff))
+        f.close()
+
 def savelvl(world):
     ents=world.containing
     loc=path.join(world.levelname,"world"+str(world.pos[0])+str(world.pos[1])+".txt")
@@ -322,9 +340,9 @@ def mdistance(s,e):
 
 def LoadGame(w):
     playername=w.playername
-    levelname=w.levelname
-    levelpath=path.join(playername,w.levelname)
-    ent=w.containing
+    #levelname=w.levelname
+    levelpath=path.join(playername)
+    #ent=w.containing
     if path.isfile(path.join(playername,playername+".txt")):
         w.levelname=levelpath
         #load player attributes
@@ -361,17 +379,17 @@ def LoadGame(w):
 
 
         #load level
-        wx=n[9]
-        wy=n[10]
-        w.pos=[int(wx),int(wy)]
+        #wx=n[9]
+        #wy=n[10]
+        #w.pos=[int(wx),int(wy)]
 
         w.mouse=Mouse(0,0,w)
 
-        loadlvl(ent,path.join(w.levelname,"world"+wx+wy+".txt"))
+        #loadlvl(ent,path.join(w.levelname,"world"+wx+wy+".txt"))
 
-        w.ReDraw()
-        for f in range(15):
-            w.logtext.append(".")
+        #w.ReDraw()
+        #for f in range(15):
+            #w.logtext.append(".")
 
 
     else:
@@ -379,29 +397,18 @@ def LoadGame(w):
 
 def NewGame(w,skip=False):
         playername=w.playername
-        levelname=w.levelname
-        levelpath=path.join(playername,w.levelname)
-        ent=w.containing
+        levelpath=path.join(playername)
+        #ent=w.containing
         if path.isdir(playername):rmtree(playername)
         while path.exists(playername):
             sleep(1)
         if not path.isdir(playername):
             w.levelname=levelpath
             mkdir(playername)
-            mkdir(path.join(playername,levelname))
+            #mkdir(path.join(playername))
 
-            p=player.Player(384.0,224.0,w)
+
             w.player=p
-            w.mouse=Mouse(0,0,w)
-
-
-            fill(ent)
-            carve(ent)
-            doors(ent)
-            savelvl(w)
-            w.ReDraw()
-            for f in range(15):
-                w.logtext.append(".")
 
 
 

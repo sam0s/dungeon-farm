@@ -40,7 +40,7 @@ class World(object):
         self.go=True
         self.levelname="default"
         self.playername="playername"
-
+        self.mouse=dl.Mouse(0,0,self)
         self.dungeonLevelCap = 5
 
 

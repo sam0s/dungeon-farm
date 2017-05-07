@@ -18,6 +18,7 @@ pygame.init()
 
 
 fontpath=path.split(path.realpath("ui.py"))
+print fontpath
 fontpath=path.join(fontpath[0],"digfont.ttf")
 print fontpath
 font=pygame.font.Font(fontpath,11)
