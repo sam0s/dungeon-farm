@@ -29,24 +29,6 @@ font = LoadFont()
 #################################
 
 #save game
-def saveplayer(player):
-        f=open(path.join(world.playername,world.playername+".txt"),'w')
-        #level,xp,nextxp,hp,maxhp,atk,gold,posx,posy,worldx,worldy
-        allstuff=str(world.player.level)+"."
-        allstuff+=str(world.player.xp)+"."
-        allstuff+=str(world.player.nextxp)+"."
-        allstuff+=str(world.player.hp)+"."
-        allstuff+=str(world.player.maxhp)+"."
-        allstuff+=str(world.player.atk)+"."
-        allstuff+=str(world.player.gold)+"."
-        allstuff+=str(int(world.player.moveto[0]))+"."
-        allstuff+=str(int(world.player.moveto[1]))+"."
-        allstuff+=str(world.pos[0])+"."
-        allstuff+=str(world.pos[1])+"."
-        allstuff+=str(world.player.speed)
-        f.write(str(allstuff))
-        f.close()
-
 def savelvl(world):
     ents=world.containing
     loc=path.join(world.levelname,"world"+str(world.pos[0])+str(world.pos[1])+".txt")
@@ -110,6 +92,20 @@ def loadlvl(ents,loc):
         data=data[3:]
     load.close()
 
+def startdungeon(index,w):
+    faf=path.join(w.playername,"d"+str(index))
+    w.pos=[0,0]
+    w.levelname=faf
+    if path.isdir(faf):
+        w.containing.empty()
+        loadlvl(w.containing,faf)
+    else:
+        print faf
+        print w.levelname
+        mkdir(faf)
+        changelevel(w)
+
+
 #draw a bar with %
 def bar(surface,color1,color2,x,y,width,height,value,maxvalue):
     xx=0
@@ -120,7 +116,7 @@ def bar(surface,color1,color2,x,y,width,height,value,maxvalue):
     surface.blit(font.render(str(value)+"/"+str(maxvalue),0,(0,0,0)),(x+width/2-11,y+height/2-5))
 
 #used to load into a new level
-def changelevel(w,fromd="new"):
+def changelevel(w):
     #change this to test if file exists
     w.containing.empty()
     loc=path.join(w.levelname,"world"+str(w.pos[0])+str(w.pos[1])+".txt")
@@ -131,7 +127,7 @@ def changelevel(w,fromd="new"):
     else:
         fill(w.containing)
         carve(w.containing)
-        doors(w.containing,fromd)
+        doors(w.containing)
         savelvl(w)
 
 #carve out the level
@@ -216,7 +212,7 @@ def fill(ents):
         y+=32
 
 #create doors on each side of the room
-def doors(ents,fromd="new"):
+def doors(ents):
     x=384
     y=224
     while x<900:
@@ -246,10 +242,10 @@ def doors(ents,fromd="new"):
             if rect.colliderect(ff.rect):
                 ents.remove(ff)
 
-    if choice([1,2])==1:ents.add(Door(768,224))
-    if choice([1,2])==1:ents.add(Door(384,480))
-    if choice([1,2])==1:ents.add(Door(384,0))
-    if choice([1,2])==1:ents.add(Door(0,224))
+    ents.add(Door(768,224))
+    ents.add(Door(384,480))
+    ents.add(Door(384,0))
+    ents.add(Door(0,224))
 
 #varition of A* pathfinding
 def findpath(s,e,world):
@@ -390,8 +386,6 @@ def LoadGame(w):
         #w.ReDraw()
         #for f in range(15):
             #w.logtext.append(".")
-
-
     else:
         NewGame(w,True)
 
@@ -400,18 +394,12 @@ def NewGame(w,skip=False):
         levelpath=path.join(playername)
         #ent=w.containing
         if path.isdir(playername):rmtree(playername)
-        while path.exists(playername):
+        while path.isdir(playername):
             sleep(1)
         if not path.isdir(playername):
             w.levelname=levelpath
             mkdir(playername)
             #mkdir(path.join(playername))
-
-
-            w.player=p
-
-
-
 
 #################################
 # CLASSES #######################

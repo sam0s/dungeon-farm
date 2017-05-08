@@ -38,8 +38,8 @@ class World(object):
         self.hudlog=dl.Log(self,439,1,360,125,(220,220,220),self.hudsurf)
         self.keys=pygame.key.get_pressed()
         self.go=True
-        self.levelname="default"
-        self.playername="playername"
+        self.levelname="d0"
+        self.playername=None
         self.mouse=dl.Mouse(0,0,self)
         self.dungeonLevelCap = 5
 

@@ -113,6 +113,7 @@ class Overworld(object):
                     for b in self.cavebuttons:
                         if b.rect.collidepoint(e.pos):
                             #LOAD CAVE FROM INDEX
-                            print self.cavebuttons.index(b)
+                            dl.startdungeon(self.cavebuttons.index(b),self.game.gw)
+                            self.game.state="game"
             if e.type==QUIT:
                 self.game.go=False

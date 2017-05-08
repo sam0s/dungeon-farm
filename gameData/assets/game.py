@@ -32,17 +32,17 @@ class Game(object):
         self.mm=mainmenu.Menu(self.surf)
         self.mm.game=self
 
-        #gameworld objects
+        #gameworld and player objects
         self.gw=world.World(self.surf)
+        self.player=player.Player(384.0,224.0,self.gw)
         self.gw.game=self
+        self.gw.player=self.player
+        self.gw.playername="playername"
 
         #overworld objects
         self.ow=overworld.Overworld(self.surf)
         self.ow.game=self
         self.go=True
-
-        #player
-        self.player=player.Player(384.0,224.0,self.gw)
 
     def Update(self,dt):
         if self.state == "menu":
