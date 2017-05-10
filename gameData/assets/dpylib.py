@@ -70,6 +70,7 @@ def savelvl(world):
 
 #load game
 def loadlvl(ents,loc):
+    #make this load like a file and not a dir
     load = open(loc,"r")
     read = 0
     data = load.read()
@@ -98,7 +99,7 @@ def startdungeon(index,w):
     w.levelname=faf
     if path.isdir(faf):
         w.containing.empty()
-        loadlvl(w.containing,faf)
+        changelevel(w)
     else:
         print faf
         print w.levelname
@@ -350,8 +351,8 @@ def LoadGame(w):
         f.close()
 
 
-        p=player.Player(int(n[7]),int(n[8]),w)
-        w.player=p
+        p=w.player
+        #w.player=p
         #set attributes 4=gold
         #level,xp,nextxp,hp,maxhp,atk,gold,movespeed
         p.setAttrs(n[0],n[1],n[2],n[3],n[4],n[5],n[6],n[11])
@@ -372,6 +373,7 @@ def LoadGame(w):
                 for f3 in range(int(f2[1])):
                     it=items.fromId(int(f2[0]),p)
                     p.giveItem(it)
+                    print p.inventory
 
 
         #load level
@@ -379,13 +381,9 @@ def LoadGame(w):
         #wy=n[10]
         #w.pos=[int(wx),int(wy)]
 
-        w.mouse=Mouse(0,0,w)
+        #w.mouse=Mouse(0,0,w)
 
         #loadlvl(ent,path.join(w.levelname,"world"+wx+wy+".txt"))
-
-        #w.ReDraw()
-        #for f in range(15):
-            #w.logtext.append(".")
     else:
         NewGame(w,True)
 

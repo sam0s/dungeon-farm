@@ -45,6 +45,7 @@ class Game(object):
         self.go=True
 
     def Update(self,dt):
+        print self.player.inventory
         if self.state == "menu":
             self.mm.Draw()
         if self.state == "overworld":

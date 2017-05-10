@@ -31,7 +31,6 @@ class Player(object):
         self.prev = self.moveto = [x,y]
         self.movelist = []
         self.moving = False
-        self.direct = "w"
         self.inventory = []
         self.activeWeapon = [items.Dirk(self)]
 

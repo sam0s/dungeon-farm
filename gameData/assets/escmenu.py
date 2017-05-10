@@ -50,7 +50,7 @@ class EscMenu(object):
         self.tabs=[ui.Button(650,50,100,32,"Player",self.surf),ui.Button(650,100,100,32,"Items",self.surf),
                     ui.Button(650,150,100,32,"Map",self.surf),
                     ui.Button(650,200,100,32,"Go Back",self.surf),
-                    ui.Button(650,300,100,32,"Save",self.surf)]
+                    ui.Button(650,300,100,32,"Leave",self.surf)]
 
         self.invbuttons=[ui.Button(500,430,100,32,"Drop",self.surf),
                             ui.Button(500,385,100,32,"Use",self.surf)]
@@ -269,8 +269,10 @@ class EscMenu(object):
                 for b in self.tabs:
                     if b.rect.collidepoint(e.pos):
                         #self.drawn=0
-                        if b.text=="Save":
+                        if b.text=="Leave":
                             dl.savelvl(self.world)
+                            self.world.game.state="overworld"
+                            self.world.state="game"
                             #dl.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt",self.world)
                         if b.text=="Go Back":
                             if self.world.battle==False:

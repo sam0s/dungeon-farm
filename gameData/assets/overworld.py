@@ -115,5 +115,9 @@ class Overworld(object):
                             #LOAD CAVE FROM INDEX
                             dl.startdungeon(self.cavebuttons.index(b),self.game.gw)
                             self.game.state="game"
+                            self.screen="main"
+                            self.game.gw.ReDraw()
+                            for f in range(15):
+                                self.game.gw.logtext.append(".")
             if e.type==QUIT:
                 self.game.go=False
