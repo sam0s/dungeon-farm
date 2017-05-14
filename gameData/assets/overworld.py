@@ -119,5 +119,6 @@ class Overworld(object):
                             self.game.gw.ReDraw()
                             for f in range(15):
                                 self.game.gw.logtext.append(".")
+                            self.drawn=False
             if e.type==QUIT:
                 self.game.go=False

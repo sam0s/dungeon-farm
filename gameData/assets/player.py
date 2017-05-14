@@ -58,6 +58,15 @@ class Player(object):
         self.animator = Animator(self.player_anim, Animator.MODE_LOOP, 5)
         self.animator.setAnim("walk_down")
 
+    def reset(self):
+        x=384
+        y=224
+        self.rect = Rect(x,y,32,32)
+        self.prev = self.moveto = [x,y]
+        self.movelist = []
+        self.moving = False
+        self.changex = float(self.rect.x)
+        self.changey = float(self.rect.y)
 
     def setAttrs(self,level,xp,nextxp,hp,maxhp,atk,gold,movespeed):
         self.hp=int(hp)

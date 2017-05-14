@@ -94,9 +94,12 @@ def loadlvl(ents,loc):
     load.close()
 
 def startdungeon(index,w):
-    faf=path.join(w.playername,"d"+str(index))
+    faf=path.join(w.playername,w.game.ow.town+str(index))
     w.pos=[0,0]
     w.levelname=faf
+
+    w.player.reset()
+
     if path.isdir(faf):
         w.containing.empty()
         changelevel(w)
