@@ -97,7 +97,8 @@ def startdungeon(index,w):
     faf=path.join(w.playername,w.game.ow.town+str(index))
     w.pos=[0,0]
     w.levelname=faf
-
+    w.dungeonLevelCap=(5+index)+(index*w.game.ow.townIndex*4)
+    print w.dungeonLevelCap
     w.player.reset()
 
     if path.isdir(faf):

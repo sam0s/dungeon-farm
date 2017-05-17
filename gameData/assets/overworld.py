@@ -51,18 +51,25 @@ class Overworld(object):
                     ui.Button(300,150,220,32,"Cave 3",self.surf)
                     ]
     def Draw(self):
+        
+        #Update Town Screen
         if self.screen=="town":
             if self.drawn==False:
                 self.surf.fill((0,0,0))
                 for b in self.townbuttons:
                     b.Update()
-                if self.town=="Prospect":
+                #prospect
+                if self.townIndex==0:
                     self.surf.blit(self.locationtitles[0],(25,25))
-                if self.town=="Fairfield":
+                #fairfield
+                if self.townIndex==1:
                     self.surf.blit(self.locationtitles[1],(25,25))
-                if self.town=="Norfolk":
+                #norfolk
+                if self.townIndex==2:
                     self.surf.blit(self.locationtitles[2],(25,25))
                 self.drawn=True
+
+        #Cave selector for towns
         if self.screen=="cave":
             if self.drawn==False:
                 self.surf.fill((0,0,0))
@@ -73,6 +80,7 @@ class Overworld(object):
                 #if self.town=="Prospect":
                 self.drawn=True
 
+        #OVERWORLD SCREEN
         if self.screen=="main":
             #menu routine
             if not self.drawn:
@@ -91,6 +99,7 @@ class Overworld(object):
                     for b in self.locationbuttons:
                         if b.rect.collidepoint(e.pos):
                             self.town=b.text
+                            self.townIndex=self.locationbuttons.index(b)
                             self.screen="town"
                             self.drawn=False
 
