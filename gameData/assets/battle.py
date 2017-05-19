@@ -57,6 +57,7 @@ class Battle(object):
             self.world.player.giveXp(xpgive)
             self.world.battle=False
             self.world.ChangeState("game")
+            self.world.ReDraw()
 
 
         #ENEMY ATTACK
@@ -68,7 +69,7 @@ class Battle(object):
 
         #test player death
         if self.world.player.hp<=0:
-            self.world.ChangeState("menu")
+            self.world.game.ChangeState("menu")
 
 
 
@@ -81,7 +82,8 @@ class Battle(object):
 
 
             dpylib.bar(self.enemydisp,(0,210,0),(210,0,0),130,4,165,25,self.enemy.hp,self.enemy.maxhp)
-            dpylib.bar(self.world.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.world.player.hp,self.world.player.maxhp)
+            self.world.ReDraw(True)
+            #dpylib.bar(self.world.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.world.player.hp,self.world.player.maxhp)
             #self.world.hudsurf.blit(self.world.images[2],(1,1))
 
             for e in self.world.events:

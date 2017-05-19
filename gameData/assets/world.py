@@ -19,6 +19,7 @@ import dpylib as dl
 from os import path
 import time
 
+bagSprite=pygame.image.load(path.join("images","bag.png")).convert()
 
 class World(object):
     def __init__(self,surf):
@@ -28,7 +29,6 @@ class World(object):
 
         #self.drawPath = pygame.sprite.Group()
 
-        self.turn=1
         self.pos=[0,0]
         self.player=None
         self.state="game"
@@ -121,14 +121,15 @@ class World(object):
         #pygame.display.flip()
 
     def Draw(self,yesworld=True):
-        #self.surf.fill((0,0,0))
         if yesworld:
             self.surf.blit(self.drawnlevel,(0,0))
-        dl.bar(self.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.player.hp,self.player.maxhp)
-        dl.bar(self.hudsurf,(75,0,130),(210,0,0),130,32,165,25,self.player.xp,self.player.nextxp)
-    def ReDraw(self):
-        self.drawnlevel.fill((0,32,0))
-        self.containing.draw(self.drawnlevel)
+
+    def ReDraw(self,hudonly=False):
+        if not hudonly:
+            self.drawnlevel.fill((0,32,0))
+            self.containing.draw(self.drawnlevel)
+        dl.bar(self.hudsurf,(0,210,0),(210,0,0),32,4,375,25,self.player.hp,self.player.maxhp)
+        dl.bar(self.hudsurf,(75,0,130),(210,0,0),32,32,375,25,self.player.xp,self.player.nextxp)
 
     def Shift(self,d):
         #self.esc.created=0

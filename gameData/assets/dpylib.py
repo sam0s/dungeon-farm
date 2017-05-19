@@ -539,7 +539,7 @@ class Log(TextHolder):
 
             for f in self.drawntext:
 
-                wax=font.render(str(self.drawntext[a]),0,(255,0,0),self.ic)
+                wax=font.render(str("> "+self.drawntext[a]),0,(255,0,0),self.ic)
                 surf.blit(wax,(self.rect.x+5,y))
                 a+=1
                 y+=12
