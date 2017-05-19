@@ -24,6 +24,8 @@ class Overworld(object):
     def __init__(self,surf):
         self.screen="main"
         self.surf=surf
+        self.hudsurf=Surface((800,128))
+        self.hudsurf.fill((25,25,200))
         self.go=True
         self.drawn=False
         self.game=None
@@ -51,7 +53,7 @@ class Overworld(object):
                     ui.Button(300,150,220,32,"Cave 3",self.surf)
                     ]
     def Draw(self):
-        
+
         #Update Town Screen
         if self.screen=="town":
             if self.drawn==False:
@@ -90,7 +92,7 @@ class Overworld(object):
                 self.drawn=True
                 for b in self.locationbuttons:
                     b.Update()
-
+        self.surf.blit(self.hudsurf,(0,512))
         for e in pygame.event.get():
             if e.type == MOUSEBUTTONUP and e.button == 1:
 
