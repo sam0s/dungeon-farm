@@ -6,9 +6,6 @@ FLAGS = HWSURFACE | DOUBLEBUF
 MASTER_SURFACE = display.set_mode(DISPLAY, FLAGS, 0)
 
 
-
-
-import math,random
 import assets.game as game
 
 from os import mkdir,path

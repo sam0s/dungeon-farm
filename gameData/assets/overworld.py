@@ -26,6 +26,8 @@ class Overworld(object):
         self.surf=surf
         self.hudsurf=Surface((800,128))
         self.hudsurf.fill((25,25,200))
+        self.logtext=[]
+        self.hudlog=dl.Log(self,439,1,360,125,(220,220,220),self.hudsurf)
         self.go=True
         self.drawn=False
         self.game=None
@@ -92,8 +94,15 @@ class Overworld(object):
                 self.drawn=True
                 for b in self.locationbuttons:
                     b.Update()
+
+
+        #draw hud
+        for f in range(15):
+            self.logtext.append(".")
+        self.hudlog.update(self.hudsurf)
         self.surf.blit(self.hudsurf,(0,512))
-        for e in pygame.event.get():
+
+        for e in self.game.events:
             if e.type == MOUSEBUTTONUP and e.button == 1:
 
                 #OVERWORLD

@@ -45,6 +45,7 @@ class Game(object):
         self.go=True
 
     def Update(self,dt):
+        self.events=pygame.event.get()
         if self.state == "menu":
             self.mm.Draw()
         if self.state == "overworld":

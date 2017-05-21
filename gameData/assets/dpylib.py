@@ -23,6 +23,13 @@ from ui import LoadFont
 pygame.init()
 font = LoadFont()
 
+wallImage=pygame.image.load(path.join("images","wall.png")).convert()
+
+goldImage=pygame.image.load(path.join("images","gold.png")).convert()
+goldImage.set_colorkey((0,255,0))
+
+chestImage=pygame.image.load(path.join("images","chest.png")).convert()
+chestImage.set_colorkey((0,255,0))
 
 #################################
 # FUNCTIONS #######################
@@ -148,11 +155,11 @@ def carve(ents):
         total+=1
 
         #generate cool stuff
-        special=choice(([1]*16) #gold rate
-                       +([2]*3)#enemy rate
-                       +([3]*1)#random box rate
+        special=choice(([1]*11) #gold rate
+                       +([2]*5)#enemy rate
+                       +([3]*4)#random box rate
                        +([4]*2)#life drop rate
-                       +([0]*104) #empty rate
+                       +([0]*111) #empty rate
                        )
 
 
@@ -454,16 +461,13 @@ class Pickup(Entity):
         self.image.convert()
         if self.ptype == "gold":
             self.name="gold"
-            self.image.fill((255,255,0))
+            self.image=goldImage
         if self.ptype == "life":
             self.name="life"
             self.image.fill((0,195,0))
-        if self.ptype == "food":
-            self.name="food"
-            self.image.fill((120,60,10))
         if self.ptype == "randombox":
             self.name="randombox"
-            self.image.fill((0,50,200))
+            self.image=chestImage
         self.rect = Rect(x,y,32,32)
 
 
@@ -483,18 +487,16 @@ class Wall(Entity):
     def __init__(self,x,y):
         Entity.__init__(self)
         self.name = "wall"
-        self.image = Surface((32,32))
-        self.image.convert()
-        self.image.fill((100,100,100))
+        self.image = wallImage
+        #self.image.convert()
+        #self.image.fill((100,100,100))
         self.rect = Rect(x,y,32,32)
 
 class Door(Entity):
     def __init__(self,x,y):
         Entity.__init__(self)
         self.name = "door"
-        self.image = Surface((32,32))
-        self.image.convert()
-        self.image.fill((139,69,19))
+        self.image = Surface((1,1))
         self.rect = Rect(x,y,32,32)
 
 class Mouse(Entity):

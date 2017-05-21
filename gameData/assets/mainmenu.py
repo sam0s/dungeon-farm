@@ -42,7 +42,7 @@ class Menu(object):
                 self.drawn=True
             for f in self.mainbuttons:
                 f.Update()
-            for e in pygame.event.get():
+            for e in self.game.events:
                 if e.type == MOUSEBUTTONUP and e.button == 1:
                     for b in self.mainbuttons:
                         if b.rect.collidepoint(e.pos):

@@ -172,7 +172,7 @@ class EscMenu(object):
                 self.small.draw(self.surf)
                 pygame.draw.rect(self.surf,(0,255,0),((self.world.player.rect.x+792)/6,(self.world.player.rect.y+492)/6,6,6),0)
 
-        for e in self.world.events:
+        for e in self.world.game.events:
             if e.type == MOUSEBUTTONUP and e.button == 1:
                 self.drawn=0
                 mse = e.pos
@@ -292,10 +292,9 @@ class EscMenu(object):
                                 if b.text=="Items":
                                     self.tab="items"
         #DRAW BUTTONS
-        for e in self.world.events:
-            for e in self.world.events:
-                if e.type == QUIT:
-                    self.world.Close()
+        for e in self.world.game.events:
+            if e.type == QUIT:
+                self.world.Close()
 
         if not self.world.battle:
             for f in self.tabs:

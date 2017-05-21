@@ -86,7 +86,7 @@ class Battle(object):
             #dpylib.bar(self.world.hudsurf,(0,210,0),(210,0,0),130,4,165,25,self.world.player.hp,self.world.player.maxhp)
             #self.world.hudsurf.blit(self.world.images[2],(1,1))
 
-            for e in self.world.events:
+            for e in self.world.game.events:
                 #button handling
                 if e.type == MOUSEBUTTONUP:
                     for b in self.buttons:

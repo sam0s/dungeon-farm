@@ -20,12 +20,34 @@ from os import path
 import time
 
 bagSprite=pygame.image.load(path.join("images","bag.png")).convert()
+floorImage=pygame.image.load(path.join("images","floor.png")).convert()
+
+floor=pygame.Surface((800,512))
+fx=0
+fy=0
+while fy<512:
+    while fx<800:
+        floor.blit(floorImage,(fx,fy))
+        fx+=32
+    fx=0
+    fy+=32
+
+floorImage=floor.convert()
 
 class World(object):
     def __init__(self,surf):
+        #Create surfaces (objects & walls, drawing platflorm, new+old for transition)
         self.containing=pygame.sprite.Group()
         self.drawnlevel=pygame.Surface((800,640))
+        self.new=pygame.Surface((800,512))
+        self.old=pygame.Surface((800,512))
+
+        #draw the level
         self.containing.draw(self.drawnlevel)
+
+        #transition progress and direction(animation variable)
+        self.tprog=0
+        self.tdir='n'
 
         #self.drawPath = pygame.sprite.Group()
 
@@ -58,6 +80,8 @@ class World(object):
         self.good=1
         self.mse32=(0,0)
 
+        self.trans=False
+
     def Close(self,save=True):
         dl.savelvl(self)
         self.game.go=False
@@ -72,53 +96,91 @@ class World(object):
 
     def Update(self,delta):
         self.delta=delta
-        #Events and Keys
-        self.events=pygame.event.get()
-        self.keys=pygame.key.get_pressed()
-        mse=pygame.mouse.get_pos()
+        if not self.trans:
+            #Events and Keys
+            self.keys=pygame.key.get_pressed()
+            mse=pygame.mouse.get_pos()
 
-        if self.state == "game":
-            self.mse32=(((mse[0])/32)*32,((mse[1])/32)*32)
-            self.Draw()
-            if self.good==1:
-                if self.keys[K_TAB]:
-                    self.esc.drawn=0
-                    self.esc.created=0
-                    self.ChangeState("escmenu")
+            if self.state == "game":
+                self.mse32=(((mse[0])/32)*32,((mse[1])/32)*32)
+                self.Draw()
+                if self.good==1:
+                    if self.keys[K_TAB]:
+                        self.esc.drawn=0
+                        self.esc.created=0
+                        self.ChangeState("escmenu")
 
-            if not self.keys[K_TAB]:
-                self.good=1
+                if not self.keys[K_TAB]:
+                    self.good=1
 
-            for e in self.events:
-                if e.type == MOUSEBUTTONDOWN and e.button == 1:
-                    if self.player.moving==False:
-                        self.player.moveto=[self.mse32[0],self.mse32[1]]
-                    #Headshot Click
-                    if e.pos[0]<130:
-                        if e.pos[1]>512:
-                            self.esc.tab="player"
-                            self.ChangeState("escmenu") #player tab
-                if e.type == QUIT:
-                    self.Close()
+                for e in self.game.events:
+                    if e.type == MOUSEBUTTONDOWN and e.button == 1:
+                        if self.player.moving==False:
+                            self.player.moveto=[self.mse32[0],self.mse32[1]]
+                        #Headshot Click
+                        if e.pos[0]<130:
+                            if e.pos[1]>512:
+                                self.esc.tab="player"
+                                self.ChangeState("escmenu") #player tab
+                    if e.type == QUIT:
+                        self.Close()
 
-            self.player.update()
-            #self.drawPath.update()
-            self.mouse.update()
-
-        if self.state == "battle":
-            self.bat.Draw()
-
-
-        #draw the in game menu
-        if self.state == "escmenu":
-            #if the player
-            if self.esc.tab=="map":
                 self.player.update()
-            self.esc.Draw()
+                #self.drawPath.update()
+                self.mouse.update()
 
-        self.hudlog.update(self.hudsurf)
-        self.surf.blit(self.hudsurf, (0,512))
-        #pygame.display.flip()
+            if self.state == "battle":
+                self.bat.Draw()
+
+
+            #draw the in game menu
+            if self.state == "escmenu":
+                #if the player
+                if self.esc.tab=="map":
+                    self.player.update()
+                self.esc.Draw()
+
+            self.hudlog.update(self.hudsurf)
+            self.surf.blit(self.hudsurf, (0,512))
+        else:
+            #progress
+            self.tprog+=300*self.delta
+
+            #NORTH/SOUTH
+            if self.tdir=='n' or self.tdir=='s':
+
+                if self.tdir=='n':
+                    self.surf.blit(self.new,(0,-512+self.tprog))
+                else:
+                    self.surf.blit(self.new,(0,512-self.tprog))
+
+                if self.tdir=='n':
+                    self.surf.blit(self.old,(0,self.tprog))
+                else:
+                    self.surf.blit(self.old,(0,-self.tprog))
+
+                if self.tprog>512:
+                    self.trans=False
+                    self.tprog=0
+
+            #EAST/WEST
+            if self.tdir=='e' or self.tdir=='w':
+
+                if self.tdir=='e':
+                    self.surf.blit(self.new,(800-self.tprog,0))
+                else:
+                    self.surf.blit(self.new,(-800+self.tprog,0))
+
+                if self.tdir=='e':
+                    self.surf.blit(self.old,(-self.tprog,0))
+                else:
+                    self.surf.blit(self.old,(self.tprog,0))
+
+                if self.tprog>800:
+                    self.trans=False
+                    self.tprog=0
+
+            self.surf.blit(self.hudsurf, (0,512))
 
     def Draw(self,yesworld=True):
         if yesworld:
@@ -126,12 +188,19 @@ class World(object):
 
     def ReDraw(self,hudonly=False):
         if not hudonly:
-            self.drawnlevel.fill((0,32,0))
+            self.drawnlevel.blit(floorImage,(0,0))
+            #self.drawnlevel.fill((0,32,0))
             self.containing.draw(self.drawnlevel)
         dl.bar(self.hudsurf,(0,210,0),(210,0,0),32,4,375,25,self.player.hp,self.player.maxhp)
         dl.bar(self.hudsurf,(75,0,130),(210,0,0),32,32,375,25,self.player.xp,self.player.nextxp)
-
     def Shift(self,d):
+
+        #self.old.fill((0,0,0))
+        #self.new.fill((0,0,0))
+        self.old.blit(floorImage,(0,0))
+        self.new.blit(floorImage,(0,0))
+        self.containing.draw(self.old)
+
         #self.esc.created=0
         dl.savelvl(self)
         if d=='n':
@@ -156,4 +225,9 @@ class World(object):
             self.logtext.append("going west")
 
         dl.changelevel(self)
-        self.ReDraw()
+
+        #Show the shift
+        self.tdir=d
+        self.containing.draw(self.new)
+        self.trans=True
+        #self.ReDraw()
