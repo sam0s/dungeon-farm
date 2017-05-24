@@ -25,8 +25,8 @@ class Overworld(object):
         self.screen="main"
         self.surf=surf
         self.hudsurf=Surface((800,128))
-        self.hudsurf.fill((25,25,200))
-        self.logtext=[]
+        self.hudsurf.fill((3,3,3))
+        self.logtext=["."]*11
         self.hudlog=dl.Log(self,439,1,360,125,(220,220,220),self.hudsurf)
         self.go=True
         self.drawn=False
@@ -54,8 +54,8 @@ class Overworld(object):
                     ui.Button(300,100,220,32,"Cave 2",self.surf),
                     ui.Button(300,150,220,32,"Cave 3",self.surf)
                     ]
-    def Draw(self):
 
+    def Draw(self):
         #Update Town Screen
         if self.screen=="town":
             if self.drawn==False:
@@ -88,6 +88,7 @@ class Overworld(object):
         if self.screen=="main":
             #menu routine
             if not self.drawn:
+                self.logtext.append("Welcome to Appigarth!")
                 #self.surf.fill((0,0,0))
                 self.surf.blit(self.overworldimg,(0,0))
                 pygame.display.update()
@@ -97,8 +98,6 @@ class Overworld(object):
 
 
         #draw hud
-        for f in range(15):
-            self.logtext.append(".")
         self.hudlog.update(self.hudsurf)
         self.surf.blit(self.hudsurf,(0,512))
 

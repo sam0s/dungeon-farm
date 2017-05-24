@@ -19,7 +19,6 @@ import dpylib as dl
 from os import path
 import time
 
-bagSprite=pygame.image.load(path.join("images","bag.png")).convert()
 floorImage=pygame.image.load(path.join("images","floor.png")).convert()
 
 floor=pygame.Surface((800,512))

@@ -101,6 +101,7 @@ class EscMenu(object):
         if not self.world.keys[K_TAB]:
                 self.world.good=1
         if self.drawn==0:
+            self.world.ReDraw(True)
             if self.tab=="items":
 
                 oef=230+(self.invy*42)

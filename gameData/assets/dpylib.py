@@ -31,6 +31,12 @@ goldImage.set_colorkey((0,255,0))
 chestImage=pygame.image.load(path.join("images","chest.png")).convert()
 chestImage.set_colorkey((0,255,0))
 
+orbHealImage=pygame.image.load(path.join("images","orb.png")).convert()
+orbHealImage.set_colorkey((0,255,0))
+
+enemyImage=pygame.image.load(path.join("images","enemy.png")).convert()
+enemyImage.set_colorkey((0,255,0))
+
 #################################
 # FUNCTIONS #######################
 #################################
@@ -63,11 +69,12 @@ def savelvl(world):
         f=open(path.join(world.playername,"inv.txt"),'w')
         itemNum=0
         for a in world.player.inventory:
-            if itemNum+1!=len(world.player.inventory):
-                f.write(str(world.player.inventory[itemNum].id)+"_"+str(world.player.inventory[itemNum].stack)+".")
-            else:
-                f.write(str(world.player.inventory[itemNum].id)+"_"+str(world.player.inventory[itemNum].stack))
+            #if itemNum+1!=len(world.player.inventory):
+            f.write(str(world.player.inventory[itemNum].id)+"_"+str(world.player.inventory[itemNum].stack)+".")
+            #else:
+                #f.write(str(world.player.inventory[itemNum].id)+"_"+str(world.player.inventory[itemNum].stack))
             itemNum+=1
+        f.write(str(world.player.activeWeapon[0].id)+"_a")
         f.close()
 
     save = open(loc,"w")
@@ -77,7 +84,6 @@ def savelvl(world):
 
 #load game
 def loadlvl(ents,loc):
-    #make this load like a file and not a dir
     load = open(loc,"r")
     read = 0
     data = load.read()
@@ -161,7 +167,6 @@ def carve(ents):
                        +([4]*2)#life drop rate
                        +([0]*111) #empty rate
                        )
-
 
         while direction == lastdir:
             direction = choice([1,2,3,4])
@@ -380,6 +385,9 @@ def LoadGame(w):
             for f in n2:
                 #divide up by name and stack
                 f2=f.split("_")
+                if f2[1]=='a':
+                    p.activeWeapon=[items.fromId(int(f2[0]),p)]
+                    break
                 #give the item
                 for f3 in range(int(f2[1])):
                     it=items.fromId(int(f2[0]),p)
@@ -464,7 +472,7 @@ class Pickup(Entity):
             self.image=goldImage
         if self.ptype == "life":
             self.name="life"
-            self.image.fill((0,195,0))
+            self.image=orbHealImage
         if self.ptype == "randombox":
             self.name="randombox"
             self.image=chestImage
@@ -477,9 +485,7 @@ class Enemy(Entity):
         Entity.__init__(self)
         self.name = "enemy"
         self.etype = "grunt"
-        self.image = Surface((32,32))
-        self.image.convert()
-        self.image.fill((255,0,0))
+        self.image = enemyImage
         self.rect = Rect(x,y,32,32)
 
 

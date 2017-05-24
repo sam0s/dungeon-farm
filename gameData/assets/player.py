@@ -154,13 +154,19 @@ class Player(object):
                         self.gold+=1
                     if f.name=='life':
                         self.world.containing.remove(f)
-                        self.world.logtext.append("health found!")
-                        self.hp+=25
+                        self.world.logtext.append("You absorb 15% life points from the orb!")
+                        self.hp+=(15*self.maxhp)/100
                         if self.hp>self.maxhp:
                             self.hp=self.maxhp
                     if f.name=="randombox":
                         #Give a random item from this here list !
-                        randomitem=choice([1,2,3,4,5,6])
+                        randomitem=choice(([1]*8)
+                                       +([2]*15)
+                                       +([3]*14)
+                                       +([4]*13)
+                                       +([5]*5)
+                                       +([8]*2)
+                                       )
                         self.giveItem(items.fromId(randomitem,self))
                         self.world.logtext.append("You found "+items.fromId(randomitem,None,True))
                         self.world.containing.remove(f)
