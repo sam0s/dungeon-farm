@@ -135,8 +135,6 @@ class World(object):
             #draw the in game menu
             if self.state == "escmenu":
                 #if the player
-                if self.esc.tab=="map":
-                    self.player.update()
                 self.esc.Draw()
 
             self.hudlog.update(self.hudsurf)
@@ -192,6 +190,7 @@ class World(object):
             self.containing.draw(self.drawnlevel)
         dl.bar(self.hudsurf,(0,210,0),(210,0,0),32,4,375,25,self.player.hp,self.player.maxhp)
         dl.bar(self.hudsurf,(75,0,130),(210,0,0),32,32,375,25,self.player.xp,self.player.nextxp)
+
     def Shift(self,d):
 
         #self.old.fill((0,0,0))
@@ -206,22 +205,22 @@ class World(object):
             self.pos=[self.pos[0],self.pos[1]-1]
             self.player.prev[1]=self.player.changey=self.player.moveto[1]=self.player.rect.y=448
 
-            self.logtext.append("going north")
+            self.logtext.append("You head towards the north.")
         elif d=='e':
             self.pos=[self.pos[0]+1,self.pos[1]]
             self.player.prev[0]=self.player.changex=self.player.moveto[0]=self.player.rect.x=32
 
-            self.logtext.append("going east")
+            self.logtext.append("You head towards the east.")
         elif d=='s':
             self.pos=[self.pos[0],self.pos[1]+1]
             self.player.prev[1]=self.player.changey=self.player.moveto[1]=self.player.rect.y=32
 
-            self.logtext.append("going south")
+            self.logtext.append("You head towards the south.")
         elif d=='w':
             self.pos=[self.pos[0]-1,self.pos[1]]
             self.player.prev[0]=self.player.changex=self.player.moveto[0]=self.player.rect.x=736
 
-            self.logtext.append("going west")
+            self.logtext.append("You head towards the west.")
 
         dl.changelevel(self)
 

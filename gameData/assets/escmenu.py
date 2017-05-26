@@ -85,10 +85,10 @@ class EscMenu(object):
                 c=(0,0,0)
                 if data[0]=='"wall"':
                     c=(100,100,100)
-                if data[0]=='"gold"':
-                    c=(255,255,0)
-                if data[0]=='"enemy"':
-                    c=(255,0,0)
+                #if data[0]=='"gold"':
+                #    c=(255,255,0)
+                #if data[0]=='"enemy"':
+                #    c=(255,0,0)
                 lev.add(Square(int(data[1])+offset,int(data[2])+offsety,c))
                 data=data[3:]
             load.close()
@@ -146,10 +146,9 @@ class EscMenu(object):
             self.drawn=1
 
         if self.tab=="map":
-            self.surf.fill((0,0,250))
-            pygame.draw.rect(self.surf,(0,0,0),(0,0,398,250),0)
-
             if self.created==0:
+                self.surf.fill((0,0,250))
+                pygame.draw.rect(self.surf,(0,0,0),(0,0,398,250),0)
                 self.small.empty()
 
                 #top
@@ -169,9 +168,10 @@ class EscMenu(object):
                 self.CreateSmallMap(str(self.world.levelname+"\\world"+str(self.world.pos[0]+1)+str(self.world.pos[1]+1)+".txt"),self.small,1584,984)
 
                 self.created=1
-            else:
+
                 self.small.draw(self.surf)
                 pygame.draw.rect(self.surf,(0,255,0),((self.world.player.rect.x+792)/6,(self.world.player.rect.y+492)/6,6,6),0)
+
 
         for e in self.world.game.events:
             if e.type == MOUSEBUTTONUP and e.button == 1:
@@ -219,8 +219,11 @@ class EscMenu(object):
 
 
                                 if b.text=="Drop":
-                                        print "dropped item"
-                                        self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
+                                        #print "dropped item"
+                                        if item.stack>1:
+                                            item.stack-=1
+                                        else:
+                                            self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
                             self.world.Draw(False)
 
 
@@ -269,29 +272,30 @@ class EscMenu(object):
 
                 #Handle the general buttons
                 for b in self.tabs:
+                    if b.rect.collidepoint(e.pos):
+                        if b.text=="Go Back":
+                            if self.world.battle==False:
+                                self.world.ChangeState("game")
+                                self.drawn=0
+                            else:
+                                self.world.bat.mode="fight"
+                                self.world.ChangeState("battle")
+                        if not self.world.battle:
+                            #self.drawn=0
+                            if b.text=="Leave":
+                                dl.savelvl(self.world)
+                                self.world.game.state="overworld"
+                                self.world.state="game"
+                                #dl.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt",self.world)
 
-                        if b.rect.collidepoint(e.pos):
-                            if b.text=="Go Back":
-                                if self.world.battle==False:
-                                    self.world.ChangeState("game")
-                                else:
-                                    self.world.bat.mode="fight"
-                                    self.world.ChangeState("battle")
-                            if not self.world.battle:
-                                #self.drawn=0
-                                if b.text=="Leave":
-                                    dl.savelvl(self.world)
-                                    self.world.game.state="overworld"
-                                    self.world.state="game"
-                                    #dl.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt",self.world)
-
-                                if b.text=="Map":
-                                    self.tab="map"
-                                if b.text=="Player":
-                                    self.player_stats_drawn=0
-                                    self.tab="player"
-                                if b.text=="Items":
-                                    self.tab="items"
+                            if b.text=="Map":
+                                self.created=0
+                                self.tab="map"
+                            if b.text=="Player":
+                                self.player_stats_drawn=0
+                                self.tab="player"
+                            if b.text=="Items":
+                                self.tab="items"
         #DRAW BUTTONS
         for e in self.world.game.events:
             if e.type == QUIT:

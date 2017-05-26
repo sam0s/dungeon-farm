@@ -50,7 +50,7 @@ class Player(object):
         self.maxhp=100
 
 
-        self.player_anim = AnimationSet(path.join("images\player_14.png"), (16, 24))
+        self.player_anim = AnimationSet(path.join("images", "player_14.png"), (16, 24))
         self.player_anim.addAnim("walk_down", 0, 3)
         self.player_anim.addAnim("walk_right", 4, 7)
         self.player_anim.addAnim("walk_left", 8, 11)
@@ -130,7 +130,6 @@ class Player(object):
             #collision
             cl=pygame.sprite.spritecollide(self, self.world.containing, False)
             if cl:
-                self.world.esc.created=0
                 for f in cl:
                     if f.name=='door':
                         self.movelist=[]
@@ -149,7 +148,7 @@ class Player(object):
                         self.world.containing.remove(f)
                     if f.name=='gold':
                         self.giveXp(2*self.level+1)
-                        self.world.logtext.append("gold found!")
+                        self.world.logtext.append("You find a gold coin.")
                         self.world.containing.remove(f)
                         self.gold+=1
                     if f.name=='life':

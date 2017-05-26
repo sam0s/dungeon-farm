@@ -41,7 +41,7 @@ class Battle(object):
         #Use the dungeon level cap to create the enemies level
         elvl=randint(self.world.dungeonLevelCap-4,self.world.dungeonLevelCap+1)
         self.enemy=choice([enemies.Orc(elvl),enemies.Goblin(elvl)])
-        self.world.logtext.append("The "+self.enemy.name+" is level "+str(elvl)+".")
+        self.world.logtext.append("The blob transforms into a level "+str(elvl)+" "+self.enemy.name+".")
 
     def Attack(self):
 
@@ -53,7 +53,8 @@ class Battle(object):
         #check for enemy death, and xp algorithim
         if self.enemy.hp<=0:
             xpgive=18*(self.enemy.level/2)+(self.enemy.level-self.world.player.level)*2
-            self.world.logtext.append("Enemy Slain! "+"You get "+str(xpgive))
+            if xpgive<=1:xpgive=5
+            self.world.logtext.append("Enemy Slain! "+"You gain "+str(xpgive)+" experience points.")
             self.world.player.giveXp(xpgive)
             self.world.battle=False
             self.world.ChangeState("game")
@@ -103,6 +104,7 @@ class Battle(object):
         #items mode
         else:
             self.world.esc.tab="items"
+            self.world.esc.drawn=False
             self.world.ChangeState("escmenu")
 
 
