@@ -24,6 +24,7 @@ class Overworld(object):
     def __init__(self,surf):
         self.screen="main"
         self.surf=surf
+        self.good=True
         self.hudsurf=Surface((800,128))
         self.hudsurf.fill((3,3,3))
         self.logtext=["."]*11
@@ -43,10 +44,9 @@ class Overworld(object):
                              font.render("Select a dungeon",0,(255,255,255),(0,0,0)),
                             ]
 
-        self.townbuttons=[ui.Button(510,50,220,32,"Visit the town leader",self.surf),
-                    ui.Button(510,100,220,32,"Visit the tavern",self.surf),
-                    ui.Button(510,150,220,32,"Visit the market",self.surf),
-                    ui.Button(510,200,220,32,"View nearby dungeons",self.surf),
+        self.townbuttons=[ui.Button(510,50,220,32,"View the quest board",self.surf),
+                    ui.Button(510,100,220,32,"Visit the market",self.surf),
+                    ui.Button(510,150,220,32,"View nearby dungeons",self.surf),
                     ui.Button(510,250,220,32,"Go back",self.surf)
                     ]
 
@@ -77,7 +77,7 @@ class Overworld(object):
         if self.screen=="cave":
             if self.drawn==False:
                 self.surf.fill((0,0,0))
-                self.townbuttons[4].Update()
+                self.townbuttons[3].Update()
                 self.surf.blit(self.locationtitles[3],(25,25))
                 for b in self.cavebuttons[0:3]:
                     b.Update()
@@ -102,8 +102,15 @@ class Overworld(object):
         self.surf.blit(self.hudsurf,(0,512))
 
         for e in self.game.events:
+            if e.type==KEYUP:
+                self.good=True
+            if e.type == KEYDOWN:
+                if e.key==K_q:
+                    if self.good:
+                        self.good=False
+                        self.drawn=False
+                        self.game.state="quests"
             if e.type == MOUSEBUTTONUP and e.button == 1:
-
                 #OVERWORLD
                 if self.screen=="main":
                     for b in self.locationbuttons:
@@ -126,7 +133,7 @@ class Overworld(object):
 
                 #CAVE SELECTION
                 if self.screen=="cave":
-                    if self.townbuttons[4].rect.collidepoint(e.pos):
+                    if self.townbuttons[3].rect.collidepoint(e.pos):
                         self.screen="town"
                         self.drawn=False
                     for b in self.cavebuttons:

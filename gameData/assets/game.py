@@ -17,6 +17,7 @@ import assets.mainmenu as mainmenu
 import assets.overworld as overworld
 import assets.player as player
 import assets.world as world
+import assets.questmenu as questmenu
 from math import sqrt
 import dpylib as dl
 from os import path
@@ -44,10 +45,16 @@ class Game(object):
         self.ow.game=self
         self.go=True
 
+        #questhandler and questmenu
+        self.qm=questmenu.Menu(self.surf)
+        self.qm.game=self
+
     def Update(self,dt):
         self.events=pygame.event.get()
         if self.state == "menu":
             self.mm.Draw()
+        if self.state == "quests":
+            self.qm.Draw()
         if self.state == "overworld":
             self.ow.Draw()
         if self.state == "game":

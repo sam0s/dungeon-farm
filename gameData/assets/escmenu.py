@@ -22,7 +22,6 @@ font = ui.LoadFont()
 
 itemFrame=pygame.image.load(path.join("images","items.png")).convert()
 
-
 class Entity(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -69,6 +68,8 @@ class EscMenu(object):
         #self.buttons=[ui.Button(300,300,100,32,"Go Back.",self.surf)]
         #self.CreateSmallMap(str(self.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small)
     def CreateSmallMap(self,loc,lev,offset=0,offsety=0):
+        offset+=400
+        offsety+=400
         #self.small.empty()
         FNF=0
         try:
@@ -82,14 +83,14 @@ class EscMenu(object):
             data=data[:-1]
 
             while len(data) > 0:
-                c=(0,0,0)
                 if data[0]=='"wall"':
                     c=(100,100,100)
+                    lev.add(Square(int(data[1])+offset,int(data[2])+offsety,c))
                 #if data[0]=='"gold"':
                 #    c=(255,255,0)
                 #if data[0]=='"enemy"':
                 #    c=(255,0,0)
-                lev.add(Square(int(data[1])+offset,int(data[2])+offsety,c))
+
                 data=data[3:]
             load.close()
 
@@ -107,7 +108,6 @@ class EscMenu(object):
                 oef=230+(self.invy*42)
                 oef2=43+(self.invx*38)
 
-                self.surf.fill((0,0,0))
                 self.surf.blit(itemFrame,(0,0))
                 pygame.draw.circle(self.surf,(255,0,0),(oef2,oef),5,0)
                 x=30
@@ -147,8 +147,9 @@ class EscMenu(object):
 
         if self.tab=="map":
             if self.created==0:
-                self.surf.fill((0,0,250))
-                pygame.draw.rect(self.surf,(0,0,0),(0,0,398,250),0)
+                #self.surf.fill((0,0,250))
+                self.surf.fill((0,0,0))
+                pygame.draw.rect(self.surf,(13,13,13),(66,66,398,250),0)
                 self.small.empty()
 
                 #top
@@ -170,7 +171,9 @@ class EscMenu(object):
                 self.created=1
 
                 self.small.draw(self.surf)
-                pygame.draw.rect(self.surf,(0,255,0),((self.world.player.rect.x+792)/6,(self.world.player.rect.y+492)/6,6,6),0)
+                plx=(self.world.player.rect.x+792)+400
+                ply=(self.world.player.rect.y+492)+400
+                pygame.draw.rect(self.surf,(0,255,0),(plx/6,ply/6,6,6),0)
 
 
         for e in self.world.game.events:

@@ -46,6 +46,8 @@ class Menu(object):
                 if e.type == MOUSEBUTTONUP and e.button == 1:
                     for b in self.mainbuttons:
                         if b.rect.collidepoint(e.pos):
+                            if b.text == "Quit":
+                                self.game.go=False
                             if b.text == "Continue":
                                 dl.LoadGame(self.game.gw)
                                 self.game.state="overworld"
