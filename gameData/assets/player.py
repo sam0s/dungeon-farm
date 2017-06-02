@@ -43,6 +43,7 @@ class Player(object):
         self.xp=0
         self.nextxp=120
         self.gold=0
+        self.kills=0
         #Skills
         self.skillpoints=0
         self.atk=7

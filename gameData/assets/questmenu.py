@@ -19,26 +19,31 @@ import dpylib as dl
 
 backDrop=pygame.image.load(path.join("images","paper.png")).convert()
 font = ui.LoadFont()
-
+font2 = ui.LoadFont(20)
 class Menu(object):
     def __init__(self,surf):
         self.screen="quests"
         self.surf=surf
         self.go=True
         self.drawn=False
-        self.game=None
         self.menuimg=backDrop
-        self.mainbuttons=[ui.Button(650,420,100,32,"Go Back",self.surf)]
-        self.quests=[Quest001(self.game),Quest002(self.game)]
+        self.mainbuttons=[ui.Button(650,420,100,32,"Go Back",self.surf),ui.Button(650,90,100,32,"Check",self.surf)]
         self.qbuttons=[]
         self.good=False
     def Draw(self):
         if self.screen=="questDescr":
             if self.drawn==False:
                 self.surf.blit(self.menuimg,(0,0))
-                self.surf.blit(font.render(self.selectedQuest.descr,0,(0,0,0)),(80,80))
+                self.surf.blit(font2.render(self.selectedQuest.descr,0,(0,0,0)),(80,80))
+                x=0
+                y=120
+                for f in self.selectedQuest.req:
+                    self.surf.blit(font.render(self.selectedQuest.req[x],0,(0,0,0)),(80,y))
+                    y+=25
+                    x+=1
 
-            pass
+
+
         if self.screen=="quests":
             #menu routine
             if not self.drawn:
@@ -49,10 +54,13 @@ class Menu(object):
                 self.drawn=True
                 padding=0
                 for f in self.quests:
-                    self.qbuttons.append(ui.Button(100,60+padding,200,32,f.name,self.surf))
-                    padding+=42
+                    if f.done==False:
+                        self.qbuttons.append(ui.Button(100,60+padding,200,32,f.name,self.surf))
+                        padding+=42
                 for f in self.qbuttons:
                     f.Update()
+        self.game.ow.hudlog.update(self.game.ow.hudsurf)
+        self.surf.blit(self.game.ow.hudsurf,(0,512))
         for f in self.mainbuttons:
             f.Update()
         for e in self.game.events:
@@ -74,41 +82,60 @@ class Menu(object):
                                 self.selectedQuest=self.quests[self.qbuttons.index(b)]
                 for b in self.mainbuttons:
                     if b.rect.collidepoint(e.pos):
-                        if self.screen=="quests":
+                        if b.text=="Check":
                             self.drawn=False
-                            self.good=False
-                            self.game.ow.good=True
-                            self.game.state="overworld"
+                            for f in self.quests:
+                                f.check()
                         else:
-                            self.drawn=False
-                            self.screen="quests"
+                            if self.screen=="quests":
+                                self.drawn=False
+                                self.good=False
+                                self.game.ow.good=True
+                                self.game.state="overworld"
+                            else:
+                                self.drawn=False
+                                self.screen="quests"
             if e.type==QUIT:
                 self.game.go=False
 
 #QUESTS
-
 class Quest001(object):
     def __init__(self,game):
         self.game=game
-        self.name="First quest!"
-        self.descr="Kill a single monster!"
+        self.name="Monster Hunter"
+        self.descr="Kill 3 monsters!"
         self.reward=100
         self.done=False
-        self.req=["Kill 1 monster. [ ]"]
+        self.req=["Kill 3 monsters. [ ]"]
+
+        self.stages=1
+        self.stage=[0]
+
     def check(self):
-        if self.game.player.kills>1 and self.done == False:
+        print self.game.player.kills
+        if self.game.player.kills>2 and self.done == False:
             self.done=True
             self.game.player.giveXp(self.reward)
 
 class Quest002(object):
     def __init__(self,game):
         self.game=game
-        self.name="Second quest!"
-        self.descr="Find a sword!"
+        self.name="Explorer"
+        self.descr="Explore, and do stuff!"
         self.reward=150
         self.done=False
-        self.req=["Find a sword. [ ]"]
+        self.req=["Find 10 gold. [ ]","Kill 5 monsters. [ ]"]
+        self.stages=2
+        self.stage=[0,0]
     def check(self):
-        if self.game.player.kills>1 and self.done == False:
+        print self.game.player.gold
+        if self.game.player.gold>9 & self.stage[0]==0:
+            self.req[0]="Find 10 gold. [X]"
+            self.stage[0]=1
+        if self.game.player.kills>4 & self.stage[1]==0:
+            self.req[1]="Kill 5 monsters. [X]"
+            self.stage[1]=1
+        if self.stage[0]==1 & self.stage[1]==1:
+            self.game.ow.logtext.append("Second Quest completed! You gain 100 experience points.")
             self.done=True
             self.game.player.giveXp(self.reward)

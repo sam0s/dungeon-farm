@@ -392,30 +392,20 @@ def LoadGame(w):
                 for f3 in range(int(f2[1])):
                     it=items.fromId(int(f2[0]),p)
                     p.giveItem(it)
-                    print p.inventory
-
-
-        #load level
-        #wx=n[9]
-        #wy=n[10]
-        #w.pos=[int(wx),int(wy)]
-
-        #w.mouse=Mouse(0,0,w)
-
-        #loadlvl(ent,path.join(w.levelname,"world"+wx+wy+".txt"))
     else:
         NewGame(w,True)
 
 def NewGame(w,skip=False):
         playername=w.playername
         levelpath=path.join(playername)
-        #ent=w.containing
         if path.isdir(playername):rmtree(playername)
         while path.isdir(playername):
             sleep(1)
         if not path.isdir(playername):
             w.levelname=levelpath
             mkdir(playername)
+            #generate quests file
+            f=open(path.join(playername,"que.sts"),'w');f.close()
             #mkdir(path.join(playername))
 
 #################################
@@ -532,7 +522,6 @@ class Log(TextHolder):
         self.textY=4
 
     def update(self,surf):
-
         if len(self.world.logtext)>0:
             for f in self.world.logtext:
                 self.drawntext.append(self.world.logtext[0])
@@ -541,10 +530,8 @@ class Log(TextHolder):
                     pygame.draw.rect(surf,(self.ic),self.rect,0)
                     pygame.draw.rect(surf,(self.oc),self.rect,3)
                     self.drawntext=self.drawntext[1:]
-
             y=4
             a=0
-
             for f in self.drawntext:
 
                 wax=font.render(str("> "+self.drawntext[a]),0,(255,0,0),self.ic)

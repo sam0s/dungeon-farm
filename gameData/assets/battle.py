@@ -70,7 +70,7 @@ class Battle(object):
 
         #test player death
         if self.world.player.hp<=0:
-            self.world.game.ChangeState("menu")
+            self.world.game.state="menu"
 
 
 
