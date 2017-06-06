@@ -132,13 +132,15 @@ class EscMenu(object):
                 font.render("XP: "+str(self.world.player.xp)+"/"+str(self.world.player.nextxp),0,(255,255,255),(0,0,0)),
                 font.render("Skill Points: "+str(self.world.player.skillpoints),0,(0,0,0),(0,0,0)),
                 font.render("",0,(0,0,0),(0,0,0)),
-                font.render("",0,(0,0,0),(0,0,0)),
                 font.render("Attack Damage: "+str(self.world.player.atk),0,(255,255,255),(0,0,0)),
                 font.render("Move Speed: "+str(self.world.player.speed),0,(255,255,255),(0,0,0)),
-                font.render("Max Health: "+str(self.world.player.maxhp),0,(255,255,255),(0,0,0))
+                font.render("Max Health: "+str(self.world.player.maxhp),0,(255,255,255),(0,0,0)),
+                font.render("",0,(0,0,0),(0,0,0)),
+                font.render("Gold: "+str(self.world.player.gold),0,(255,255,255),(0,0,0)),
+                font.render("Kills: "+str(self.world.player.kills),0,(255,255,255),(0,0,0))
                 ]
                 if self.world.player.skillpoints>0:
-                    b[4]=font.render("Skill Points: "+str(self.world.player.skillpoints),0,(25,255,50),(0,0,0))
+                    b[3]=font.render("Skill Points: "+str(self.world.player.skillpoints),0,(25,255,50),(0,0,0))
                 for f in b:
                     self.surf.blit(f,(32,x*32))
                     x+=1

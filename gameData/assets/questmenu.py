@@ -18,8 +18,9 @@ from shutil import rmtree
 import dpylib as dl
 
 backDrop=pygame.image.load(path.join("images","paper.png")).convert()
-font = ui.LoadFont()
-font2 = ui.LoadFont(20)
+font = ui.LoadFont(17)
+font2 = ui.LoadFont(19)
+font3 = ui.LoadFont(38)
 class Menu(object):
     def __init__(self,surf):
         self.screen="quests"
@@ -27,21 +28,26 @@ class Menu(object):
         self.go=True
         self.drawn=False
         self.menuimg=backDrop
-        self.mainbuttons=[ui.Button(650,420,100,32,"Go Back",self.surf),ui.Button(650,90,100,32,"Check",self.surf)]
+        self.mainbuttons=[ui.Button(650,420,100,32,"Go Back",self.surf),ui.Button(650,372,100,32,"Check",self.surf)]
         self.qbuttons=[]
         self.good=False
     def Draw(self):
         if self.screen=="questDescr":
             if self.drawn==False:
                 self.surf.blit(self.menuimg,(0,0))
-                self.surf.blit(font2.render(self.selectedQuest.descr,0,(0,0,0)),(80,80))
+                self.surf.blit(font3.render(self.selectedQuest.name,0,(0,0,0)),(40,50))
+
+                y=55
+                for f in self.selectedQuest.descr:
+                    self.surf.blit(font2.render(f,0,(0,0,0)),(342,y))
+                    y+=25
+
                 x=0
-                y=120
+                y=99
                 for f in self.selectedQuest.req:
-                    self.surf.blit(font.render(self.selectedQuest.req[x],0,(0,0,0)),(80,y))
+                    self.surf.blit(font.render(self.selectedQuest.req[x],0,(0,0,0)),(42,y))
                     y+=25
                     x+=1
-
 
 
         if self.screen=="quests":
@@ -59,6 +65,7 @@ class Menu(object):
                         padding+=42
                 for f in self.qbuttons:
                     f.Update()
+                    
         self.game.ow.hudlog.update(self.game.ow.hudsurf)
         self.surf.blit(self.game.ow.hudsurf,(0,512))
         for f in self.mainbuttons:
@@ -98,44 +105,30 @@ class Menu(object):
             if e.type==QUIT:
                 self.game.go=False
 
-#QUESTS
+#QUESTS (sorry andrew)
 class Quest001(object):
     def __init__(self,game):
         self.game=game
-        self.name="Monster Hunter"
-        self.descr="Kill 3 monsters!"
-        self.reward=100
-        self.done=False
-        self.req=["Kill 3 monsters. [ ]"]
-
-        self.stages=1
-        self.stage=[0]
-
-    def check(self):
-        print self.game.player.kills
-        if self.game.player.kills>2 and self.done == False:
-            self.done=True
-            self.game.player.giveXp(self.reward)
-
-class Quest002(object):
-    def __init__(self,game):
-        self.game=game
-        self.name="Explorer"
-        self.descr="Explore, and do stuff!"
+        self.name="New Adventurer"
+        self.descr=["As a new adventurer, the quest-giver of",
+                    "Prospect has tasked you with finding ten ",
+                    "gold as well as slaying 5 monsters.",
+                    "",
+                    "Your reward is 150 experience points."]
         self.reward=150
         self.done=False
         self.req=["Find 10 gold. [ ]","Kill 5 monsters. [ ]"]
-        self.stages=2
         self.stage=[0,0]
     def check(self):
         print self.game.player.gold
-        if self.game.player.gold>9 & self.stage[0]==0:
+        if self.game.player.gold>9 and self.stage[0]==0:
             self.req[0]="Find 10 gold. [X]"
             self.stage[0]=1
-        if self.game.player.kills>4 & self.stage[1]==0:
+        if self.game.player.kills>4 and self.stage[1]==0:
             self.req[1]="Kill 5 monsters. [X]"
             self.stage[1]=1
-        if self.stage[0]==1 & self.stage[1]==1:
-            self.game.ow.logtext.append("Second Quest completed! You gain 100 experience points.")
+        if self.stage[0]==1 and self.stage[1]==1 and self.done==False:
+            self.game.ow.logtext.append("New Adventurer quest completed!")
+            self.game.ow.logtext.append("You gain 100 experience points.")
             self.done=True
             self.game.player.giveXp(self.reward)

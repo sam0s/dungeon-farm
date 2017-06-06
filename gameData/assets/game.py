@@ -48,7 +48,7 @@ class Game(object):
         #questhandler and questmenu
         self.qm=questmenu.Menu(self.surf)
         self.qm.game=self
-        self.qm.quests=[questmenu.Quest001(self),questmenu.Quest002(self)]
+        self.qm.quests=[questmenu.Quest001(self)]
 
     def Update(self,dt):
         self.events=pygame.event.get()

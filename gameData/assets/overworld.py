@@ -34,6 +34,9 @@ class Overworld(object):
         self.game=None
         self.overworldimg=overworldimage
 
+        self.level5questsP=["New Adventurer","quest1","quest2","quest3","Monster Hunter 1"]
+        self.qbuttons=[]
+
         self.locationbuttons=[ui.Button(147,96,100,32,"Prospect",self.surf),
                     ui.Button(170,410,100,32,"Fairfield",self.surf),
                     ui.Button(459,37,100,32,"Norfolk",self.surf)]
@@ -42,6 +45,7 @@ class Overworld(object):
                              font.render("Welcome to Fairfield",0,(255,255,255),(0,0,0)),
                              font.render("Welcome to Norfolk",0,(255,255,255),(0,0,0)),
                              font.render("Select a dungeon",0,(255,255,255),(0,0,0)),
+                             font.render("Click a quest to activate it",0,(255,255,255),(0,0,0))
                             ]
 
         self.townbuttons=[ui.Button(510,50,220,32,"View the quest board",self.surf),
@@ -81,7 +85,24 @@ class Overworld(object):
                 self.surf.blit(self.locationtitles[3],(25,25))
                 for b in self.cavebuttons[0:3]:
                     b.Update()
-                #if self.town=="Prospect":
+                self.drawn=True
+        if self.screen=="questboard":
+            if self.drawn==False:
+                self.surf.fill((0,0,0))
+                self.surf.blit(self.locationtitles[4],(25,25))
+                self.qbuttons=[]
+                padding=0
+                if self.townIndex==0:
+                    for f in self.level5questsP:
+                        self.qbuttons.append(ui.Button(100,60+padding,200,32,f,self.surf))
+                        padding+=42
+                for f in self.qbuttons:
+                    f.Update()
+
+
+
+
+                self.townbuttons[3].Update()
                 self.drawn=True
 
         #OVERWORLD SCREEN
@@ -130,9 +151,12 @@ class Overworld(object):
                             if b.text=="View nearby dungeons":
                                 self.screen="cave"
                                 self.drawn=False
+                            if b.text=="View the quest board":
+                                self.screen="questboard"
+                                self.drawn=False
 
                 #CAVE SELECTION
-                if self.screen=="cave":
+                if self.screen=="cave" or self.screen=="questboard":
                     if self.townbuttons[3].rect.collidepoint(e.pos):
                         self.screen="town"
                         self.drawn=False

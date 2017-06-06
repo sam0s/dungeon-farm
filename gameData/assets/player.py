@@ -69,7 +69,7 @@ class Player(object):
         self.changex = float(self.rect.x)
         self.changey = float(self.rect.y)
 
-    def setAttrs(self,level,xp,nextxp,hp,maxhp,atk,gold,movespeed):
+    def setAttrs(self,level,xp,nextxp,hp,maxhp,atk,gold,movespeed,kills):
         self.hp=int(hp)
         self.maxhp=int(maxhp)
         self.level=int(level)
@@ -78,6 +78,7 @@ class Player(object):
         self.nextxp=int(nextxp)
         self.gold=int(gold)
         self.speed=int(movespeed)
+        self.kills=int(kills)
 
     def giveItem(self,item):
         if len(self.inventory)==72:

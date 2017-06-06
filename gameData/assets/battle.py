@@ -57,6 +57,7 @@ class Battle(object):
             self.world.logtext.append("Enemy Slain! "+"You gain "+str(xpgive)+" experience points.")
             self.world.player.giveXp(xpgive)
             self.world.battle=False
+            self.world.player.kills+=1
             self.world.ChangeState("game")
             self.world.ReDraw()
 
