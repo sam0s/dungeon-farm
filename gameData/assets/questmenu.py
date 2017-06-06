@@ -42,12 +42,12 @@ class Menu(object):
                     self.surf.blit(font2.render(f,0,(0,0,0)),(342,y))
                     y+=25
 
-                x=0
                 y=99
-                for f in self.selectedQuest.req:
-                    self.surf.blit(font.render(self.selectedQuest.req[x],0,(0,0,0)),(42,y))
+                for t in self.selectedQuest.tasks:
+                    descr = "[X] " if t.completed else "[ ] "
+                    descr += t.descr()
+                    self.surf.blit(font.render(descr,0,(0,0,0)),(42,y))
                     y+=25
-                    x+=1
 
 
         if self.screen=="quests":
@@ -60,7 +60,7 @@ class Menu(object):
                 self.drawn=True
                 padding=0
                 for f in self.quests:
-                    if f.done==False:
+                    if not f.completed():
                         self.qbuttons.append(ui.Button(100,60+padding,200,32,f.name,self.surf))
                         padding+=42
                 for f in self.qbuttons:
@@ -87,12 +87,13 @@ class Menu(object):
                                 self.screen="questDescr"
                                 self.drawn=False
                                 self.selectedQuest=self.quests[self.qbuttons.index(b)]
+                                self.selectedQuest.check(self.game)
                 for b in self.mainbuttons:
                     if b.rect.collidepoint(e.pos):
                         if b.text=="Check":
                             self.drawn=False
                             for f in self.quests:
-                                f.check()
+                                f.check(self.game)
                         else:
                             if self.screen=="quests":
                                 self.drawn=False
@@ -105,30 +106,106 @@ class Menu(object):
             if e.type==QUIT:
                 self.game.go=False
 
-#QUESTS (sorry andrew)
-class Quest001(object):
-    def __init__(self,game):
-        self.game=game
-        self.name="New Adventurer"
-        self.descr=["As a new adventurer, the quest-giver of",
+
+class Quest(object):
+    def __init__(self, name, descr, active=False, tasks=[], rewards=[]):
+        self.name = name
+        self.descr = descr
+        self.active = active
+        self.tasks = tasks
+        self.rewards = rewards
+
+    def addTasks(self, *tasks):
+        # Allow single or list of tasks
+        self.tasks.extend(tasks)
+
+    def addRewards(self, *rewards):
+        self.rewards.extend(rewards)
+
+    def check(self, game):
+        if self.active:
+            for t in self.tasks:
+                t.check(game)
+
+        # TODO: Game logic should be controlling when quests get rewarded
+        # instead of doing it instantly.
+        return self.reward(game)
+
+    def completed(self):
+        # Only check `completed` attribute instead of running full check.
+        for t in self.tasks:
+            if not t.completed:
+                return False
+        return True
+
+    def reward(self, game):
+        if not self.active or not self.completed():
+            return False
+
+        game.ow.logtext.append("%s quest completed!" % self.name)
+
+        # Only handle XP rewards for now
+        xp = 0
+        xp += sum(self.rewards)
+        game.player.giveXp(xp)
+        game.ow.logtext.append("You gain %d experience points." % xp)
+        self.active = False
+        return True
+
+
+class Task(object):
+    """
+    Task Baseclass
+    Used this as a start to all other Tasks Types.
+    """
+    def __init__(self):
+        self.completed = False
+
+    def check(self, game):
+        return self.completed
+
+    def descr(self):
+        return "[Empty Task]"
+
+
+class PlayerPropTask(Task):
+    """
+    Task allowing to check if a certain Player property has reached a certain value.
+    """
+    def __init__(self, format, prop, count):
+        Task.__init__(self)
+        self.format = format
+        self.prop = prop
+        self.count = count
+
+    def check(self, game):
+        print "Checking player.%s(%d) > %d" % (self.prop, getattr(game.player, self.prop), self.count)
+        self.completed = getattr(game.player, self.prop) >= self.count
+        return self.completed
+
+    def descr(self):
+        return self.format.format(prop=self.prop, count=self.count)
+
+
+##########################################################################
+# SAMPLE QUESTS
+
+QUEST_001 = Quest("New Adventurer",
+                  ["As a new adventurer, the quest-giver of",
                     "Prospect has tasked you with finding ten ",
                     "gold as well as slaying 5 monsters.",
                     "",
-                    "Your reward is 150 experience points."]
-        self.reward=150
-        self.done=False
-        self.req=["Find 10 gold. [ ]","Kill 5 monsters. [ ]"]
-        self.stage=[0,0]
-    def check(self):
-        print self.game.player.gold
-        if self.game.player.gold>9 and self.stage[0]==0:
-            self.req[0]="Find 10 gold. [X]"
-            self.stage[0]=1
-        if self.game.player.kills>4 and self.stage[1]==0:
-            self.req[1]="Kill 5 monsters. [X]"
-            self.stage[1]=1
-        if self.stage[0]==1 and self.stage[1]==1 and self.done==False:
-            self.game.ow.logtext.append("New Adventurer quest completed!")
-            self.game.ow.logtext.append("You gain 100 experience points.")
-            self.done=True
-            self.game.player.giveXp(self.reward)
+                    "Your reward is 150 experience points."], True)
+QUEST_001.addTasks(PlayerPropTask("Find {count} {prop}.", 'gold', 5),
+                   PlayerPropTask("Kill {count} monsters.", 'kills', 3))
+QUEST_001.addRewards(100)
+
+QUEST_002 = Quest("Become Stronger",
+                  ["Gain experience to become stronger.",
+                   "Reach Level 5 and your reward will be",
+                   "500 more experience points."],
+                   active=True,
+                   tasks=[PlayerPropTask("Reach Level {count}", 'level', 5)],
+                   rewards=[500]
+)
+
