@@ -288,11 +288,10 @@ class EscMenu(object):
                         if not self.world.battle:
                             #self.drawn=0
                             if b.text=="Leave":
-                                dl.savelvl(self.world)
+                                dl.savelvl(self.world.game)
                                 self.world.game.state="overworld"
                                 self.world.state="game"
                                 #dl.savelvl(self.world.containing,self.world.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt",self.world)
-
                             if b.text=="Map":
                                 self.created=0
                                 self.tab="map"

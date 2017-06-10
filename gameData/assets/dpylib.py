@@ -42,7 +42,8 @@ enemyImage.set_colorkey((0,255,0))
 #################################
 
 #save game
-def savelvl(world):
+def savelvl(game):
+    world=game.gw
     ents=world.containing
     loc=path.join(world.levelname,"world"+str(world.pos[0])+str(world.pos[1])+".txt")
     if world:
@@ -142,12 +143,12 @@ def changelevel(w):
 
     if path.isfile(loc):
         loadlvl(w.containing,loc)
-        savelvl(w)
+        savelvl(w.game)
     else:
         fill(w.containing)
         carve(w.containing)
         doors(w.containing)
-        savelvl(w)
+        savelvl(w.game)
 
 #carve out the level
 def carve(ents):

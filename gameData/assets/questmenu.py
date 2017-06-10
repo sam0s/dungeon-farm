@@ -28,9 +28,10 @@ class Menu(object):
         self.go=True
         self.drawn=False
         self.menuimg=backDrop
-        self.mainbuttons=[ui.Button(650,420,100,32,"Go Back",self.surf),ui.Button(650,372,100,32,"Check",self.surf)]
+        self.mainbuttons=[ui.Button(650,420,100,32,"Go Back",self.surf)]
         self.qbuttons=[]
         self.good=False
+        self.completedQuests=[]
     def Draw(self):
         if self.screen=="questDescr":
             if self.drawn==False:
@@ -60,14 +61,14 @@ class Menu(object):
                 self.drawn=True
                 padding=0
                 for f in self.quests:
-                    if not f.completed():
-                        self.qbuttons.append(ui.Button(100,60+padding,200,32,f.name,self.surf))
-                        padding+=42
+                    self.qbuttons.append(ui.Button(100,60+padding,200,32,f.name,self.surf))
+                    padding+=42
                 for f in self.qbuttons:
                     f.Update()
-                    
+
         self.game.ow.hudlog.update(self.game.ow.hudsurf)
         self.surf.blit(self.game.ow.hudsurf,(0,512))
+
         for f in self.mainbuttons:
             f.Update()
         for e in self.game.events:
@@ -88,21 +89,19 @@ class Menu(object):
                                 self.drawn=False
                                 self.selectedQuest=self.quests[self.qbuttons.index(b)]
                                 self.selectedQuest.check(self.game)
+                                if self.selectedQuest.active==False:
+                                    self.quests.pop(self.quests.index(self.selectedQuest))
+                                    self.completedQuests.append(self.selectedQuest)
                 for b in self.mainbuttons:
                     if b.rect.collidepoint(e.pos):
-                        if b.text=="Check":
+                        if self.screen=="quests":
                             self.drawn=False
-                            for f in self.quests:
-                                f.check(self.game)
+                            self.good=False
+                            self.game.ow.good=True
+                            self.game.state="overworld"
                         else:
-                            if self.screen=="quests":
-                                self.drawn=False
-                                self.good=False
-                                self.game.ow.good=True
-                                self.game.state="overworld"
-                            else:
-                                self.drawn=False
-                                self.screen="quests"
+                            self.drawn=False
+                            self.screen="quests"
             if e.type==QUIT:
                 self.game.go=False
 
@@ -186,6 +185,25 @@ class PlayerPropTask(Task):
     def descr(self):
         return self.format.format(prop=self.prop, count=self.count)
 
+class PlayerItemTask(Task):
+    """
+    Task allowing to check if a certain Player has found a certain item(s).
+    """
+    def __init__(self, format, item, count):
+        Task.__init__(self)
+        self.format = format
+        self.item = item
+        self.count = count
+
+    def check(self, game):
+        print "Checking player's items for "+self.item
+        for f in game.player.inventory:
+            print f.name
+        return self.completed
+
+    def descr(self):
+        return self.format.format(item=self.item, count=self.count)
+
 
 ##########################################################################
 # SAMPLE QUESTS
@@ -200,7 +218,16 @@ QUEST_001.addTasks(PlayerPropTask("Find {count} {prop}.", 'gold', 5),
                    PlayerPropTask("Kill {count} monsters.", 'kills', 3))
 QUEST_001.addRewards(100)
 
-QUEST_002 = Quest("Become Stronger",
+QUEST_002 = Quest("Find Gabe",
+                 ["A man has posted about a missing friend",
+                 "you are tasked with finding his lost",
+                 "friend in prospects 2nd dungeon.",
+                 "",
+                 "Your reward is 25 gold, and also",
+                 "100 expereince points."],active=True,tasks=[PlayerItemTask("Find {item}.", 'gabe', 1)],rewards=[100])
+
+
+QUEST_003 = Quest("Become Stronger",
                   ["Gain experience to become stronger.",
                    "Reach Level 5 and your reward will be",
                    "500 more experience points."],
@@ -208,4 +235,3 @@ QUEST_002 = Quest("Become Stronger",
                    tasks=[PlayerPropTask("Reach Level {count}", 'level', 5)],
                    rewards=[500]
 )
-

@@ -82,7 +82,7 @@ class World(object):
         self.trans=False
 
     def Close(self,save=True):
-        dl.savelvl(self)
+        dl.savelvl(self.game)
         self.game.go=False
     def SetPlayer(self,name):
         self.playername=name
@@ -200,7 +200,7 @@ class World(object):
         self.containing.draw(self.old)
 
         #self.esc.created=0
-        dl.savelvl(self)
+        dl.savelvl(self.game)
         if d=='n':
             self.pos=[self.pos[0],self.pos[1]-1]
             self.player.prev[1]=self.player.changey=self.player.moveto[1]=self.player.rect.y=448
