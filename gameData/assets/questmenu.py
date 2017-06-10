@@ -38,12 +38,12 @@ class Menu(object):
                 self.surf.blit(self.menuimg,(0,0))
                 self.surf.blit(font3.render(self.selectedQuest.name,0,(0,0,0)),(40,50))
 
-                y=55
+                y=90
                 for f in self.selectedQuest.descr:
                     self.surf.blit(font2.render(f,0,(0,0,0)),(342,y))
                     y+=25
 
-                y=99
+                y=120
                 for t in self.selectedQuest.tasks:
                     descr = "[X] " if t.completed else "[ ] "
                     descr += t.descr()
@@ -197,8 +197,13 @@ class PlayerItemTask(Task):
 
     def check(self, game):
         print "Checking player's items for "+self.item
+
+        c=0
         for f in game.player.inventory:
-            print f.name
+            if f.name==self.item:
+                c+=1
+        self.completed=c>=self.count
+
         return self.completed
 
     def descr(self):
@@ -227,11 +232,11 @@ QUEST_002 = Quest("Find Gabe",
                  "100 expereince points."],active=True,tasks=[PlayerItemTask("Find {item}.", 'gabe', 1)],rewards=[100])
 
 
-QUEST_003 = Quest("Become Stronger",
-                  ["Gain experience to become stronger.",
-                   "Reach Level 5 and your reward will be",
-                   "500 more experience points."],
+QUEST_003 = Quest("The world is your oyster",
+                  ["They say the worlds your oyster.",
+                   "But oysters ain't for you.",
+                   "Find an apple."],
                    active=True,
-                   tasks=[PlayerPropTask("Reach Level {count}", 'level', 5)],
-                   rewards=[500]
+                   tasks=[PlayerItemTask("Find an {item}", 'apple', 1)],
+                   rewards=[50]
 )
