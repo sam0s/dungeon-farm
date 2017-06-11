@@ -11,7 +11,9 @@ __credits__ = []
 import pygame
 from os import path
 
-itemsheet = pygame.image.load(path.join("images","item.png")).convert()
+itemsheet = pygame.image.load(path.join("images","itemF.png")).convert()
+itemsheetWeapon = pygame.image.load(path.join("images","itemW.png")).convert()
+itemsheetQuest = pygame.image.load(path.join("images","itemQ.png")).convert()
 
 class Item:
     def __init__(self):
@@ -19,12 +21,31 @@ class Item:
     def setContainer(self,setpc):
         self.parentContain=setpc
     def setName(self, name):
-        self.name = name
+        self.Subname = name
     def destroy(self):
         self.parent.inventory.remove(self)
 
 #TYPES
 
+#QUEST
+class Gabe(Item):
+    def __init__(self,setp,setpc=None):
+        self.parent=setp
+        self.parentContain=setpc
+        self.itemType="quest"
+        self.name="gabe"
+
+        self.id = 100
+
+        self.val = 0
+        self.consumeVal = 0
+        self.ad = 0
+        self.ap = 0
+        self.weight = 1
+
+        self.stack=1
+
+        self.image = itemsheetQuest.subsurface(pygame.Rect(0*26, 0, 26, 26)).convert()
 
 #WEAPON
 class Dirk(Item):
@@ -34,7 +55,7 @@ class Dirk(Item):
         self.itemType="weapon"
         self.name="dirk"
 
-        self.id = 0
+        self.id = 200
 
         self.val = 15
         self.consumeVal = 0
@@ -44,7 +65,7 @@ class Dirk(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
+        self.image = itemsheetWeapon.subsurface(pygame.Rect(0*26, 0, 26, 26)).convert()
 
 class Sword(Item):
     def __init__(self,setp,setpc=None):
@@ -53,7 +74,7 @@ class Sword(Item):
         self.itemType="weapon"
         self.name="sword"
 
-        self.id = 8
+        self.id = 201
 
         self.val = 25
         self.consumeVal = 0
@@ -63,7 +84,7 @@ class Sword(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
+        self.image = itemsheetWeapon.subsurface(pygame.Rect(1*26, 0, 26, 26)).convert()
 
 #EAT
 class Bread(Item):
@@ -83,7 +104,7 @@ class Bread(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
+        self.image = itemsheet.subsurface(pygame.Rect(1*26, 0, 26, 26)).convert()
 
 
 
@@ -104,7 +125,7 @@ class Apple(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
+        self.image = itemsheet.subsurface(pygame.Rect(2*26, 0, 26, 26)).convert()
 
 
 class Pizza(Item):
@@ -124,7 +145,7 @@ class Pizza(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
+        self.image = itemsheet.subsurface(pygame.Rect(3*26, 0, 26, 26)).convert()
 
 class Cheese(Item):
     def __init__(self,setp,setpc=None):
@@ -143,7 +164,7 @@ class Cheese(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
+        self.image = itemsheet.subsurface(pygame.Rect(4*26, 0, 26, 26)).convert()
 
 class Fish(Item):
     def __init__(self,setp,setpc=None):
@@ -162,7 +183,7 @@ class Fish(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
+        self.image = itemsheet.subsurface(pygame.Rect(5*26, 0, 26, 26)).convert()
 
 
 class HealthPot(Item):
@@ -182,13 +203,9 @@ class HealthPot(Item):
 
         self.stack=1
 
-        self.image = itemsheet.subsurface(pygame.Rect(self.id*26, 0, 26, 26)).convert()
+        self.image = itemsheet.subsurface(pygame.Rect(6*26, 0, 26, 26)).convert()
 
 def fromId(idn,parent,justname=False):
-    if idn==0:
-        if not justname:
-            return Dirk(parent)
-        return "Dirk"
     if idn==1:
         if not justname:
             return Bread(parent)
@@ -213,7 +230,15 @@ def fromId(idn,parent,justname=False):
         if not justname:
             return HealthPot(parent)
         return "Health Potion"
-    if idn==8:
+    if idn==200:
+        if not justname:
+            return Dirk(parent)
+        return "Dirk"
+    if idn==201:
         if not justname:
             return Sword(parent)
         return "Sword"
+    if idn==100:
+        if not justname:
+            return Gabe(parent)
+        return "Gabe"

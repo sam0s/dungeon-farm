@@ -98,10 +98,6 @@ class Overworld(object):
                         padding+=42
                 for f in self.qbuttons:
                     f.Update()
-
-
-
-
                 self.townbuttons[3].Update()
                 self.drawn=True
 

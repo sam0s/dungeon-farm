@@ -232,34 +232,17 @@ def fill(ents):
 
 #create doors on each side of the room
 def doors(ents):
-    x=384
-    y=224
-    while x<900:
-        x+=32
-        rect = pygame.Rect(x,y,2,2)
-        for ff in ents:
-            if rect.colliderect(ff.rect):
-                ents.remove(ff)
-    while x>-200:
-        x-=32
-        rect = pygame.Rect(x,y,2,2)
-        for ff in ents:
-            if rect.colliderect(ff.rect):
-                ents.remove(ff)
+    #killhor
+    rect = pygame.Rect(-5,224,900,2)
+    for ff in ents:
+        if rect.colliderect(ff.rect):
+            ents.remove(ff)
 
-    x=384
-    while y<900:
-        y+=32
-        rect = pygame.Rect(x,y,2,2)
-        for ff in ents:
-            if rect.colliderect(ff.rect):
-                ents.remove(ff)
-    while y>-900:
-        y-=32
-        rect = pygame.Rect(x,y,2,2)
-        for ff in ents:
-            if rect.colliderect(ff.rect):
-                ents.remove(ff)
+    #killvert
+    rect = pygame.Rect(384,-5,2,900)
+    for ff in ents:
+        if rect.colliderect(ff.rect):
+            ents.remove(ff)
 
     ents.add(Door(768,224))
     ents.add(Door(384,480))

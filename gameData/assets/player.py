@@ -50,7 +50,6 @@ class Player(object):
         self.speed=70
         self.maxhp=100
 
-
         self.player_anim = AnimationSet(path.join("images", "player_14.png"), (16, 24))
         self.player_anim.addAnim("walk_down", 0, 3)
         self.player_anim.addAnim("walk_right", 4, 7)
@@ -165,8 +164,9 @@ class Player(object):
                                        +([2]*15)
                                        +([3]*14)
                                        +([4]*13)
-                                       +([5]*5)
-                                       +([8]*2)
+                                       +([5]*8)
+                                       +([6]*4)
+                                       +([201]*2)
                                        )
                         self.giveItem(items.fromId(randomitem,self))
                         self.world.logtext.append("You found "+items.fromId(randomitem,None,True))

@@ -201,6 +201,7 @@ class PlayerItemTask(Task):
         c=0
         for f in game.player.inventory:
             if f.name==self.item:
+                game.player.inventory.pop(game.player.inventory.index(f))
                 c+=1
         self.completed=c>=self.count
 

@@ -55,9 +55,9 @@ class EscMenu(object):
         self.invbuttons=[ui.Button(500,430,100,32,"Drop",self.surf),
                             ui.Button(500,385,100,32,"Use",self.surf)]
 
-        self.levelbuttons=[ui.Button(150,188,16,16,"+",self.surf),
-                            ui.Button(150,220,16,16,"+",self.surf),
-                            ui.Button(150,252,16,16,"+",self.surf)]
+        self.levelbuttons=[ui.Button(150,158,16,16,"+",self.surf),
+                            ui.Button(150,190,16,16,"+",self.surf),
+                            ui.Button(150,222,16,16,"+",self.surf)]
 
 
         self.invx=0
