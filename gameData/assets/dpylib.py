@@ -20,6 +20,8 @@ from time import sleep
 from os import path,mkdir
 from ui import LoadFont
 
+from Queue import PriorityQueue
+
 pygame.init()
 font = LoadFont()
 
@@ -255,70 +257,6 @@ def doors(ents):
     ents.add(Door(384,0))
     ents.add(Door(0,224))
 
-#varition of A* pathfinding
-def findpath(s,e,world):
-    #world.drawPath.empty()
-    s=[s[0],s[1]]
-    e=[e[0],e[1]]
-
-    dontuse=[[s[0],s[1]]]
-    movelist=[]
-
-    current=[s[0],s[1]]
-
-    t=Pathfinder(world.mse32[0],world.mse32[1],world,1,e)
-    if len(pygame.sprite.spritecollide(t,world.containing,False))>0:
-        if pygame.sprite.spritecollide(t,world.containing,False)[0].name=="wall":
-            #world.drawPath.empty()
-            movelist=[[s[0],s[1]]]
-            return movelist
-    if e[1]>620:
-        movelist=[[s[0],s[1]]]
-        return movelist
-
-    #YOU ARE A*
-    ds=0
-    while current != e:
-
-        ds+=1
-        u=Pathfinder(current[0],current[1]-32,world,ds,e)
-        d=Pathfinder(current[0],current[1]+32,world,ds,e)
-        l=Pathfinder(current[0]-32,current[1],world,ds,e)
-        r=Pathfinder(current[0]+32,current[1],world,ds,e)
-        #world.drawPath.add(u);world.drawPath.add(d);world.drawPath.add(l);world.drawPath.add(r)
-        scores=[u,d,l,r]
-        scoresnum=[]
-
-        #SIFT REAL GOOD
-        if len(pygame.sprite.spritecollide(u,world.containing,False))>0:
-            if pygame.sprite.spritecollide(u,world.containing,False)[0].name=="wall":scores.pop(scores.index(u));#world.drawPath.remove(u)
-        if len(pygame.sprite.spritecollide(d,world.containing,False))>0:
-            if pygame.sprite.spritecollide(d,world.containing,False)[0].name=="wall":scores.pop(scores.index(d));#world.drawPath.remove(d)
-        if len(pygame.sprite.spritecollide(l,world.containing,False))>0:
-            if pygame.sprite.spritecollide(l,world.containing,False)[0].name=="wall":scores.pop(scores.index(l));#world.drawPath.remove(l)
-        if len(pygame.sprite.spritecollide(r,world.containing,False))>0:
-            if pygame.sprite.spritecollide(r,world.containing,False)[0].name=="wall":scores.pop(scores.index(r));#world.drawPath.remove(r)
-
-        if [u.rect.x,u.rect.y] in dontuse:scores.pop(scores.index(u));#world.drawPath.remove(u)
-        if [d.rect.x,d.rect.y] in dontuse:scores.pop(scores.index(d));#world.drawPath.remove(d)
-        if [l.rect.x,l.rect.y] in dontuse:scores.pop(scores.index(l));#world.drawPath.remove(l)
-        if [r.rect.x,r.rect.y] in dontuse:scores.pop(scores.index(r));#world.drawPath.remove(r)
-        print scores
-        if len(scores)==0:
-            #world.drawPath.empty()
-            movelist=[[s[0],s[1]]]
-            return movelist
-
-        for f in scores:
-            scoresnum.append(f.score)
-        for f in scores:
-            if f.score==min(scoresnum):
-                current=[f.rect.x,f.rect.y]
-                dontuse.append(current)
-        movelist.append(current)
-        if len(movelist)>5:
-            return movelist
-    return movelist
 
 #manhattan distance calculator
 def mdistance(s,e):
@@ -412,33 +350,157 @@ class TextHolder(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
-#Used for pathfinding
-class Pathfinder(Entity):
-    def __init__(self,x,y,world,ds,e):
-        Entity.__init__(self)
-        self.name = "pfinder"
-        self.image = Surface((32,32))
-        self.image.convert()
-        self.image.fill((255,25,25))
-        self.rect = Rect(x,y,32,32)
-        self.world=world
+class PathNode:
+    """
+    Linked node representing a single movement in the pathfinding space.
+    PathNode can be extended to provide different Cost and Fitness calculations.
+    """
+    MAX_FITNESS = 500
 
-        #destination
-        self.ending=e
+    def __init__(self, pos, prev_node, end_node):
+        self.rect = pygame.Rect(pos[0], pos[1], 32, 32)
+        self.prev = prev_node
+        self.cost = self.calcCost(prev_node.rect.topleft, pos) + prev_node.cost if prev_node else 0
+        self.fit = self.calcFitness(pos, end_node.rect.topleft) if end_node else PathNode.MAX_FITNESS
 
-        #distance from start
-        self.ds=ds
+    def __cmp__(self, other):
+        if self.rect.topleft == other.rect.topleft:
+            return 0
+        return cmp(self.fit, other.fit)
 
-        #distance to destination
-        self.de=mdistance((self.rect.x,self.rect.y),e)
+    def __hash__(self):
+        return hash(self.rect.topleft)
 
-        #A* score
-        self.score=self.ds+self.de
+    def __repr__(self):
+        return "PathNode[%d] <%s> ->[%d] %d, %d" % (id(self), self.rect.topleft, id(self.prev), self.cost, self.fit)
 
-    def update(self):
-        s=font.render(str(self.score),0,(255,255,255),(0,0,0))
-        pygame.draw.rect(self.world.surf,(255,0,0),(self.rect.x,self.rect.y,32,32),1)
-        self.world.surf.blit(s,(self.rect.x+16,self.rect.y+16))
+    def calcCost(self, start, end):
+        return mdistance(start, end)
+
+    def calcFitness(self, start, end):
+        return mdistance(start, end) + self.cost
+
+
+class PathFinder:
+    """
+    An iterative path finder using the A* algorithm.
+    An alternative Node Class can be specified to change the Fitness/Cost calculations.
+
+    """
+
+    def __init__(self, world, start, end, node_class=PathNode):
+        print "PathFinder(%s, %s)" % (start, end)
+        self.world = world
+        self.nclass = node_class
+        self.enode = node_class(end, None, None)
+        self.snode = node_class(start, None, self.enode)
+        self.closed = {}
+        self.opened = {}
+        self.sort = PriorityQueue()
+        self.last = None
+        self.nsteps = 0
+        self.path = None
+
+        # End node can't be a wall
+        c = pygame.sprite.spritecollide(self.enode, world.containing, False)
+        if c and c[0].name == "wall":
+            self.path = [start]
+            return self.path
+
+        # Place start into open set
+        self.opened[self.snode] = self.snode
+        self.sort.put(self.snode)
+
+    def processPath(self, steps=-1):
+        # Check for solved path
+        if self.path:
+            return self.path
+
+        current = None
+        while steps != 0:
+            if self.sort.empty():
+                # Failed path points to start
+                self.path = [self.snode.rect.topleft]
+                break
+
+            self.nsteps += 1
+            steps -= 1
+
+            current = self.sort.get()
+            print "Pop[%d,%d] %s" % (self.sort.qsize(), len(self.opened), current)
+            if current == self.enode:
+                return self._constructPath(current)
+
+            del self.opened[current]
+            self.closed[current] = current
+            nexts = (
+                self.nclass((current.rect.left, current.rect.top-32), current, self.enode),
+                self.nclass((current.rect.left+32, current.rect.top), current, self.enode),
+                self.nclass((current.rect.left, current.rect.top+32), current, self.enode),
+                self.nclass((current.rect.left-32, current.rect.top), current, self.enode),
+            )
+
+            for n in nexts:
+                if n in self.closed:
+                    continue
+
+                c = pygame.sprite.spritecollide(n, self.world.containing, False)
+                if c and c[0].name == "wall":
+                    # Add walls to closed list to avoid checking them later
+                    #print "\tWall %s" % n
+                    self.closed[n] = n
+                    continue
+
+                m = self.opened.get(n, None)
+                if not m:
+                    # Add new node
+                    #print "\tAdding %s" % n
+                    self.opened[n] = n
+                    self.sort.put(n)
+                    continue
+                else:
+                    print "\tExisting %s as %s" % (n, m)
+
+                if n.cost < m.cost:
+                    # Replace old node with better node
+                    print "\tReplacing %s with %s" % (m, n)
+                    m.prev, m.cost = n.prev, n.cost
+
+        self.last = current
+        return self.path
+
+    def draw(self, dsurf):
+        """ Debug rendering of PathFinder info. """
+        # Draw closed set
+        for n in self.closed:
+            pygame.draw.rect(dsurf, (255, 0, 0), n.rect, 1)
+
+        # Draw open set
+        for n in self.opened:
+            pygame.draw.rect(dsurf, (128, 128, 0), n.rect, 2)
+            fs = font.render(str(n.fit), 0, (255, 255, 255))
+            dsurf.blit(fs, n.rect)
+            fs = font.render(str(n.cost), 0, (128, 128, 128))
+            dsurf.blit(fs, n.rect.center)
+
+        if self.last:
+            pygame.draw.rect(dsurf, (0, 255, 0), self.last.rect, 3)
+
+
+    def update(self, steps=-1, dsurf=None):
+        res = self.processPath(steps)
+        if dsurf:
+            self.draw(dsurf)
+        return res
+
+    def _constructPath(self, end):
+        print "Constructing Path:"
+        self.path = []
+        while end.prev:
+            print end
+            self.path.insert(0, list(end.rect.topleft))
+            end = end.prev
+        return self.path
 
 
 class Pickup(Entity):

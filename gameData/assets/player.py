@@ -29,6 +29,7 @@ class Player(object):
         self.image.convert()
         self.rect = Rect(x,y,32,32)
         self.prev = self.moveto = [x,y]
+        self.pfinder = None
         self.movelist = []
         self.moving = False
         self.inventory = []
@@ -116,17 +117,24 @@ class Player(object):
             self.xp=self.xp-self.nextxp
             self.levelUp()
 
-
-
     def update(self):
         self.animator.render(self.world.surf, (self.rect.x+8,self.rect.y+4))
 
-        if not self.moving:
+        if self.pfinder:
+            # update/draw pathfinder process
+            # pass steps and render surf to `update` to enable debugging
+            self.pfinder.update()
+            if self.pfinder.path:
+                # pathfinder has finished!
+                self.movelist = self.pfinder.path
+                print "Path " + str(self.movelist)
+                self.moving=True
+                self.pfinder = None
+        elif not self.moving:
             self.prev=[self.rect.x,self.rect.y]
             if self.moveto!=self.prev:
-                self.movelist=dl.findpath(self.prev,self.moveto,self.world)
-                self.moving=True
-
+                #print "Not moving %s->%s" % (self.prev, self.moveto)
+                self.pfinder = dl.PathFinder(self.world, self.prev, self.moveto)
         else:
             #collision
             cl=pygame.sprite.spritecollide(self, self.world.containing, False)
