@@ -67,6 +67,12 @@ def savelvl(game):
         f.write(str(allstuff))
         f.close()
 
+        #save quests
+        f=open(path.join(world.playername,"que.sts"),'w')
+        for q in game.qm.quests:
+            f.write(str(q.id))
+        f.close()
+
         #save inventory
         f=open(path.join(world.playername,"inv.txt"),'w')
         itemNum=0

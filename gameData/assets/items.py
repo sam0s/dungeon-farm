@@ -10,28 +10,22 @@ __credits__ = []
 
 import pygame
 from os import path
+from random import choice
 
 itemsheet = pygame.image.load(path.join("images","itemF.png")).convert()
 itemsheetWeapon = pygame.image.load(path.join("images","itemW.png")).convert()
 itemsheetQuest = pygame.image.load(path.join("images","itemQ.png")).convert()
 
+
 class Item:
     def __init__(self):
         self.stack=1
-    def setContainer(self,setpc):
-        self.parentContain=setpc
-    def setName(self, name):
-        self.Subname = name
-    def destroy(self):
-        self.parent.inventory.remove(self)
 
 #TYPES
 
 #QUEST
 class Gabe(Item):
-    def __init__(self,setp,setpc=None):
-        self.parent=setp
-        self.parentContain=setpc
+    def __init__(self):
         self.itemType="quest"
         self.name="gabe"
 
@@ -49,9 +43,7 @@ class Gabe(Item):
 
 #WEAPON
 class Dirk(Item):
-    def __init__(self,setp,setpc=None):
-        self.parent=setp
-        self.parentContain=setpc
+    def __init__(self):
         self.itemType="weapon"
         self.name="dirk"
 
@@ -68,9 +60,7 @@ class Dirk(Item):
         self.image = itemsheetWeapon.subsurface(pygame.Rect(0*26, 0, 26, 26)).convert()
 
 class Sword(Item):
-    def __init__(self,setp,setpc=None):
-        self.parent=setp
-        self.parentContain=setpc
+    def __init__(self):
         self.itemType="weapon"
         self.name="sword"
 
@@ -88,9 +78,7 @@ class Sword(Item):
 
 #EAT
 class Bread(Item):
-    def __init__(self,setp,setpc=None):
-        self.parent=setp
-        self.parentContain=setpc
+    def __init__(self):
         self.itemType="food"
 
         self.id=1
@@ -109,9 +97,7 @@ class Bread(Item):
 
 
 class Apple(Item):
-    def __init__(self,setp,setpc=None):
-        self.parent=setp
-        self.parentContain=setpc
+    def __init__(self):
         self.itemType="food"
 
         self.id=2
@@ -127,11 +113,8 @@ class Apple(Item):
 
         self.image = itemsheet.subsurface(pygame.Rect(2*26, 0, 26, 26)).convert()
 
-
 class Pizza(Item):
-    def __init__(self,setp,setpc=None):
-        self.parent=setp
-        self.parentContain=setpc
+    def __init__(self):
         self.itemType="food"
 
         self.id=3
@@ -148,9 +131,7 @@ class Pizza(Item):
         self.image = itemsheet.subsurface(pygame.Rect(3*26, 0, 26, 26)).convert()
 
 class Cheese(Item):
-    def __init__(self,setp,setpc=None):
-        self.parent=setp
-        self.parentContain=setpc
+    def __init__(self):
         self.itemType="food"
 
         self.id=4
@@ -167,9 +148,7 @@ class Cheese(Item):
         self.image = itemsheet.subsurface(pygame.Rect(4*26, 0, 26, 26)).convert()
 
 class Fish(Item):
-    def __init__(self,setp,setpc=None):
-        self.parent=setp
-        self.parentContain=setpc
+    def __init__(self):
         self.itemType="food"
 
         self.id=5
@@ -185,11 +164,8 @@ class Fish(Item):
 
         self.image = itemsheet.subsurface(pygame.Rect(5*26, 0, 26, 26)).convert()
 
-
-class HealthPot(Item):
-    def __init__(self,setp,setpc=None):
-        self.parent=setp
-        self.parentContain=setpc
+class HealthPotion(Item):
+    def __init__(self):
         self.itemType="food"
 
         self.id=6
@@ -205,40 +181,29 @@ class HealthPot(Item):
 
         self.image = itemsheet.subsurface(pygame.Rect(6*26, 0, 26, 26)).convert()
 
-def fromId(idn,parent,justname=False):
-    if idn==1:
-        if not justname:
-            return Bread(parent)
-        return "Bread"
-    if idn==2:
-        if not justname:
-            return Apple(parent)
-        return "Apple"
-    if idn==3:
-        if not justname:
-            return Pizza(parent)
-        return "Pizza"
-    if  idn==4:
-        if not justname:
-            return Cheese(parent)
-        return "Cheese"
-    if idn==5:
-        if not justname:
-            return Fish(parent)
-        return "Fish"
-    if idn==6:
-        if not justname:
-            return HealthPot(parent)
-        return "Health Potion"
-    if idn==200:
-        if not justname:
-            return Dirk(parent)
-        return "Dirk"
-    if idn==201:
-        if not justname:
-            return Sword(parent)
-        return "Sword"
-    if idn==100:
-        if not justname:
-            return Gabe(parent)
-        return "Gabe"
+def fromId(idn,parent=None,justname=False):
+    itemDict= {1:"Bread",
+               2:"Apple",
+               3:"Pizza",
+               4:"Cheese",
+               5:"Fish",
+               6:"Health Potion",
+               200:"Dirk",
+               201:"Sword",
+               100:"Gabe"
+               }
+    if not justname:
+        return eval(itemDict[idn]+"()")
+    return itemDict[idn]
+
+def randomItem():
+    #incorporate levels
+    randomIDN=choice(([1]*12) #bread
+                   +([2]*15) #apple
+                   +([3]*14) #pizza
+                   +([4]*13) #cheese
+                   +([5]*13) #fish
+                   +([6]*8) #hpot
+                   +([201]*4) #sword
+                   )
+    return fromId(randomIDN)

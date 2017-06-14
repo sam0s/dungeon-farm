@@ -32,7 +32,7 @@ class Player(object):
         self.movelist = []
         self.moving = False
         self.inventory = []
-        self.activeWeapon = [items.Dirk(self)]
+        self.activeWeapon = [items.Dirk()]
 
         self.changex = float(self.rect.x)
         self.changey = float(self.rect.y)
@@ -159,17 +159,10 @@ class Player(object):
                         if self.hp>self.maxhp:
                             self.hp=self.maxhp
                     if f.name=="randombox":
-                        #Give a random item from this here list !
-                        randomitem=choice(([1]*8)
-                                       +([2]*15)
-                                       +([3]*14)
-                                       +([4]*13)
-                                       +([5]*8)
-                                       +([6]*4)
-                                       +([201]*2)
-                                       )
-                        self.giveItem(items.fromId(randomitem,self))
-                        self.world.logtext.append("You found "+items.fromId(randomitem,None,True))
+                        #Give a random item
+                        item=items.randomItem()
+                        self.giveItem(item)
+                        self.world.logtext.append("You found "+item.name)
                         self.world.containing.remove(f)
 
                     self.world.ReDraw()

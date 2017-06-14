@@ -208,7 +208,7 @@ class EscMenu(object):
                                         self.world.player.hp+=item.consumeVal
                                         if self.world.player.hp>self.world.player.maxhp:self.world.player.hp=self.world.player.maxhp
                                         if item.stack==1:
-                                            self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
+                                            self.world.player.inventory.pop((self.invx+(self.invy)*12))
                                         else:
                                             item.stack-=1
                                     if item.itemType=="weapon":
@@ -220,15 +220,14 @@ class EscMenu(object):
                                             else:
                                                 self.world.player.giveItem(self.world.player.activeWeapon[0])
                                                 self.world.player.activeWeapon=[item]
-                                                self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
-
+                                                self.world.player.inventory.pop((self.invx+(self.invy)*12))
 
                                 if b.text=="Drop":
                                         #print "dropped item"
                                         if item.stack>1:
                                             item.stack-=1
                                         else:
-                                            self.world.player.inventory[(self.invx+(self.invy)*12)].destroy()
+                                            self.world.player.inventory.pop((self.invx+(self.invy)*12))
                             self.world.Draw(False)
 
 
