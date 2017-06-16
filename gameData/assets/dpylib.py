@@ -405,7 +405,6 @@ class PathFinder:
         c = pygame.sprite.spritecollide(self.enode, world.containing, False)
         if c and c[0].name == "wall":
             self.path = [start]
-            return self.path
 
         # Place start into open set
         self.opened[self.snode] = self.snode
