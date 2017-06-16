@@ -21,9 +21,8 @@ class Item:
     def __init__(self):
         self.stack=1
 
-#TYPES
-
-#QUEST
+####### QUEST ITEMS ##########
+###########################
 class Gabe(Item):
     def __init__(self):
         self.itemType="quest"
@@ -41,7 +40,8 @@ class Gabe(Item):
 
         self.image = itemsheetQuest.subsurface(pygame.Rect(0*26, 0, 26, 26)).convert()
 
-#WEAPON
+############ WEAPONS #######################
+##########################
 class Dirk(Item):
     def __init__(self):
         self.itemType="weapon"
@@ -76,7 +76,8 @@ class Sword(Item):
 
         self.image = itemsheetWeapon.subsurface(pygame.Rect(1*26, 0, 26, 26)).convert()
 
-#EAT
+## EAT ##
+#########
 class Bread(Item):
     def __init__(self):
         self.itemType="food"

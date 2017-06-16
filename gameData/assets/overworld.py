@@ -20,6 +20,9 @@ import dpylib as dl
 overworldimage=pygame.image.load(path.join("images","worldmap.png")).convert()
 font = ui.LoadFont()
 
+#MAKE OTHER TOWNS
+
+
 class Overworld(object):
     def __init__(self,surf):
         self.screen="main"
@@ -37,15 +40,17 @@ class Overworld(object):
         self.level5questsP=["New Adventurer","quest1","quest2","quest3","Monster Hunter 1"]
         self.qbuttons=[]
 
-        self.locationbuttons=[ui.Button(147,96,100,32,"Prospect",self.surf),
-                    ui.Button(170,410,100,32,"Fairfield",self.surf),
-                    ui.Button(459,37,100,32,"Norfolk",self.surf)]
+        self.locationbuttons=[ui.Button(65,146,100,32,"Prospect",self.surf),
+                    ui.Button(132,410,100,32,"Fairfield",self.surf),
+                    ui.Button(392,95,100,32,"Norfolk",self.surf),
+                    ui.Button(375,445,100,32,"New Medford",self.surf),
+                    ui.Button(670,191,100,32,"Easton",self.surf),]
 
         self.locationtitles=[font.render("Welcome to Prospect",0,(255,255,255),(0,0,0)),
                              font.render("Welcome to Fairfield",0,(255,255,255),(0,0,0)),
                              font.render("Welcome to Norfolk",0,(255,255,255),(0,0,0)),
-                             font.render("Select a dungeon",0,(255,255,255),(0,0,0)),
-                             font.render("Click a quest to activate it",0,(255,255,255),(0,0,0))
+                             font.render("Welcome to New Medford",0,(255,255,255),(0,0,0)),
+                             font.render("Welcome to Easton",0,(255,255,255),(0,0,0)),
                             ]
 
         self.townbuttons=[ui.Button(510,50,220,32,"View the quest board",self.surf),
@@ -67,14 +72,7 @@ class Overworld(object):
                 for b in self.townbuttons:
                     b.Update()
                 #prospect
-                if self.townIndex==0:
-                    self.surf.blit(self.locationtitles[0],(25,25))
-                #fairfield
-                if self.townIndex==1:
-                    self.surf.blit(self.locationtitles[1],(25,25))
-                #norfolk
-                if self.townIndex==2:
-                    self.surf.blit(self.locationtitles[2],(25,25))
+                self.surf.blit(self.locationtitles[self.townIndex],(25,25))
                 self.drawn=True
 
         #Cave selector for towns
@@ -82,14 +80,14 @@ class Overworld(object):
             if self.drawn==False:
                 self.surf.fill((0,0,0))
                 self.townbuttons[3].Update()
-                self.surf.blit(self.locationtitles[3],(25,25))
+                self.surf.blit(font.render("Select a dungeon",0,(255,255,255),(0,0,0)),(25,25))
                 for b in self.cavebuttons[0:3]:
                     b.Update()
                 self.drawn=True
         if self.screen=="questboard":
             if self.drawn==False:
                 self.surf.fill((0,0,0))
-                self.surf.blit(self.locationtitles[4],(25,25))
+                self.surf.blit(font.render("Select a quest!",0,(255,255,255),(0,0,0)),(25,25))
                 self.qbuttons=[]
                 padding=0
                 if self.townIndex==0:
