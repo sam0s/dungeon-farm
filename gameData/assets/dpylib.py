@@ -10,7 +10,7 @@ __credits__ = []
 
 
 
-import pygame
+import pygame,json
 from random import choice
 from pygame import *
 from math import sqrt
@@ -49,25 +49,18 @@ def savelvl(game):
     ents=world.containing
     loc=path.join(world.levelname,"world"+str(world.pos[0])+str(world.pos[1])+".txt")
     if world:
-        print world.player.prev
         #save stats
-        f=open(path.join(world.playername,world.playername+".txt"),'w')
-        #level,xp,nextxp,hp,maxhp,atk,gold,posx,posy,worldx,worldy,speed,kills
-        allstuff=str(world.player.level)+"."
-        allstuff+=str(world.player.xp)+"."
-        allstuff+=str(world.player.nextxp)+"."
-        allstuff+=str(world.player.hp)+"."
-        allstuff+=str(world.player.maxhp)+"."
-        allstuff+=str(world.player.atk)+"."
-        allstuff+=str(world.player.gold)+"."
-        allstuff+=str(int(world.player.moveto[0]))+"."
-        allstuff+=str(int(world.player.moveto[1]))+"."
-        allstuff+=str(world.pos[0])+"."
-        allstuff+=str(world.pos[1])+"."
-        allstuff+=str(world.player.speed)+"."
-        allstuff+=str(world.player.kills)
-        f.write(str(allstuff))
-        f.close()
+        data = {'player':[{'level':world.player.level,
+                            'xp':world.player.xp,
+                            'hp':world.player.hp,
+                            'maxhp':world.player.maxhp,
+                            'atk':world.player.atk,
+                            'gold':world.player.gold,
+                            'speed':world.player.speed,
+                            'kills':world.player.kills}]}
+
+        with open(path.join(world.playername,world.playername+".json"), 'w') as outfile:
+            json.dump(data, outfile, indent=4)
 
         #save quests
         f=open(path.join(world.playername,"que.sts"),'w')
@@ -285,22 +278,22 @@ def LoadGame(w):
     #levelname=w.levelname
     levelpath=path.join(playername)
     #ent=w.containing
-    if path.isfile(path.join(playername,playername+".txt")):
+    if path.isfile(path.join(playername,playername+".json")):
         w.levelname=levelpath
         #load player attributes
-        f=open(path.join(playername,playername+".txt"),'r')
-        n=f.read()
-
-        n=n.split(".")
-
-        f.close()
-
-
         p=w.player
-        #w.player=p
-        #set attributes 4=gold
-        #level,xp,nextxp,hp,maxhp,atk,gold,movespeed,kills
-        p.setAttrs(n[0],n[1],n[2],n[3],n[4],n[5],n[6],n[11],n[12])
+        with open(path.join(playername,playername+".json")) as f:
+            jsondata = json.load(f)
+        for atr in jsondata['player']:
+            p.setAttrs(level=atr['level'],
+                       xp=atr['xp'],
+                       hp=atr['hp'],
+                       maxhp=atr['maxhp'],
+                       atk=atr['atk'],
+                       gold=atr['gold'],
+                       movespeed=atr['speed'],
+                       kills=atr['kills']
+                       )
 
 
         #loading inventory

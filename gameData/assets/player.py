@@ -69,13 +69,13 @@ class Player(object):
         self.changex = float(self.rect.x)
         self.changey = float(self.rect.y)
 
-    def setAttrs(self,level,xp,nextxp,hp,maxhp,atk,gold,movespeed,kills):
+    def setAttrs(self,level=1,xp=0,hp=100,maxhp=100,atk=7,gold=0,movespeed=70,kills=0):
         self.hp=int(hp)
         self.maxhp=int(maxhp)
         self.level=int(level)
         self.atk=int(atk)
         self.xp=int(xp)
-        self.nextxp=int(nextxp)
+        self.nextxp=120+int(level)*120
         self.gold=int(gold)
         self.speed=int(movespeed)
         self.kills=int(kills)
@@ -104,7 +104,7 @@ class Player(object):
         self.hp=self.maxhp
 
         #CHANGE THIS LATER
-        self.nextxp+=150
+        self.nextxp=120+(int(self.level)*120)
         if self.xp>=self.nextxp:
             self.xp=self.xp-self.nextxp
             self.levelUp()
