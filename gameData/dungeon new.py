@@ -1,5 +1,8 @@
-import pygame,sys
+import pygame,sys,json
+from os import path
 from pygame import *
+
+
 
 
 DISPLAY = (800, 640)
@@ -11,10 +14,11 @@ import assets.game as game
 screen = pygame.Surface((800,640))
 
 pygame.init()
-display.set_caption("Dungeon Farm")
+display.set_caption("Dungeon Farm [800x640]")
 
 timer = pygame.time.Clock()
 GAME=game.Game(screen)
+
 
 
 def main2():

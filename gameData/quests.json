@@ -1,0 +1,57 @@
+{
+    "001":
+        {
+            "name": "New Adventurer",
+            "descr": ["As a new adventurer, the quest-giver of",
+                       "Prospect has tasked you with finding ten ",
+                       "gold.",
+                       "",
+                       "Your reward is 150 experience points."],
+            "tasks": [
+            {
+                "type": "PlayerPropTask",
+                "format": "Find {count} {prop}.",
+                "prop": "gold",
+                "count": 15
+            }
+                    ],
+            "rew": 150
+        },
+
+    "002":
+        {
+            "name": "Monster Hunter",
+            "descr": ["The quest-giver of Prospect has",
+                       "tasked you with killing 5 monsters.",
+                       "",
+                       "Your reward is 150 experience points."],
+            "tasks": [
+            {
+                "type": "PlayerPropTask",
+                "format": "Kill {count} enemies.",
+                "prop": "kills",
+                "count": 3
+            }
+                    ],
+            "rew": 150
+        },
+
+    "003":
+        {
+            "name": "Find Gabe!",
+            "descr": ["A man has posted about his lost friend",
+                       "named gabe. Go find him!",
+                       "",
+                       "Your reward is 150 experience points."],
+            "tasks": [
+            {
+                "type": "PlayerItemTask",
+                "format": "Find {item}.",
+                "item": "gabe",
+                "count": 1
+            }
+                    ],
+            "rew": 150
+        }
+
+}

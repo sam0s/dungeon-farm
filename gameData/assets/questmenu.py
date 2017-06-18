@@ -9,7 +9,7 @@ __copyright__ = "None"
 __credits__ = []
 
 
-import pygame
+import pygame,json
 from random import choice
 from pygame import *
 import ui
@@ -107,11 +107,11 @@ class Menu(object):
 
 
 class Quest(object):
-    def __init__(self, id, name, descr, active=False, tasks=[], rewards=[]):
+    def __init__(self, id, name, descr, active=False, tasks=None, rewards=[]):
         self.name = name
         self.descr = descr
         self.active = active
-        self.tasks = tasks
+        self.tasks = tasks if tasks else []
         self.rewards = rewards
         self.id = id
 
@@ -214,31 +214,19 @@ class PlayerItemTask(Task):
 
 ##########################################################################
 # SAMPLE QUESTS
+def LoadQuest(qId):
 
-QUEST_001 = Quest(1,"New Adventurer",
-                  ["As a new adventurer, the quest-giver of",
-                    "Prospect has tasked you with finding ten ",
-                    "gold as well as slaying 5 monsters.",
-                    "",
-                    "Your reward is 150 experience points."], True)
-QUEST_001.addTasks(PlayerPropTask("Find {count} {prop}.", 'gold', 5),
-                   PlayerPropTask("Kill {count} monsters.", 'kills', 3))
-QUEST_001.addRewards(100)
+    with open(path.join("quests.json")) as f:
+        jsondata = json.load(f)
 
-QUEST_002 = Quest(2,"Find Gabe",
-                 ["A man has posted about a missing friend",
-                 "you are tasked with finding his lost",
-                 "friend in prospects 2nd dungeon.",
-                 "",
-                 "Your reward is 25 gold, and also",
-                 "100 expereince points."],active=True,tasks=[PlayerItemTask("Find {item}.", 'gabe', 1)],rewards=[100])
+    taskTypes = {'PlayerPropTask':PlayerPropTask,'PlayerItemTask':PlayerItemTask}
 
+    QUEST = Quest(qId,jsondata[qId]['name'],jsondata[qId]['descr'],active=True,rewards=[jsondata[qId]['rew']])
 
-QUEST_003 = Quest(3,"The world is your oyster",
-                  ["They say the worlds your oyster.",
-                   "But oysters ain't for you.",
-                   "Find an apple."],
-                   active=True,
-                   tasks=[PlayerItemTask("Find an {item}", 'apple', 1)],
-                   rewards=[50]
-)
+    for f in jsondata[qId]['tasks']:
+        involves={'PlayerPropTask':'prop','PlayerItemTask':'item'}[f['type']]
+        QUEST.addTasks(
+        taskTypes[f['type']](f['format'],f[involves],f['count'])
+        )
+
+    return QUEST
