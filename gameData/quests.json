@@ -1,0 +1,20 @@
+{
+    "quest":
+        {
+            "name": "New Adventurer",
+            "descr": ["As a new adventurer, the quest-giver of",
+                       "Prospect has tasked you with finding ten ",
+                       "gold.",
+                       "",
+                       "Your reward is 150 experience points."],
+            "tasks": [
+            {
+                "type": "PlayerPropTask",
+                "format": "Find {count} {prop}.",
+                "prop": "gold",
+                "count": 15
+            }
+                    ],
+            "rew": 150
+        }
+}

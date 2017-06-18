@@ -75,7 +75,7 @@ class Player(object):
         self.level=int(level)
         self.atk=int(atk)
         self.xp=int(xp)
-        self.nextxp=120+int(level)*120
+        self.nextxp=120+int(level-1)*120
         self.gold=int(gold)
         self.speed=int(movespeed)
         self.kills=int(kills)
@@ -104,7 +104,7 @@ class Player(object):
         self.hp=self.maxhp
 
         #CHANGE THIS LATER
-        self.nextxp=120+(int(self.level)*120)
+        self.nextxp=120+int(level-1)*120
         if self.xp>=self.nextxp:
             self.xp=self.xp-self.nextxp
             self.levelUp()

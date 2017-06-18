@@ -10,7 +10,7 @@ __credits__ = []
 
 
 
-import pygame
+import pygame,json
 from random import choice
 from pygame import *
 import assets.mainmenu as mainmenu
@@ -48,7 +48,22 @@ class Game(object):
         #questhandler and questmenu
         self.qm=questmenu.Menu(self.surf)
         self.qm.game=self
-        self.qm.quests=[]
+
+
+        with open(path.join("quests.json")) as f:
+            jsondata = json.load(f)
+
+
+        taskTypes = {'PlayerPropTask': questmenu.PlayerPropTask}
+
+        QUEST_0f1 = questmenu.Quest(2,jsondata['quest']['name'],jsondata['quest']['descr'],active=True,rewards=[jsondata['quest']['rew']])
+
+        for f in jsondata['quest']['tasks']:
+            print f
+            QUEST_0f1.addTasks(
+            taskTypes[f['type']](f['format'],f['prop'],f['count'])
+            )
+        self.qm.quests=[QUEST_0f1]
 
     def Update(self,dt):
         self.events=pygame.event.get()

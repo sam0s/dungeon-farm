@@ -224,21 +224,3 @@ QUEST_001 = Quest(1,"New Adventurer",
 QUEST_001.addTasks(PlayerPropTask("Find {count} {prop}.", 'gold', 5),
                    PlayerPropTask("Kill {count} monsters.", 'kills', 3))
 QUEST_001.addRewards(100)
-
-QUEST_002 = Quest(2,"Find Gabe",
-                 ["A man has posted about a missing friend",
-                 "you are tasked with finding his lost",
-                 "friend in prospects 2nd dungeon.",
-                 "",
-                 "Your reward is 25 gold, and also",
-                 "100 expereince points."],active=True,tasks=[PlayerItemTask("Find {item}.", 'gabe', 1)],rewards=[100])
-
-
-QUEST_003 = Quest(3,"The world is your oyster",
-                  ["They say the worlds your oyster.",
-                   "But oysters ain't for you.",
-                   "Find an apple."],
-                   active=True,
-                   tasks=[PlayerItemTask("Find an {item}", 'apple', 1)],
-                   rewards=[50]
-)
