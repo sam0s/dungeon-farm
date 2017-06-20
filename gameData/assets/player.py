@@ -104,17 +104,14 @@ class Player(object):
         self.hp=self.maxhp
 
         #CHANGE THIS LATER
-        self.nextxp=120+int(level-1)*120
-        if self.xp>=self.nextxp:
-            self.xp=self.xp-self.nextxp
-            self.levelUp()
+        self.nextxp=120+int(self.level-1)*120
 
     def giveXp(self,xp):
         self.xp+=xp
         print self.xp
         print self.nextxp
-        if self.xp>=self.nextxp:
-            self.xp=self.xp-self.nextxp
+        while self.xp>=self.nextxp:
+            self.xp-=self.nextxp
             self.levelUp()
 
     def update(self):

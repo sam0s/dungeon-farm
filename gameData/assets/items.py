@@ -188,7 +188,7 @@ def fromId(idn,parent=None,justname=False):
                3:"Pizza",
                4:"Cheese",
                5:"Fish",
-               6:"Health Potion",
+               6:"HealthPotion",
                200:"Dirk",
                201:"Sword",
                100:"Gabe"
