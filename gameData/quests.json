@@ -1,5 +1,5 @@
 {
-    "001":
+    "0":
         {
             "name": "New Adventurer",
             "descr": ["As a new adventurer, the quest-giver of",
@@ -18,7 +18,7 @@
             "rew": 150
         },
 
-    "002":
+    "1":
         {
             "name": "Monster Hunter",
             "descr": ["The quest-giver of Prospect has",
@@ -36,7 +36,7 @@
             "rew": 150
         },
 
-    "003":
+    "2":
         {
             "name": "Find Gabe!",
             "descr": ["A man has posted about his lost friend",

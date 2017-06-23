@@ -18,6 +18,7 @@ import assets.overworld as overworld
 import assets.player as player
 import assets.world as world
 import assets.questmenu as questmenu
+import assets.ui as ui
 from math import sqrt
 import dpylib as dl
 from os import path
@@ -26,9 +27,12 @@ pygame.init()
 
 class Game(object):
     def __init__(self,surf):
-        self.state="menu"
+        self.state="logos"
         self.surf=surf
 
+        #logo screen
+        self.logos=mainmenu.Logos(self.surf)
+        self.logos.game=self
         #mainmenu objects
         self.mm=mainmenu.Menu(self.surf)
         self.mm.game=self
@@ -49,13 +53,12 @@ class Game(object):
         self.qm=questmenu.Menu(self.surf)
         self.qm.game=self
 
-        self.qm.quests=[questmenu.LoadQuest("001"),
-                        questmenu.LoadQuest("002"),
-                        questmenu.LoadQuest("003"),
-                        ]
+        self.qm.quests=[]
 
     def Update(self,dt):
         self.events=pygame.event.get()
+        if self.state == "logos":
+            self.logos.Draw(dt)
         if self.state == "menu":
             self.mm.Draw()
         if self.state == "quests":

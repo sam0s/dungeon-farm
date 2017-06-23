@@ -21,6 +21,9 @@ backDrop=pygame.image.load(path.join("images","paper.png")).convert()
 font = ui.LoadFont(17)
 font2 = ui.LoadFont(19)
 font3 = ui.LoadFont(38)
+
+
+
 class Menu(object):
     def __init__(self,surf):
         self.screen="quests"
@@ -215,18 +218,30 @@ class PlayerItemTask(Task):
 ##########################################################################
 # SAMPLE QUESTS
 def LoadQuest(qId):
+    try:
+        with open(path.join("quests.json")) as f:
+            jsondata = json.load(f)
 
-    with open(path.join("quests.json")) as f:
-        jsondata = json.load(f)
+        taskTypes = {'PlayerPropTask':PlayerPropTask,'PlayerItemTask':PlayerItemTask}
 
-    taskTypes = {'PlayerPropTask':PlayerPropTask,'PlayerItemTask':PlayerItemTask}
+        QUEST = Quest(qId,jsondata[qId]['name'],jsondata[qId]['descr'],active=True,rewards=[jsondata[qId]['rew']])
 
-    QUEST = Quest(qId,jsondata[qId]['name'],jsondata[qId]['descr'],active=True,rewards=[jsondata[qId]['rew']])
+        for f in jsondata[qId]['tasks']:
+            involves={'PlayerPropTask':'prop','PlayerItemTask':'item'}[f['type']]
+            QUEST.addTasks(
+            taskTypes[f['type']](f['format'],f[involves],f['count'])
+            )
 
-    for f in jsondata[qId]['tasks']:
-        involves={'PlayerPropTask':'prop','PlayerItemTask':'item'}[f['type']]
-        QUEST.addTasks(
-        taskTypes[f['type']](f['format'],f[involves],f['count'])
-        )
+        return QUEST
+    except KeyError:
+        print "no quest with idn-"+qId
 
-    return QUEST
+
+allQuests={}
+
+for f in range(100):
+    try:
+        a=str(f)
+        allQuests[a]=LoadQuest(a)
+    except KeyError:
+        print "no quest for idn-"+a
