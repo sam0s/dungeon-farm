@@ -216,13 +216,16 @@ class PlayerItemTask(Task):
 
 
 ##########################################################################
-# SAMPLE QUESTS
-def LoadQuest(qId):
-    try:
-        with open(path.join("quests.json")) as f:
-            jsondata = json.load(f)
+# LOAD ALL QUESTS (while only opening the file one time lol)
+allQuests={}
+try:
+    with open(path.join("quests.json")) as f:
+        jsondata = json.load(f)
 
-        taskTypes = {'PlayerPropTask':PlayerPropTask,'PlayerItemTask':PlayerItemTask}
+    taskTypes = {'PlayerPropTask':PlayerPropTask,'PlayerItemTask':PlayerItemTask}
+
+    for qId in range(999):
+        qId=str(qId)
 
         QUEST = Quest(qId,jsondata[qId]['name'],jsondata[qId]['descr'],active=True,rewards=[jsondata[qId]['rew']])
 
@@ -232,16 +235,6 @@ def LoadQuest(qId):
             taskTypes[f['type']](f['format'],f[involves],f['count'])
             )
 
-        return QUEST
-    except KeyError:
-        print "no quest with idn-"+qId
-
-
-allQuests={}
-
-for f in range(100):
-    try:
-        a=str(f)
-        allQuests[a]=LoadQuest(a)
-    except KeyError:
-        print "no quest for idn-"+a
+            allQuests[qId]=QUEST
+except KeyError:
+    print "number of quests loaded-"+qId

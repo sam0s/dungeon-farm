@@ -6,7 +6,7 @@ from pygame import *
 
 
 DISPLAY = (800, 640)
-FLAGS = HWSURFACE | DOUBLEBUF
+FLAGS = HWSURFACE | DOUBLEBUF 
 MASTER_SURFACE = display.set_mode(DISPLAY, FLAGS, 0)
 
 import assets.game as game

@@ -31,7 +31,6 @@ class Logos(object):
     def Draw(self,dt):
         if self.time>=0:
             logo_samiscool.set_alpha(12)
-            print logo_samiscool.get_alpha()
             self.surf.blit(logo_samiscool,(0,0))
             self.time-=1*dt
         else:
