@@ -30,7 +30,7 @@ class Gabe(Item):
 
         self.id = 100
 
-        self.val = 0
+        self.val = 15
         self.consumeVal = 0
         self.ad = 0
         self.ap = 0
@@ -39,6 +39,23 @@ class Gabe(Item):
         self.stack=1
 
         self.image = itemsheetQuest.subsurface(pygame.Rect(0*26, 0, 26, 26)).convert()
+
+class CherishedBow(Item):
+    def __init__(self):
+        self.itemType="quest"
+        self.name="cherishedbow"
+
+        self.id = 101
+
+        self.val = 100
+        self.consumeVal = 0
+        self.ad = 0
+        self.ap = 0
+        self.weight = 1
+
+        self.stack=1
+
+        self.image = itemsheetQuest.subsurface(pygame.Rect(1*26, 0, 26, 26)).convert()
 
 ############ WEAPONS #######################
 ##########################

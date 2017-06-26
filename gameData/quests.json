@@ -52,6 +52,24 @@
             }
                     ],
             "rew": 150
+        },
+
+    "3":
+        {
+            "name": "Cherished Bow!",
+            "descr": ["A woman has posted about a lost bow and aarow.",
+                       "It once belong to a leader of the famous",
+                       "Quiet Bison tribe, and was handed down to her.",
+                       "Your reward is 150 experience points."],
+            "tasks": [
+            {
+                "type": "PlayerItemTask",
+                "format": "Find {item}.",
+                "item": "cherishedbow",
+                "count": 1
+            }
+                    ],
+            "rew": 150
         }
 
 }
