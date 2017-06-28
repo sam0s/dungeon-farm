@@ -35,6 +35,7 @@ class Menu(object):
         self.qbuttons=[]
         self.good=False
         self.completedQuests=[]
+        self.allQuests=loadAllQuests()
     def Draw(self):
         if self.screen=="questDescr":
             if self.drawn==False:
@@ -217,24 +218,26 @@ class PlayerItemTask(Task):
 
 ##########################################################################
 # LOAD ALL QUESTS (while only opening the file one time lol)
-allQuests={}
-try:
-    with open(path.join("quests.json")) as f:
-        jsondata = json.load(f)
+def loadAllQuests():
+    allQuests={}
+    try:
+        with open(path.join("quests.json")) as f:
+            jsondata = json.load(f)
 
-    taskTypes = {'PlayerPropTask':PlayerPropTask,'PlayerItemTask':PlayerItemTask}
+        taskTypes = {'PlayerPropTask':PlayerPropTask,'PlayerItemTask':PlayerItemTask}
 
-    for qId in range(999):
-        qId=str(qId)
+        for qId in range(999):
+            qId=str(qId)
 
-        QUEST = Quest(qId,jsondata[qId]['name'],jsondata[qId]['descr'],active=True,rewards=[jsondata[qId]['rew']])
+            QUEST = Quest(qId,jsondata[qId]['name'],jsondata[qId]['descr'],active=True,rewards=[jsondata[qId]['rew']])
 
-        for f in jsondata[qId]['tasks']:
-            involves={'PlayerPropTask':'prop','PlayerItemTask':'item'}[f['type']]
-            QUEST.addTasks(
-            taskTypes[f['type']](f['format'],f[involves],f['count'])
-            )
+            for f in jsondata[qId]['tasks']:
+                involves={'PlayerPropTask':'prop','PlayerItemTask':'item'}[f['type']]
+                QUEST.addTasks(
+                taskTypes[f['type']](f['format'],f[involves],f['count'])
+                )
 
-            allQuests[qId]=QUEST
-except KeyError:
-    print "number of quests loaded-"+qId
+                allQuests[qId]=QUEST
+    except KeyError:
+        print "number of quests loaded-"+qId
+    return allQuests

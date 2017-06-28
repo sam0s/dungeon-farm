@@ -72,6 +72,7 @@ class Menu(object):
                 if e.type == MOUSEBUTTONUP and e.button == 1:
                     for b in self.mainbuttons:
                         if b.rect.collidepoint(e.pos):
+                            self.game.snd.Play("button")
                             if b.text == "Quit":
                                 self.game.go=False
                             if b.text == "Continue":

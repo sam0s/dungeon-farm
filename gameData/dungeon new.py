@@ -2,11 +2,8 @@ import pygame,sys,json
 from os import path
 from pygame import *
 
-
-
-
 DISPLAY = (800, 640)
-FLAGS = HWSURFACE | DOUBLEBUF 
+FLAGS = HWSURFACE | DOUBLEBUF
 MASTER_SURFACE = display.set_mode(DISPLAY, FLAGS, 0)
 
 import assets.game as game
@@ -17,9 +14,7 @@ pygame.init()
 display.set_caption("Dungeon Farm [800x640]")
 
 timer = pygame.time.Clock()
-GAME=game.Game(screen)
-
-
+GAME = game.Game(screen)
 
 def main2():
     while GAME.go:

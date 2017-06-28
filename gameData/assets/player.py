@@ -69,16 +69,39 @@ class Player(object):
         self.changex = float(self.rect.x)
         self.changey = float(self.rect.y)
 
-    def setAttrs(self,level=1,xp=0,hp=100,maxhp=100,atk=7,gold=0,movespeed=70,kills=0):
-        self.hp=int(hp)
-        self.maxhp=int(maxhp)
-        self.level=int(level)
-        self.atk=int(atk)
-        self.xp=int(xp)
-        self.nextxp=120+int(level-1)*120
-        self.gold=int(gold)
-        self.speed=int(movespeed)
-        self.kills=int(kills)
+    def loadPlayer(self,data):
+        #load attribute
+        for atr in data['player']:
+            self.hp=int(atr['hp'])
+            self.maxhp=int(atr['maxhp'])
+            self.level=int(atr['level'])
+            self.atk=int(atr['atk'])
+            self.xp=int(atr['xp'])
+            self.nextxp=120+int(self.level-1)*120
+            self.gold=int(atr['gold'])
+            self.speed=int(atr['speed'])
+            self.kills=int(atr['kills'])
+            pq=atr['quests']
+            n2=atr['inventory']
+        #load inventory
+        if n2[0]!=[]:
+            for f in n2:
+                #divide up by name and stack
+                f2=f.split("_")
+                print f2
+                if f2[1]=='a':
+                    self.activeWeapon=[items.fromId(int(f2[0]),self)]
+                    break
+                #give the item
+                for f3 in range(int(f2[1])):
+                    it=items.fromId(int(f2[0]),self)
+                    self.giveItem(it)
+        #load quests
+        print pq
+        for f in pq:
+            f=int(f)
+            self.world.game.qm.quests += [self.world.game.qm.allQuests[str(f)]]
+
 
     def giveItem(self,item):
         if len(self.inventory)==72:

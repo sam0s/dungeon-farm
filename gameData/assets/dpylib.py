@@ -49,6 +49,14 @@ def savelvl(game):
     ents=world.containing
     loc=path.join(world.levelname,"world"+str(world.pos[0])+str(world.pos[1])+".txt")
     if world:
+        pquests=[]
+        pitems=[]
+        for q in game.qm.quests:
+            pquests+=[q.id]
+        for i in world.player.inventory:
+            pitems+=[str(i.id)+"_"+str(i.stack)]
+        pitems+=[str(world.player.activeWeapon[0].id)+"_a"]
+
         #save stats
         data = {'player':[{'level':world.player.level,
                             'xp':world.player.xp,
@@ -57,33 +65,18 @@ def savelvl(game):
                             'atk':world.player.atk,
                             'gold':world.player.gold,
                             'speed':world.player.speed,
-                            'kills':world.player.kills}]}
+                            'kills':world.player.kills,
+                            'quests':pquests,
+                            'inventory':pitems}]}
 
         with open(path.join(world.playername,world.playername+".json"), 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
-        #save quests
-        f=open(path.join(world.playername,"que.sts"),'w')
-        for q in game.qm.quests:
-            f.write(str(q.id))
-        f.close()
-
-        #save inventory
-        f=open(path.join(world.playername,"inv.txt"),'w')
-        itemNum=0
-        for a in world.player.inventory:
-            #if itemNum+1!=len(world.player.inventory):
-            f.write(str(world.player.inventory[itemNum].id)+"_"+str(world.player.inventory[itemNum].stack)+".")
-            #else:
-                #f.write(str(world.player.inventory[itemNum].id)+"_"+str(world.player.inventory[itemNum].stack))
-            itemNum+=1
-        f.write(str(world.player.activeWeapon[0].id)+"_a")
-        f.close()
-
-    save = open(loc,"w")
-    for f in ents:
-        save.write('"'+f.name+'"'+"."+str(f.rect.left)+"."+str(f.rect.top)+".")
-    save.close()
+        #save level data
+        save = open(loc,"w")
+        for f in ents:
+            save.write('"'+f.name+'"'+"."+str(f.rect.left)+"."+str(f.rect.top)+".")
+        save.close()
 
 #load game
 def loadlvl(ents,loc):
@@ -282,38 +275,13 @@ def LoadGame(w):
         w.levelname=levelpath
         #load player attributes
         p=w.player
+
         with open(path.join(playername,playername+".json")) as f:
             jsondata = json.load(f)
-        for atr in jsondata['player']:
-            p.setAttrs(level=atr['level'],
-                       xp=atr['xp'],
-                       hp=atr['hp'],
-                       maxhp=atr['maxhp'],
-                       atk=atr['atk'],
-                       gold=atr['gold'],
-                       movespeed=atr['speed'],
-                       kills=atr['kills']
-                       )
+
+        w.player.loadPlayer(jsondata)
 
 
-        #loading inventory
-        f=open(path.join(playername,"inv.txt"),'r')
-        n2=f.read()
-        f.close()
-
-        #divide up by item
-        n2=n2.split(".")
-        if n2[0]!='':
-            for f in n2:
-                #divide up by name and stack
-                f2=f.split("_")
-                if f2[1]=='a':
-                    p.activeWeapon=[items.fromId(int(f2[0]),p)]
-                    break
-                #give the item
-                for f3 in range(int(f2[1])):
-                    it=items.fromId(int(f2[0]),p)
-                    p.giveItem(it)
     else:
         NewGame(w,True)
 
@@ -326,8 +294,6 @@ def NewGame(w,skip=False):
         if not path.isdir(playername):
             w.levelname=levelpath
             mkdir(playername)
-            #generate quests file
-            f=open(path.join(playername,"que.sts"),'w');f.close()
             #mkdir(path.join(playername))
 
 #################################

@@ -200,6 +200,8 @@ class HealthPotion(Item):
         self.image = itemsheet.subsurface(pygame.Rect(6*26, 0, 26, 26)).convert()
 
 def fromId(idn,parent=None,justname=False):
+    print idn
+    
     itemDict= {1:"Bread",
                2:"Apple",
                3:"Pizza",
@@ -208,7 +210,8 @@ def fromId(idn,parent=None,justname=False):
                6:"HealthPotion",
                200:"Dirk",
                201:"Sword",
-               100:"Gabe"
+               100:"Gabe",
+               101:"CherishedBow"
                }
     if not justname:
         return eval(itemDict[idn]+"()")

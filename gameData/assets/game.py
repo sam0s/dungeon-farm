@@ -17,6 +17,7 @@ import assets.mainmenu as mainmenu
 import assets.overworld as overworld
 import assets.player as player
 import assets.world as world
+import assets.sound as sound
 import assets.questmenu as questmenu
 import assets.ui as ui
 from math import sqrt
@@ -27,7 +28,7 @@ pygame.init()
 
 class Game(object):
     def __init__(self,surf):
-        self.state="logos"
+        self.state="menu"
         self.surf=surf
 
         #logo screen
@@ -36,6 +37,9 @@ class Game(object):
         #mainmenu objects
         self.mm=mainmenu.Menu(self.surf)
         self.mm.game=self
+
+        #sound
+        self.snd=sound.Mix()
 
         #gameworld and player objects
         self.gw=world.World(self.surf)
@@ -54,6 +58,8 @@ class Game(object):
         self.qm.game=self
 
         self.qm.quests=[]
+
+
 
     def Update(self,dt):
         self.events=pygame.event.get()
