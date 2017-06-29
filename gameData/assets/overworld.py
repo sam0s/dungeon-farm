@@ -47,8 +47,14 @@ class Overworld(object):
         self.offsety=0
         self.goto=[0,0]
 
-        self.locationrects=[pygame.Rect((50,70),(245,245)),pygame.Rect((692,20),(245,245))
+        self.locationrects=[
+        pygame.Rect((50,70),(245,245)),
+        pygame.Rect((692,20),(245,245)),
+        pygame.Rect((215,632),(245,245)),
+        pygame.Rect((700,700),(245,245)),
+        pygame.Rect((1280,200),(245,245))
         ]
+
         self.townRef={0:'Prospect',1:"Fairfield",2:"Norfolk",3:"New Medford",4:"Easton"}
 
         self.locationtitles = [font.render("Welcome to Prospect",0,(255,255,255),(0,0,0)),
@@ -123,12 +129,14 @@ class Overworld(object):
             if self.goto[1] > 0:self.offsety+=1*dt;self.goto[1]-=1*dt
             if self.goto[1] < 0:self.offsety-=1*dt;self.goto[1]+=1*dt
 
+            self.surf.fill((0,0,0))
             self.surf.blit(self.overworldimg,(self.offsetx,self.offsety))
             pygame.draw.circle(self.surf,(0,0,0),(400,320),5,0)
 
             for f in self.locationrects:
                 f=pygame.Rect(f.left+self.offsetx,f.top+self.offsety,f.width,f.height)
                 pygame.draw.rect(self.surf,(2,2,2),f,2)
+            pygame.draw.line(self.surf,(0,0,0),(400,320),(400-self.goto[0],320-self.goto[1]),3)
 
         #draw hud
         self.hudlog.update(self.hudsurf)
