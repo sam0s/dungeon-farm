@@ -18,7 +18,7 @@ GAME = game.Game(screen)
 
 def main2():
     while GAME.go:
-        GAME.Update(dt=float(timer.tick(100)*1e-3))
+        GAME.Update(dt=float(timer.tick(300)*1e-3))
         display.set_caption("Dungeon Farm - "+str(timer.get_fps()))
         MASTER_SURFACE.blit(GAME.surf,(0,0))
 

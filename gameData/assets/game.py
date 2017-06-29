@@ -70,7 +70,7 @@ class Game(object):
         if self.state == "quests":
             self.qm.Draw()
         if self.state == "overworld":
-            self.ow.Draw()
+            self.ow.Draw(dt)
         if self.state == "game":
             self.gw.Update(dt)
             self.surf.blit(self.gw.surf,(0,0))

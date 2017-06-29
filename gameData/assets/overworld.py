@@ -18,10 +18,10 @@ from shutil import rmtree
 import dpylib as dl
 
 overworldimage = pygame.image.load(path.join("images","worldmap.png")).convert()
+overworldimage=pygame.transform.scale(overworldimage,(1600,1024))
 font = ui.LoadFont()
 
 #MAKE OTHER TOWNS
-
 
 class Overworld(object):
     def __init__(self,surf):
@@ -42,11 +42,14 @@ class Overworld(object):
         self.game = None
         self.overworldimg = overworldimage
 
-        self.locationbuttons = [ui.Button(65,146,100,32,"Prospect",self.surf),
-                    ui.Button(132,410,100,32,"Fairfield",self.surf),
-                    ui.Button(392,95,100,32,"Norfolk",self.surf),
-                    ui.Button(375,445,100,32,"New Medford",self.surf),
-                    ui.Button(670,191,100,32,"Easton",self.surf),]
+        #cool stuff
+        self.offsetx=0
+        self.offsety=0
+        self.goto=[0,0]
+
+        self.locationrects=[pygame.Rect((50,70),(245,245)),pygame.Rect((692,20),(245,245))
+        ]
+        self.townRef={0:'Prospect',1:"Fairfield",2:"Norfolk",3:"New Medford",4:"Easton"}
 
         self.locationtitles = [font.render("Welcome to Prospect",0,(255,255,255),(0,0,0)),
                              font.render("Welcome to Fairfield",0,(255,255,255),(0,0,0)),
@@ -66,7 +69,7 @@ class Overworld(object):
                     ui.Button(300,150,220,32,"Cave 3",self.surf)
                     ]
 
-    def Draw(self):
+    def Draw(self,dt):
         #Update Town Screen
         if self.screen == "town":
             if self.drawn == False:
@@ -76,7 +79,6 @@ class Overworld(object):
                 #prospect
                 self.surf.blit(self.locationtitles[self.townIndex],(25,25))
                 self.drawn = True
-
         #Cave selector for towns
         if self.screen == "cave":
             if self.drawn == False:
@@ -86,6 +88,7 @@ class Overworld(object):
                 for b in self.cavebuttons[0:3]:
                     b.Update()
                 self.drawn = True
+        #Show quests for the town
         if self.screen=="questboard":
             if self.drawn == False:
                 self.surf.fill((0,0,0))
@@ -111,17 +114,21 @@ class Overworld(object):
                 self.townbuttons[3].Update()
                 self.drawn=True
 
-        #OVERWORLD SCREEN
+        #OVERWORLD SCREEN - NEW, IMPROVED, INTERACTIVE
         if self.screen == "main":
             #menu routine
-            if not self.drawn:
-                self.logtext.append("Welcome to Appigarth!")
-                #self.surf.fill((0,0,0))
-                self.surf.blit(self.overworldimg,(0,0))
-                pygame.display.update()
-                self.drawn = True
-                for b in self.locationbuttons:
-                    b.Update()
+            dt=dt*100
+            if self.goto[0] > 0:self.offsetx+=1*dt;self.goto[0]-=1*dt
+            if self.goto[0] < 0:self.offsetx-=1*dt;self.goto[0]+=1*dt
+            if self.goto[1] > 0:self.offsety+=1*dt;self.goto[1]-=1*dt
+            if self.goto[1] < 0:self.offsety-=1*dt;self.goto[1]+=1*dt
+
+            self.surf.blit(self.overworldimg,(self.offsetx,self.offsety))
+            pygame.draw.circle(self.surf,(0,0,0),(400,320),5,0)
+
+            for f in self.locationrects:
+                f=pygame.Rect(f.left+self.offsetx,f.top+self.offsety,f.width,f.height)
+                pygame.draw.rect(self.surf,(2,2,2),f,2)
 
         #draw hud
         self.hudlog.update(self.hudsurf)
@@ -136,15 +143,22 @@ class Overworld(object):
                         self.good = False
                         self.drawn = False
                         self.game.state = "quests"
-            if e.type == MOUSEBUTTONUP and e.button == 1:
+                if e.key == K_f:
+                    for f in self.locationrects:
+                        if pygame.Rect(f.left+self.offsetx,f.top+self.offsety,f.width,f.height).collidepoint(400,320):
+                            self.town = self.townRef[self.locationrects.index(f)]
+                            self.townIndex = self.locationrects.index(f)
+                            self.screen="town"
+                            self.drawn=False
+            if e.type == MOUSEBUTTONDOWN and e.button == 1:
                 #OVERWORLD
                 if self.screen == "main":
-                    for b in self.locationbuttons:
-                        if b.rect.collidepoint(e.pos):
-                            self.town = b.text
-                            self.townIndex = self.locationbuttons.index(b)
-                            self.screen = "town"
-                            self.drawn = False
+                    self.goto=[400-e.pos[0],320-e.pos[1]]
+                    #townstuf
+                        #self.town = b.text
+                        #self.townIndex = self.locationbuttons.index(b)
+                        #self.screen = "town"
+                        #self.drawn = False
 
                 #IN A TOWN
                 if self.screen == "town":
