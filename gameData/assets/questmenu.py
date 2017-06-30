@@ -34,10 +34,9 @@ class Menu(object):
         self.mainbuttons=[ui.Button(650,420,100,32,"Go Back",self.surf)]
         self.qbuttons=[]
         self.good=False
-        self.completedQuests=[]
         self.allQuests=loadAllQuests()
     def Draw(self):
-        if self.screen=="questDescr":
+        if self.screen=="questDescr" or self.screen=="questDescr_ig":
             if self.drawn==False:
                 self.surf.blit(self.menuimg,(0,0))
                 self.surf.blit(font3.render(self.selectedQuest.name,0,(0,0,0)),(40,50))
@@ -55,7 +54,7 @@ class Menu(object):
                     y+=25
 
 
-        if self.screen=="quests":
+        if self.screen=="quests" or self.screen == "quests_ig":
             #menu routine
             if not self.drawn:
                 self.qbuttons=[]
@@ -65,8 +64,9 @@ class Menu(object):
                 self.drawn=True
                 padding=0
                 for f in self.quests:
-                    self.qbuttons.append(ui.Button(100,60+padding,200,32,f.name,self.surf))
-                    padding+=42
+                    if f.active:
+                        self.qbuttons.append(ui.Button(100,60+padding,200,32,f.name,self.surf))
+                        padding+=42
                 for f in self.qbuttons:
                     f.Update()
 
@@ -84,20 +84,28 @@ class Menu(object):
                         self.good=False
                         self.drawn=False
                         self.game.state="overworld"
+                        if self.screen=="quests_ig" or self.screen=="questDescr_ig":self.game.state="game"
+
             if e.type == MOUSEBUTTONUP and e.button == 1:
-                if self.screen=="quests":
+                if self.screen=="quests" or self.screen=="quests_ig":
                     if len(self.qbuttons)>0:
                         for b in self.qbuttons:
                             if b.rect.collidepoint(e.pos):
-                                self.screen="questDescr"
+                                if self.screen=="quests_ig":
+                                    self.screen="questDescr_ig"
+                                else:
+                                    self.screen="questDescr"
                                 self.drawn=False
                                 self.selectedQuest=self.quests[self.qbuttons.index(b)]
                                 self.selectedQuest.check(self.game)
-                                if self.selectedQuest.active==False:
-                                    self.quests.pop(self.quests.index(self.selectedQuest))
-                                    self.completedQuests.append(self.selectedQuest)
+
                 for b in self.mainbuttons:
                     if b.rect.collidepoint(e.pos):
+                        if self.screen=="quests_ig":
+                            self.drawn=False
+                            self.good=False
+                            self.game.state="game"
+
                         if self.screen=="quests":
                             self.drawn=False
                             self.good=False
@@ -105,7 +113,10 @@ class Menu(object):
                             self.game.state="overworld"
                         else:
                             self.drawn=False
-                            self.screen="quests"
+                            if self.screen=="questDescr_ig":
+                                self.screen="quests_ig"
+                            else:
+                                self.screen="quests"
             if e.type==QUIT:
                 self.game.go=False
 
@@ -164,6 +175,7 @@ class Task(object):
     """
     def __init__(self):
         self.completed = False
+        self.location = False
 
     def check(self, game):
         return self.completed
@@ -215,6 +227,31 @@ class PlayerItemTask(Task):
     def descr(self):
         return self.format.format(item=self.item, count=self.count)
 
+class PlayerFetchTask(Task):
+    """
+    Task allowing to check if a certain Player has found a certain item from dungeon.
+    """
+    def __init__(self, format, item, location):
+        Task.__init__(self)
+        self.format = format
+        self.item = item
+        self.location=location
+
+    def check(self, game):
+        print "Checking player's items for "+self.item
+
+        c=0
+        for f in game.player.inventory:
+            if f.name==self.item:
+                game.player.inventory.pop(game.player.inventory.index(f))
+                c+=1
+        self.completed=c>0
+
+        return self.completed
+
+    def descr(self):
+        return self.format.format(item=self.item)
+
 
 ##########################################################################
 # LOAD ALL QUESTS (while only opening the file one time lol)
@@ -224,7 +261,7 @@ def loadAllQuests():
         with open(path.join("quests.json")) as f:
             jsondata = json.load(f)
 
-        taskTypes = {'PlayerPropTask':PlayerPropTask,'PlayerItemTask':PlayerItemTask}
+        taskTypes = {'PlayerPropTask':PlayerPropTask,'PlayerItemTask':PlayerItemTask,'PlayerFetchTask':PlayerFetchTask}
 
         for qId in range(999):
             qId=str(qId)
@@ -232,10 +269,15 @@ def loadAllQuests():
             QUEST = Quest(qId,jsondata[qId]['name'],jsondata[qId]['descr'],active=True,rewards=[jsondata[qId]['rew']])
 
             for f in jsondata[qId]['tasks']:
-                involves={'PlayerPropTask':'prop','PlayerItemTask':'item'}[f['type']]
-                QUEST.addTasks(
-                taskTypes[f['type']](f['format'],f[involves],f['count'])
-                )
+                tp=f['type']
+                if tp=="PlayerFetchTask":
+                    QUEST.addTasks(PlayerFetchTask(f['format'],f['item'],f['location']))
+                if tp=="PlayerItemTask":
+                    QUEST.addTasks(PlayerItemTask(f['format'],f['item'],f['count']))
+                if tp=="PlayerPropTask":
+                    QUEST.addTasks(PlayerPropTask(f['format'],f['prop'],f['count']))
+
+
 
                 allQuests[qId]=QUEST
     except KeyError:

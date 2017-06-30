@@ -49,13 +49,8 @@ def savelvl(game):
     ents=world.containing
     loc=path.join(world.levelname,"world"+str(world.pos[0])+str(world.pos[1])+".txt")
     if world:
-        pquests=[]
-        pitems=[]
-        for q in game.qm.quests:
-            pquests+=[q.id]
-        for i in world.player.inventory:
-            pitems+=[str(i.id)+"_"+str(i.stack)]
-        pitems+=[str(world.player.activeWeapon[0].id)+"_a"]
+        pquests = [str(q.id)+"_"+str(q.active) for q in game.qm.quests]
+        pitems=[str(i.id)+"_"+str(i.stack) for i in world.player.inventory]+[str(world.player.activeWeapon[0].id)+"_a"]
 
         #save stats
         data = {'player':[{'level':world.player.level,
@@ -140,12 +135,16 @@ def changelevel(w):
         savelvl(w.game)
     else:
         fill(w.containing)
-        carve(w.containing)
+        carve(w.game)
         doors(w.containing)
         savelvl(w.game)
 
 #carve out the level
-def carve(ents):
+def carve(game):
+    ents=game.gw.containing
+    for f in game.qm.quests:
+        for t in [x for x in f.tasks if x.location]:
+            print t
     x = 32
     y = 32
     direction = choice([1,2,3,4])
@@ -544,7 +543,6 @@ class Log(TextHolder):
             y=4
             a=0
             for f in self.drawntext:
-
                 wax=font.render(str("> "+self.drawntext[a]),0,(255,0,0),self.ic)
                 surf.blit(wax,(self.rect.x+5,y))
                 a+=1

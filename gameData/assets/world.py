@@ -92,7 +92,6 @@ class World(object):
         if state=="escmenu":
             self.Draw()
 
-
     def Update(self,delta):
         self.delta=delta
         if not self.trans:
@@ -104,12 +103,17 @@ class World(object):
                 self.mse32=(((mse[0])/32)*32,((mse[1])/32)*32)
                 self.Draw()
                 if self.good==1:
+                    if self.keys[K_q]:
+                        self.game.state="quests"
+                        self.game.qm.screen="quests_ig"
+                        self.good=0
+                        self.game.qm.drawn=False
                     if self.keys[K_TAB]:
                         self.esc.drawn=0
                         self.esc.created=0
                         self.ChangeState("escmenu")
 
-                if not self.keys[K_TAB]:
+                if not self.keys[K_TAB] and not self.keys[K_q]:
                     self.good=1
 
                 for e in self.game.events:

@@ -19,7 +19,8 @@ import dpylib as dl
 
 overworldimage = pygame.image.load(path.join("images","worldmap.png")).convert()
 overworldimage=pygame.transform.scale(overworldimage,(1600,1024))
-font = ui.LoadFont()
+
+font = ui.LoadFont(30)
 
 #MAKE OTHER TOWNS
 
@@ -108,9 +109,7 @@ class Overworld(object):
                         for ff in self.game.qm.quests:
                             if f.name == ff.name:xx =- 400
                         self.qbuttons.append(ui.Button(100+xx,60+padding,200,32,f.name,self.surf))
-
                         padding += 42
-
                     except KeyError:
                         print "no quest"
 
@@ -122,18 +121,27 @@ class Overworld(object):
 
         #OVERWORLD SCREEN - NEW, IMPROVED, INTERACTIVE
         if self.screen == "main":
-            #menu routine
             dt=dt*100
-            if self.goto[0] > 0:self.offsetx+=1*dt;self.goto[0]-=1*dt
-            if self.goto[0] < 0:self.offsetx-=1*dt;self.goto[0]+=1*dt
-            if self.goto[1] > 0:self.offsety+=1*dt;self.goto[1]-=1*dt
-            if self.goto[1] < 0:self.offsety-=1*dt;self.goto[1]+=1*dt
+            if self.goto[0] > 0:self.offsetx+=1*dt;self.goto[0]-=1*dt;
+            if self.goto[0] < 0:self.offsetx-=1*dt;self.goto[0]+=1*dt;
+            if self.goto[1] > 0:self.offsety+=1*dt;self.goto[1]-=1*dt;
+            if self.goto[1] < 0:self.offsety-=1*dt;self.goto[1]+=1*dt;
 
             self.surf.fill((0,0,0))
             self.surf.blit(self.overworldimg,(self.offsetx,self.offsety))
             pygame.draw.circle(self.surf,(0,0,0),(400,320),5,0)
 
+            #test movement
+            #move=True
+            #if self.goto[0]<1 and self.goto[1]<1 and  self.goto[0]>-1 and self.goto[1]>-1:
+                #move=False
+
             for f in self.locationrects:
+                if pygame.Rect(f.left+self.offsetx,f.top+self.offsety,f.width,f.height).collidepoint(400,320):
+                    text="Press F to visit "+self.townRef[self.locationrects.index(f)]
+                    text=font.render(text,0,(255,0,0),(0,0,0))
+                    center=text.get_width()/2
+                    self.surf.blit(text,(400-center,450))
                 f=pygame.Rect(f.left+self.offsetx,f.top+self.offsety,f.width,f.height)
                 pygame.draw.rect(self.surf,(2,2,2),f,2)
             pygame.draw.line(self.surf,(0,0,0),(400,320),(400-self.goto[0],320-self.goto[1]),3)
@@ -150,6 +158,7 @@ class Overworld(object):
                     if self.good:
                         self.good = False
                         self.drawn = False
+                        self.game.qm.screen="quests"
                         self.game.state = "quests"
                 if e.key == K_f:
                     for f in self.locationrects:
@@ -162,11 +171,6 @@ class Overworld(object):
                 #OVERWORLD
                 if self.screen == "main":
                     self.goto=[400-e.pos[0],320-e.pos[1]]
-                    #townstuf
-                        #self.town = b.text
-                        #self.townIndex = self.locationbuttons.index(b)
-                        #self.screen = "town"
-                        #self.drawn = False
 
                 #IN A TOWN
                 if self.screen == "town":

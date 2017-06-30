@@ -3,19 +3,25 @@
         {
             "name": "New Adventurer",
             "descr": ["As a new adventurer, the quest-giver of",
-                       "Prospect has tasked you with finding ten ",
-                       "gold.",
+                       "Prospect has tasked you with finding 5 ",
+                       "gold. and killing an enemy.",
                        "",
-                       "Your reward is 150 experience points."],
+                       "Your reward is 50 experience points."],
             "tasks": [
             {
                 "type": "PlayerPropTask",
                 "format": "Find {count} {prop}.",
                 "prop": "gold",
-                "count": 15
+                "count": 5
+            },
+            {
+              "type": "PlayerPropTask",
+              "format": "Kill a single monster.",
+              "prop": "kills",
+              "count": 1
             }
                     ],
-            "rew": 150
+            "rew": 50
         },
 
     "1":
@@ -30,7 +36,7 @@
                 "type": "PlayerPropTask",
                 "format": "Kill {count} enemies.",
                 "prop": "kills",
-                "count": 3
+                "count": 5
             }
                     ],
             "rew": 150
@@ -45,10 +51,10 @@
                        "Your reward is 150 experience points."],
             "tasks": [
             {
-                "type": "PlayerItemTask",
+                "type": "PlayerFetchTask",
                 "format": "Find {item}.",
                 "item": "gabe",
-                "count": 1
+                "location": "0_5_5"
             }
                     ],
             "rew": 150
@@ -57,19 +63,38 @@
     "3":
         {
             "name": "Cherished Bow!",
-            "descr": ["A woman has posted about a lost bow and aarow.",
+            "descr": ["A woman has posted about a lost weapon.",
                        "It once belong to a leader of the famous",
-                       "Quiet Bison tribe, and was handed down to her.",
+                       "Quiet Bison tribe, and was handed down to",
+                       "her family many moons ago.",
                        "Your reward is 150 experience points."],
             "tasks": [
             {
                 "type": "PlayerItemTask",
-                "format": "Find {item}.",
+                "format": "Find the weapon.",
                 "item": "cherishedbow",
                 "count": 1
             }
                     ],
             "rew": 150
+        },
+
+    "4":
+        {
+            "name": "Monster Hunter 2",
+            "descr": ["The quest-giver of Fairfield has",
+                       "tasked you with killing 20 monsters.",
+                       "",
+                       "Your reward is 300 experience points."],
+            "tasks": [
+            {
+                "type": "PlayerPropTask",
+                "format": "Kill {count} enemies.",
+                "prop": "kills",
+                "count": 20
+            }
+                    ],
+            "rew": 300
         }
 
 }

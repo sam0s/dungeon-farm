@@ -88,7 +88,6 @@ class Player(object):
             for f in n2:
                 #divide up by name and stack
                 f2=f.split("_")
-                print f2
                 if f2[1]=='a':
                     self.activeWeapon=[items.fromId(int(f2[0]),self)]
                     break
@@ -97,10 +96,12 @@ class Player(object):
                     it=items.fromId(int(f2[0]),self)
                     self.giveItem(it)
         #load quests
-        print pq
-        for f in pq:
-            f=int(f)
-            self.world.game.qm.quests += [self.world.game.qm.allQuests[str(f)]]
+
+        for q in pq:
+            q=q.split("_")
+            nq=self.world.game.qm.allQuests[str(q[0])]
+            nq.active=q[1]=="True"
+            self.world.game.qm.quests += [nq]
 
 
     def giveItem(self,item):
@@ -131,8 +132,6 @@ class Player(object):
 
     def giveXp(self,xp):
         self.xp+=xp
-        print self.xp
-        print self.nextxp
         while self.xp>=self.nextxp:
             self.xp-=self.nextxp
             self.levelUp()
