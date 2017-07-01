@@ -8,8 +8,6 @@ __author__ = "Sam Tubb (sam0s)"
 __copyright__ = "None"
 __credits__ = []
 
-
-
 import pygame
 from random import choice
 from pygame import *
@@ -63,11 +61,10 @@ class World(object):
         self.playername=None
         self.mouse=dl.Mouse(0,0,self)
         self.dungeonLevelCap = 5
-
+        self.dn=0
 
         #are you in a battle?
         self.battle=False
-
 
         self.logtext=[]
 

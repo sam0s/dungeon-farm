@@ -231,18 +231,19 @@ class PlayerFetchTask(Task):
     """
     Task allowing to check if a certain Player has found a certain item from dungeon.
     """
-    def __init__(self, format, item, location):
+    def __init__(self, format, itemID, location):
         Task.__init__(self)
         self.format = format
-        self.item = item
+        self.itemID = itemID
         self.location=location
 
     def check(self, game):
-        print "Checking player's items for "+self.item
+        print "Checking player's items for item with ID"
+        print self.itemID
 
         c=0
         for f in game.player.inventory:
-            if f.name==self.item:
+            if f.id==self.itemID:
                 game.player.inventory.pop(game.player.inventory.index(f))
                 c+=1
         self.completed=c>0
@@ -250,8 +251,7 @@ class PlayerFetchTask(Task):
         return self.completed
 
     def descr(self):
-        return self.format.format(item=self.item)
-
+        return self.format
 
 ##########################################################################
 # LOAD ALL QUESTS (while only opening the file one time lol)
@@ -271,7 +271,7 @@ def loadAllQuests():
             for f in jsondata[qId]['tasks']:
                 tp=f['type']
                 if tp=="PlayerFetchTask":
-                    QUEST.addTasks(PlayerFetchTask(f['format'],f['item'],f['location']))
+                    QUEST.addTasks(PlayerFetchTask(f['format'],int(f['itemID']),f['location']))
                 if tp=="PlayerItemTask":
                     QUEST.addTasks(PlayerItemTask(f['format'],f['item'],f['count']))
                 if tp=="PlayerPropTask":

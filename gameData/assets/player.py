@@ -8,8 +8,6 @@ __author__ = "Sam Tubb (sam0s)"
 __copyright__ = "None"
 __credits__ = []
 
-
-
 import pygame
 from random import choice
 from pygame import *
@@ -18,7 +16,6 @@ from math import sqrt
 import dpylib as dl
 from assets.gamelib import AnimationSet, Animator
 from os import path
-
 
 class Player(object):
     def __init__(self,x,y,world):
@@ -120,6 +117,7 @@ class Player(object):
     def levelUp(self):
         #LEVEL UP
         self.world.logtext.append("Level Up!")
+        self.world.logtext.append("5 Skill-Points added! (go to player tab)")
         self.level+=1
         self.skillpoints+=5
 
@@ -159,6 +157,9 @@ class Player(object):
             cl=pygame.sprite.spritecollide(self, self.world.containing, False)
             if cl:
                 for f in cl:
+                    if f.name == 'qitem':
+                        self.giveItem(f.item)
+                        self.world.containing.remove(f)
                     if f.name=='door':
                         self.movelist=[]
                         if self.rect.y<64:
@@ -194,7 +195,6 @@ class Player(object):
 
                     self.world.ReDraw()
 
-
             #move based on time delta
             if len(self.movelist)>0:
                 self.moveto=self.movelist[0]
@@ -223,7 +223,6 @@ class Player(object):
 
             #draw player
             self.animator.update(self.world.delta)
-
 
             self.rect.x=int(self.changex)
             self.rect.y=int(self.changey)

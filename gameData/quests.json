@@ -47,14 +47,15 @@
             "name": "Find Gabe!",
             "descr": ["A man has posted about his lost friend",
                        "named gabe. Go find him!",
+                       "located in Prospect0 x0y1",
                        "",
                        "Your reward is 150 experience points."],
             "tasks": [
             {
                 "type": "PlayerFetchTask",
-                "format": "Find {item}.",
-                "item": "gabe",
-                "location": "0_5_5"
+                "format": "Find Gabe.",
+                "itemID": "100",
+                "location": "0_0_0_1"
             }
                     ],
             "rew": 150

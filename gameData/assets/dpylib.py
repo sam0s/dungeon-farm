@@ -8,8 +8,6 @@ __author__ = "Sam Tubb (sam0s)"
 __copyright__ = "None"
 __credits__ = []
 
-
-
 import pygame,json
 from random import choice
 from pygame import *
@@ -73,7 +71,7 @@ def savelvl(game):
             save.write('"'+f.name+'"'+"."+str(f.rect.left)+"."+str(f.rect.top)+".")
         save.close()
 
-#load game
+#load a room
 def loadlvl(ents,loc):
     load = open(loc,"r")
     read = 0
@@ -99,10 +97,10 @@ def loadlvl(ents,loc):
 
 def startdungeon(index,w):
     faf=path.join(w.playername,w.game.ow.town+str(index))
+    w.dn=index
     w.pos=[0,0]
     w.levelname=faf
     w.dungeonLevelCap=(5+index)+(index*w.game.ow.townIndex*4)
-    print w.dungeonLevelCap
     w.player.reset()
 
     if path.isdir(faf):
@@ -113,7 +111,6 @@ def startdungeon(index,w):
         print w.levelname
         mkdir(faf)
         changelevel(w)
-
 
 #draw a bar with %
 def bar(surface,color1,color2,x,y,width,height,value,maxvalue):
@@ -126,9 +123,10 @@ def bar(surface,color1,color2,x,y,width,height,value,maxvalue):
 
 #used to load into a new level
 def changelevel(w):
-    #change this to test if file exists
     w.containing.empty()
     loc=path.join(w.levelname,"world"+str(w.pos[0])+str(w.pos[1])+".txt")
+
+    game=w.game
 
     if path.isfile(loc):
         loadlvl(w.containing,loc)
@@ -138,13 +136,17 @@ def changelevel(w):
         carve(w.game)
         doors(w.containing)
         savelvl(w.game)
+    #check for quest specific placements
+    for f in [x for x in game.qm.quests if x.active]:
+        for t in [x for x in f.tasks if x.location]:
+            tl=t.location.split("_")
+            tl=[int(x) for x in tl]
+            if tl[0]==game.ow.townIndex and tl[1] == w.dn and tl[2]==w.pos[0] and tl[3]==w.pos[1]:
+                w.containing.add(QuestItem(384,224,t.itemID))
 
 #carve out the level
 def carve(game):
     ents=game.gw.containing
-    for f in game.qm.quests:
-        for t in [x for x in f.tasks if x.location]:
-            print t
     x = 32
     y = 32
     direction = choice([1,2,3,4])
@@ -242,7 +244,6 @@ def doors(ents):
     ents.add(Door(384,0))
     ents.add(Door(0,224))
 
-
 #manhattan distance calculator
 def mdistance(s,e):
     ns=[s[0],s[1]]
@@ -262,8 +263,6 @@ def mdistance(s,e):
             ns[1]-=32
             total+=32
     return total/32
-
-
 
 def LoadGame(w):
     playername=w.playername
@@ -298,7 +297,6 @@ def NewGame(w,skip=False):
 #################################
 # CLASSES #######################
 #################################
-
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self):
@@ -337,7 +335,6 @@ class PathNode:
 
     def calcFitness(self, start, end):
         return mdistance(start, end) + self.cost
-
 
 class PathFinder:
     """
@@ -459,7 +456,6 @@ class PathFinder:
             end = end.prev
         return self.path
 
-
 class Pickup(Entity):
     def __init__(self,x,y,ptype):
         Entity.__init__(self)
@@ -478,7 +474,15 @@ class Pickup(Entity):
             self.image=chestImage
         self.rect = Rect(x,y,32,32)
 
-
+class QuestItem(Entity):
+    def __init__(self,x,y,itemID):
+        Entity.__init__(self)
+        self.name = "qitem"
+        self.item=items.fromId(itemID)
+        self.image = Surface((32,32))
+        self.image.convert()
+        self.image=chestImage
+        self.rect = Rect(x,y,32,32)
 
 class Enemy(Entity):
     def __init__(self,x,y):
@@ -487,7 +491,6 @@ class Enemy(Entity):
         self.etype = "grunt"
         self.image = enemyImage
         self.rect = Rect(x,y,32,32)
-
 
 class Wall(Entity):
     def __init__(self,x,y):
