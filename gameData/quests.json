@@ -9,9 +9,10 @@
                        "Your reward is 50 experience points."],
             "tasks": [
             {
-                "type": "PlayerQuestTask",
-                "format": "Help.",
-                "quest": 2
+                "type": "PlayerPropTask",
+                "format": "Find {count} {prop}",
+                "prop": "gold",
+                "count": 5
             },
             {
               "type": "PlayerPropTask",
@@ -25,7 +26,7 @@
 
     "1":
         {
-            "name": "Monster Hunter",
+            "name": "Monster Hunter 1",
             "descr": ["The quest-giver of Prospect has",
                        "tasked you with killing 5 monsters.",
                        "",
@@ -66,14 +67,16 @@
             "descr": ["A woman has posted about a lost weapon.",
                        "It once belong to a leader of the famous",
                        "Quiet Bison tribe, and was handed down to",
-                       "her family many moons ago.",
+                       "her family long ago.",
+                       "located in Fairfield x10y-4",
+                       "",
                        "Your reward is 150 experience points."],
             "tasks": [
             {
-                "type": "PlayerItemTask",
+                "type": "PlayerFetchTask",
                 "format": "Find the weapon.",
-                "item": "cherishedbow",
-                "count": 1
+                "itemID": "101",
+                "location": "1_2_10_-4"
             }
                     ],
             "rew": 150

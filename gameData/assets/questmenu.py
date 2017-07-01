@@ -57,14 +57,16 @@ class Menu(object):
         if self.screen=="quests" or self.screen == "quests_ig":
             #menu routine
             if not self.drawn:
-                self.qbuttons=[]
                 #self.surf.fill((0,0,0))
                 self.surf.blit(self.menuimg,(0,0))
                 pygame.display.update()
                 self.drawn=True
                 padding=0
+                self.qbuttons=[]
+                self.qIds=[]
                 for f in self.quests:
                     if f.active:
+                        self.qIds.append(f.id)
                         self.qbuttons.append(ui.Button(100,60+padding,200,32,f.name,self.surf))
                         padding+=42
                 for f in self.qbuttons:
@@ -96,7 +98,10 @@ class Menu(object):
                                 else:
                                     self.screen="questDescr"
                                 self.drawn=False
-                                self.selectedQuest=self.quests[self.qbuttons.index(b)]
+                                #fix this
+                                targetId=self.qIds[self.qbuttons.index(b)]
+                                qlist=[x for x in self.quests if x.id == targetId]
+                                self.selectedQuest=qlist[0]
                                 self.selectedQuest.check(self.game)
 
                 for b in self.mainbuttons:
@@ -167,7 +172,6 @@ class Quest(object):
         self.active = False
         return True
 
-
 class Task(object):
     """
     Task Baseclass
@@ -182,7 +186,6 @@ class Task(object):
 
     def descr(self):
         return "[Empty Task]"
-
 
 class PlayerPropTask(Task):
     """
@@ -201,6 +204,7 @@ class PlayerPropTask(Task):
 
     def descr(self):
         return self.format.format(prop=self.prop, count=self.count)
+
 class PlayerQuestTask(Task):
     """
     Task to see if a player has completed a certain quest. (based on ID)
@@ -302,9 +306,6 @@ def loadAllQuests():
                     QUEST.addTasks(PlayerPropTask(f['format'],f['prop'],f['count']))
                 if tp=="PlayerQuestTask":
                     QUEST.addTasks(PlayerQuestTask(f['format'],f['quest']))
-
-
-
                 allQuests[qId]=QUEST
     except KeyError:
         print "number of quests loaded-"+qId
