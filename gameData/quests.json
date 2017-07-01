@@ -9,10 +9,9 @@
                        "Your reward is 50 experience points."],
             "tasks": [
             {
-                "type": "PlayerPropTask",
-                "format": "Find {count} {prop}.",
-                "prop": "gold",
-                "count": 5
+                "type": "PlayerQuestTask",
+                "format": "Help.",
+                "quest": 2
             },
             {
               "type": "PlayerPropTask",

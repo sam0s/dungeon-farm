@@ -201,6 +201,25 @@ class PlayerPropTask(Task):
 
     def descr(self):
         return self.format.format(prop=self.prop, count=self.count)
+class PlayerQuestTask(Task):
+    """
+    Task to see if a player has completed a certain quest. (based on ID)
+    """
+    def __init__(self,format,questID):
+        Task.__init__(self)
+        self.format=format
+        self.questID=questID
+    def check(self,game):
+        print "Checking completed quests for ID"
+        print self.questID
+
+        for f in [x for x in game.qm.quests if not x.active]:
+            self.completed=int(f.id)==self.questID
+
+        return self.completed
+
+    def descr(self):
+        return self.format
 
 class PlayerItemTask(Task):
     """
@@ -261,7 +280,12 @@ def loadAllQuests():
         with open(path.join("quests.json")) as f:
             jsondata = json.load(f)
 
-        taskTypes = {'PlayerPropTask':PlayerPropTask,'PlayerItemTask':PlayerItemTask,'PlayerFetchTask':PlayerFetchTask}
+        taskTypes = {
+        'PlayerPropTask':PlayerPropTask,
+        'PlayerItemTask':PlayerItemTask,
+        'PlayerFetchTask':PlayerFetchTask,
+        'PlayerQuestTask':PlayerQuestTask
+        }
 
         for qId in range(999):
             qId=str(qId)
@@ -276,6 +300,8 @@ def loadAllQuests():
                     QUEST.addTasks(PlayerItemTask(f['format'],f['item'],f['count']))
                 if tp=="PlayerPropTask":
                     QUEST.addTasks(PlayerPropTask(f['format'],f['prop'],f['count']))
+                if tp=="PlayerQuestTask":
+                    QUEST.addTasks(PlayerQuestTask(f['format'],f['quest']))
 
 
 
