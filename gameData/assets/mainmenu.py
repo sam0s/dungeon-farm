@@ -56,7 +56,8 @@ class Menu(object):
         self.mainbuttons=[ui.Button(650,50,100,32,"Continue",self.surf),
                     ui.Button(650,100,100,32,"New",self.surf),
                     ui.Button(650,150,100,32,"Options",self.surf),
-                    ui.Button(650,200,100,32,"Quit",self.surf)
+                    ui.Button(650,200,100,32,"Quit",self.surf),
+                    ui.CheckBox(650,300,"test_check",self.surf)
                     ]
         self.options=[ui.Button(650,250,100,32,"Go Back",self.surf)]
 
@@ -80,6 +81,8 @@ class Menu(object):
 
 
         for e in self.game.events:
+            if e.type==QUIT:
+                self.game.go=False
             if e.type == MOUSEBUTTONUP and e.button == 1:
                 if self.screen == "options":
                     for b in self.options:
@@ -91,8 +94,10 @@ class Menu(object):
                     for b in self.mainbuttons:
                         if b.rect.collidepoint(e.pos):
                             self.game.snd.Play("button")
+                            if b.text == "test_check":
+                                b.Check()
+                                self.drawn=False
                             if b.text == "Options":
-                                print "ef"
                                 self.screen = "options"
                                 self.drawn=False
                             if b.text == "Quit":
@@ -103,5 +108,3 @@ class Menu(object):
                             if b.text == "New":
                                 dl.NewGame(self.game.gw)
                                 self.game.state="overworld"
-                if e.type==QUIT:
-                    self.game.go=False
