@@ -22,8 +22,6 @@ font = ui.LoadFont(17)
 font2 = ui.LoadFont(19)
 font3 = ui.LoadFont(38)
 
-
-
 class Menu(object):
     def __init__(self,surf):
         self.screen="quests"
@@ -124,7 +122,6 @@ class Menu(object):
                                 self.screen="quests"
             if e.type==QUIT:
                 self.game.go=False
-
 
 class Quest(object):
     def __init__(self, id, name, descr, active=False, tasks=None, rewards=[]):
@@ -278,6 +275,7 @@ class PlayerFetchTask(Task):
 
 ##########################################################################
 # LOAD ALL QUESTS (while only opening the file one time lol)
+
 def loadAllQuests():
     allQuests={}
     try:

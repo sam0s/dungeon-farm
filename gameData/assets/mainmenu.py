@@ -18,6 +18,7 @@ from shutil import rmtree
 import dpylib as dl
 
 mainmenu=pygame.image.load(path.join("images","menu.png")).convert()
+optionsimg=pygame.image.load(path.join("images","menu.png")).convert()
 logo_samiscool=pygame.image.load(path.join("images","samiscool_splash.png")).convert()
 
 class Logos(object):
@@ -44,8 +45,6 @@ class Logos(object):
             if e.type==QUIT:
                 self.game.go=False
 
-
-
 class Menu(object):
     def __init__(self,surf):
         self.screen="main"
@@ -57,22 +56,45 @@ class Menu(object):
         self.mainbuttons=[ui.Button(650,50,100,32,"Continue",self.surf),
                     ui.Button(650,100,100,32,"New",self.surf),
                     ui.Button(650,150,100,32,"Options",self.surf),
-                    ui.Button(650,200,100,32,"Quit",self.surf)]
+                    ui.Button(650,200,100,32,"Quit",self.surf)
+                    ]
+        self.options=[ui.Button(650,250,100,32,"Go Back",self.surf)]
+
     def Draw(self):
+        if self.screen=="options":
+            #options routine
+            if not self.drawn:
+                self.surf.blit(optionsimg,(0,0))
+
+                [x.Update() for x in self.options]
+                self.drawn=True
+
         if self.screen=="main":
             #menu routine
             if not self.drawn:
                 #self.surf.fill((0,0,0))
                 self.surf.blit(self.menuimg,(0,0))
                 pygame.display.update()
+                [x.Update() for x in self.mainbuttons]
                 self.drawn=True
-            for f in self.mainbuttons:
-                f.Update()
-            for e in self.game.events:
-                if e.type == MOUSEBUTTONUP and e.button == 1:
+
+
+        for e in self.game.events:
+            if e.type == MOUSEBUTTONUP and e.button == 1:
+                if self.screen == "options":
+                    for b in self.options:
+                        if b.rect.collidepoint(e.pos):
+                            if b.text == "Go Back":
+                                self.screen = "main"
+                                self.drawn = False
+                if self.screen == "main":
                     for b in self.mainbuttons:
                         if b.rect.collidepoint(e.pos):
                             self.game.snd.Play("button")
+                            if b.text == "Options":
+                                print "ef"
+                                self.screen = "options"
+                                self.drawn=False
                             if b.text == "Quit":
                                 self.game.go=False
                             if b.text == "Continue":

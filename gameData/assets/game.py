@@ -60,7 +60,6 @@ class Game(object):
         self.qm.quests=[]
 
 
-
     def Update(self,dt):
         self.events=pygame.event.get()
         if self.state == "logos":
