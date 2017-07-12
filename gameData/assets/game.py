@@ -4,11 +4,10 @@
 world.py
 
 """
+
 __author__ = "Sam Tubb (sam0s)"
 __copyright__ = "None"
 __credits__ = []
-
-
 
 import pygame
 from random import choice
@@ -20,7 +19,6 @@ import assets.world as world
 import assets.sound as sound
 import assets.questmenu as questmenu
 import assets.ui as ui
-from math import sqrt
 import dpylib as dl
 from os import path
 
@@ -58,6 +56,7 @@ class Game(object):
         self.qm.game=self
 
         self.qm.quests=[]
+        self.qm.quests += [self.qm.allQuests['5']]
 
 
     def Update(self,dt):

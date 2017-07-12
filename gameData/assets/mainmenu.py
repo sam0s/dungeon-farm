@@ -56,10 +56,11 @@ class Menu(object):
         self.mainbuttons=[ui.Button(650,50,100,32,"Continue",self.surf),
                     ui.Button(650,100,100,32,"New",self.surf),
                     ui.Button(650,150,100,32,"Options",self.surf),
-                    ui.Button(650,200,100,32,"Quit",self.surf),
-                    ui.CheckBox(650,300,"test_check",self.surf)
+                    ui.Button(650,200,100,32,"Quit",self.surf)
                     ]
-        self.options=[ui.Button(650,250,100,32,"Go Back",self.surf)]
+        self.options=[ui.Button(650,250,100,32,"Go Back",self.surf),
+                      ui.CheckBox(60,300,"Fullscreen",self.surf)]
+
 
     def Draw(self):
         if self.screen=="options":
@@ -90,21 +91,27 @@ class Menu(object):
                             if b.text == "Go Back":
                                 self.screen = "main"
                                 self.drawn = False
+                            if b.text == "Fullscreen":
+                                b.Check()
+                                pygame.display.set_mode((800, 640),HWSURFACE | DOUBLEBUF)
+                                if b.active:
+                                    pygame.display.set_mode((800, 640),HWSURFACE | DOUBLEBUF | FULLSCREEN)
+                                self.drawn=False
+                                
                 if self.screen == "main":
                     for b in self.mainbuttons:
                         if b.rect.collidepoint(e.pos):
                             self.game.snd.Play("button")
-                            if b.text == "test_check":
-                                b.Check()
-                                self.drawn=False
                             if b.text == "Options":
                                 self.screen = "options"
                                 self.drawn=False
                             if b.text == "Quit":
                                 self.game.go=False
                             if b.text == "Continue":
+                                self.drawn=False
                                 dl.LoadGame(self.game.gw)
                                 self.game.state="overworld"
                             if b.text == "New":
+                                self.drawn=False
                                 dl.NewGame(self.game.gw)
                                 self.game.state="overworld"

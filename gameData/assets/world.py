@@ -102,7 +102,7 @@ class World(object):
                 if self.good==1:
                     if self.keys[K_q]:
                         self.game.state="quests"
-                        self.game.qm.screen="quests_ig"
+                        self.game.qm.goBackTo="game"
                         self.good=0
                         self.game.qm.drawn=False
                     if self.keys[K_TAB]:

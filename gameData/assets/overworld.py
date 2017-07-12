@@ -32,7 +32,8 @@ class Overworld(object):
         self.hudsurf = Surface((800,128))
 
         #First item is townIndex, corresponding item is list of quests for that town (questBoardList)
-        self.questBoardList = {0:[0,1],1:[2,3]}
+        self.questBoardList = {0:[10,20],
+                               1:[30,40]}
         self.qbuttons = []
 
         self.hudsurf.fill((3,3,3))
@@ -131,11 +132,6 @@ class Overworld(object):
             self.surf.blit(self.overworldimg,(self.offsetx,self.offsety))
             pygame.draw.circle(self.surf,(0,0,0),(400,320),5,0)
 
-            #test movement
-            #move=True
-            #if self.goto[0]<1 and self.goto[1]<1 and  self.goto[0]>-1 and self.goto[1]>-1:
-                #move=False
-
             for f in self.locationrects:
                 if pygame.Rect(f.left+self.offsetx,f.top+self.offsety,f.width,f.height).collidepoint(400,320):
                     text="Press F to visit "+self.townRef[self.locationrects.index(f)]
@@ -152,13 +148,15 @@ class Overworld(object):
 
         for e in self.game.events:
             if e.type == KEYUP:
+                if e.key==K_ESCAPE:
+                    self.game.state="menu"
                 self.good = True
             if e.type == KEYDOWN:
                 if e.key == K_q:
                     if self.good:
                         self.good = False
                         self.drawn = False
-                        self.game.qm.screen="quests"
+                        self.game.qm.goBackTo="overworld"
                         self.game.state = "quests"
                 if e.key == K_f:
                     for f in self.locationrects:

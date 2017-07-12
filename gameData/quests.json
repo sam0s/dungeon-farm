@@ -1,5 +1,23 @@
 {
-    "0":
+
+    "5":
+      {
+          "name": "Save Appigarth Pt. 1",
+          "descr": [
+                     "Appigarth is in need of a hero.",
+                     "",
+                     "Your reward is 2000 experience points."],
+          "tasks": [
+          {
+            "type": "PlayerQuestTask",
+            "format": "Become an adventurer.",
+            "quest": 10
+          }
+                  ],
+          "rew": 2000
+      },
+
+    "10":
         {
             "name": "New Adventurer",
             "descr": ["As a new adventurer, the quest-giver of",
@@ -24,7 +42,7 @@
             "rew": 50
         },
 
-    "1":
+    "20":
         {
             "name": "Monster Hunter 1",
             "descr": ["The quest-giver of Prospect has",
@@ -42,7 +60,7 @@
             "rew": 150
         },
 
-    "2":
+    "30":
         {
             "name": "Find Gabe!",
             "descr": ["A man has posted about his lost friend",
@@ -61,7 +79,7 @@
             "rew": 150
         },
 
-    "3":
+    "40":
         {
             "name": "Cherished Bow!",
             "descr": ["A woman has posted about a lost weapon.",
@@ -82,7 +100,7 @@
             "rew": 150
         },
 
-    "4":
+    "50":
         {
             "name": "Monster Hunter 2",
             "descr": ["The quest-giver of Fairfield has",

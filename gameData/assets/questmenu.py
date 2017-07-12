@@ -33,8 +33,10 @@ class Menu(object):
         self.qbuttons=[]
         self.good=False
         self.allQuests=loadAllQuests()
+        self.goBackTo="overworld"
+
     def Draw(self):
-        if self.screen=="questDescr" or self.screen=="questDescr_ig":
+        if self.screen=="questDescr":
             if self.drawn==False:
                 self.surf.blit(self.menuimg,(0,0))
                 self.surf.blit(font3.render(self.selectedQuest.name,0,(0,0,0)),(40,50))
@@ -52,7 +54,7 @@ class Menu(object):
                     y+=25
 
 
-        if self.screen=="quests" or self.screen == "quests_ig":
+        if self.screen=="quests":
             #menu routine
             if not self.drawn:
                 #self.surf.fill((0,0,0))
@@ -83,18 +85,14 @@ class Menu(object):
                     if self.good:
                         self.good=False
                         self.drawn=False
-                        self.game.state="overworld"
-                        if self.screen=="quests_ig" or self.screen=="questDescr_ig":self.game.state="game"
+                        self.game.state=self.goBackTo
 
             if e.type == MOUSEBUTTONUP and e.button == 1:
-                if self.screen=="quests" or self.screen=="quests_ig":
+                if self.screen=="quests":
                     if len(self.qbuttons)>0:
                         for b in self.qbuttons:
                             if b.rect.collidepoint(e.pos):
-                                if self.screen=="quests_ig":
-                                    self.screen="questDescr_ig"
-                                else:
-                                    self.screen="questDescr"
+                                self.screen="questDescr"
                                 self.drawn=False
                                 #fix this
                                 targetId=self.qIds[self.qbuttons.index(b)]
@@ -104,22 +102,14 @@ class Menu(object):
 
                 for b in self.mainbuttons:
                     if b.rect.collidepoint(e.pos):
-                        if self.screen=="quests_ig":
-                            self.drawn=False
-                            self.good=False
-                            self.game.state="game"
-
                         if self.screen=="quests":
                             self.drawn=False
                             self.good=False
                             self.game.ow.good=True
-                            self.game.state="overworld"
+                            self.game.state=self.goBackTo
                         else:
                             self.drawn=False
-                            if self.screen=="questDescr_ig":
-                                self.screen="quests_ig"
-                            else:
-                                self.screen="quests"
+                            self.screen="quests"
             if e.type==QUIT:
                 self.game.go=False
 
@@ -278,22 +268,28 @@ class PlayerFetchTask(Task):
 
 def loadAllQuests():
     allQuests={}
-    try:
-        with open(path.join("quests.json")) as f:
-            jsondata = json.load(f)
+    #try:
+    with open(path.join("quests.json")) as f:
+        jsondata = json.load(f)
 
-        taskTypes = {
-        'PlayerPropTask':PlayerPropTask,
-        'PlayerItemTask':PlayerItemTask,
-        'PlayerFetchTask':PlayerFetchTask,
-        'PlayerQuestTask':PlayerQuestTask
-        }
+    taskTypes = {
+    'PlayerPropTask':PlayerPropTask,
+    'PlayerItemTask':PlayerItemTask,
+    'PlayerFetchTask':PlayerFetchTask,
+    'PlayerQuestTask':PlayerQuestTask
+    }
 
-        for qId in range(999):
-            qId=str(qId)
+    for qId in range(999):
+        qId=str(qId)
 
+        try:
             QUEST = Quest(qId,jsondata[qId]['name'],jsondata[qId]['descr'],active=True,rewards=[jsondata[qId]['rew']])
+        except KeyError:
+            print "No quest with id "+qId
+            qId="skip"
 
+        if qId != "skip":
+            print "te"
             for f in jsondata[qId]['tasks']:
                 tp=f['type']
                 if tp=="PlayerFetchTask":
@@ -305,6 +301,6 @@ def loadAllQuests():
                 if tp=="PlayerQuestTask":
                     QUEST.addTasks(PlayerQuestTask(f['format'],f['quest']))
                 allQuests[qId]=QUEST
-    except KeyError:
-        print "number of quests loaded-"+qId
+    #except KeyError:
+        #print "number of quests loaded-"+qId
     return allQuests
