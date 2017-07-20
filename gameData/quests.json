@@ -12,9 +12,33 @@
             "type": "PlayerQuestTask",
             "format": "Become an adventurer.",
             "quest": 10
+          },
+          {
+            "type": "PlayerQuestTask",
+            "format": "Help the tribe.",
+            "quest": 12
           }
                   ],
           "rew": 2000
+      },
+
+    "12":
+      {
+          "name": "Tribal Woes",
+          "descr": [
+                     "The Bright Foot has had their sacred drum stolen",
+                     "by a group of Night Spirit tribals.",
+                     "",
+                     "Your reward is 200 experience points."],
+          "tasks": [
+          {
+            "type": "PlayerFetchTask",
+            "format": "Find the drum!",
+            "itemID": 102,
+            "location": "1_1_5_12"
+          }
+                  ],
+          "rew": 200
       },
 
     "10":

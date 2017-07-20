@@ -57,6 +57,23 @@ class CherishedBow(Item):
 
         self.image = itemsheetQuest.subsurface(pygame.Rect(1*26, 0, 26, 26)).convert()
 
+class Drum(Item):
+    def __init__(self):
+        self.itemType="quest"
+        self.name="drum"
+
+        self.id = 101
+
+        self.val = 100
+        self.consumeVal = 0
+        self.ad = 0
+        self.ap = 0
+        self.weight = 1
+
+        self.stack=1
+
+        self.image = itemsheetQuest.subsurface(pygame.Rect(2*26, 0, 26, 26)).convert()
+
 ############ WEAPONS #######################
 ##########################
 class Dirk(Item):
@@ -201,7 +218,7 @@ class HealthPotion(Item):
 
 def fromId(idn,parent=None,justname=False):
     print idn
-    
+
     itemDict= {1:"Bread",
                2:"Apple",
                3:"Pizza",
@@ -211,7 +228,8 @@ def fromId(idn,parent=None,justname=False):
                200:"Dirk",
                201:"Sword",
                100:"Gabe",
-               101:"CherishedBow"
+               101:"CherishedBow",
+               102:"Drum"
                }
     if not justname:
         return eval(itemDict[idn]+"()")

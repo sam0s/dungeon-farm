@@ -17,6 +17,7 @@ import dpylib as dl
 from os import path
 import time
 
+compassImage=pygame.image.load(path.join("images","compass.png")).convert()
 floorImage=pygame.image.load(path.join("images","floor.png")).convert()
 
 floor=pygame.Surface((800,512))
@@ -62,6 +63,7 @@ class World(object):
         self.mouse=dl.Mouse(0,0,self)
         self.dungeonLevelCap = 5
         self.dn=0
+        self.pointTo=""
 
         #are you in a battle?
         self.battle=False
@@ -113,10 +115,13 @@ class World(object):
                 if not self.keys[K_TAB] and not self.keys[K_q]:
                     self.good=1
 
+                pygame.event.pump()
+                
                 for e in self.game.events:
                     if e.type == MOUSEBUTTONDOWN and e.button == 1:
                         if self.player.moving==False:
-                            self.player.moveto=[self.mse32[0],self.mse32[1]]
+                            if self.mse32[1]<512:
+                                self.player.moveto=[self.mse32[0],self.mse32[1]]
                         #Headshot Click
                         if e.pos[0]<130:
                             if e.pos[1]>512:
@@ -126,7 +131,6 @@ class World(object):
                         self.Close()
 
                 self.player.update()
-                #self.drawPath.update()
                 self.mouse.update()
 
             if self.state == "battle":
@@ -189,8 +193,13 @@ class World(object):
             self.drawnlevel.blit(floorImage,(0,0))
             #self.drawnlevel.fill((0,32,0))
             self.containing.draw(self.drawnlevel)
+        a={"wn":0,"n":1,"en":2,
+            "w":3,"":4,"e":5,
+            "sw":6,"s":7,"es":8}
+        a1=compassImage.subsurface(pygame.Rect(a[self.pointTo]*32, 0, 32, 32)).convert()
         dl.bar(self.hudsurf,(0,210,0),(210,0,0),32,4,375,25,self.player.hp,self.player.maxhp)
         dl.bar(self.hudsurf,(75,0,130),(210,0,0),32,32,375,25,self.player.xp,self.player.nextxp)
+        self.hudsurf.blit(a1,(372,72))
 
     def Shift(self,d):
 

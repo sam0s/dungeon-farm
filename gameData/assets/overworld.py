@@ -169,7 +169,7 @@ class Overworld(object):
                 #OVERWORLD
                 if self.screen == "main":
                     self.goto=[400-e.pos[0],320-e.pos[1]]
-
+            if e.type == MOUSEBUTTONUP and e.button == 1:
                 #IN A TOWN
                 if self.screen == "town":
                     for b in self.townbuttons:

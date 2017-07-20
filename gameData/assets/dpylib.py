@@ -141,6 +141,13 @@ def changelevel(w):
         for t in [x for x in f.tasks if x.location]:
             tl=t.location.split("_")
             tl=[int(x) for x in tl]
+            if tl[0]==game.ow.townIndex and tl[1] == w.dn:
+                a=''
+                if tl[2]>w.pos[0]:a+='e'
+                if tl[3]>w.pos[1]:a+='s'
+                if tl[2]<w.pos[0]:a+='w'
+                if tl[3]<w.pos[1]:a+='n'
+                game.gw.pointTo=a
             if tl[0]==game.ow.townIndex and tl[1] == w.dn and tl[2]==w.pos[0] and tl[3]==w.pos[1]:
                 w.containing.add(QuestItem(384,224,t.itemID))
 
