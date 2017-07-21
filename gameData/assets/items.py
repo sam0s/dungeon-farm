@@ -27,14 +27,13 @@ class Gabe(Item):
     def __init__(self):
         self.itemType="quest"
         self.name="gabe"
-
+        self.descr=["A cute dog named Gabe! He belongs to a man from Fairfield."]
         self.id = 100
 
         self.val = 15
         self.consumeVal = 0
         self.ad = 0
         self.ap = 0
-        self.weight = 1
 
         self.stack=1
 
@@ -44,6 +43,7 @@ class CherishedBow(Item):
     def __init__(self):
         self.itemType="quest"
         self.name="cherishedbow"
+        self.descr=["A sacred bow. It once belonged to a leader of","the Quiet Bison tribe, far to the west."]
 
         self.id = 101
 
@@ -51,7 +51,6 @@ class CherishedBow(Item):
         self.consumeVal = 0
         self.ad = 0
         self.ap = 0
-        self.weight = 1
 
         self.stack=1
 
@@ -61,14 +60,14 @@ class Drum(Item):
     def __init__(self):
         self.itemType="quest"
         self.name="drum"
+        self.descr=["This sacred drum belongs to the Bright Foot tribe."]
 
-        self.id = 101
-
+        self.id = 102
+        
         self.val = 100
         self.consumeVal = 0
         self.ad = 0
         self.ap = 0
-        self.weight = 1
 
         self.stack=1
 
@@ -80,6 +79,7 @@ class Dirk(Item):
     def __init__(self):
         self.itemType="weapon"
         self.name="dirk"
+        self.descr=["A very standard dirk.","","AD - 7"]
 
         self.id = 200
 
@@ -87,7 +87,6 @@ class Dirk(Item):
         self.consumeVal = 0
         self.ad = 7
         self.ap = 0
-        self.weight = 1
 
         self.stack=1
 
@@ -97,14 +96,13 @@ class Sword(Item):
     def __init__(self):
         self.itemType="weapon"
         self.name="sword"
-
+        self.descr=["A two handed steel blade.","","AD - 12"]
         self.id = 201
 
         self.val = 25
         self.consumeVal = 0
         self.ad = 12
         self.ap = 0
-        self.weight = 1
 
         self.stack=1
 
@@ -115,7 +113,7 @@ class Sword(Item):
 class Bread(Item):
     def __init__(self):
         self.itemType="food"
-
+        self.descr=["Some tasty bread.","","Heals for - 20"]
         self.id=1
 
         self.val=5
@@ -123,7 +121,6 @@ class Bread(Item):
         self.consumeVal = 20
         self.ad=0
         self.ap=0
-        self.weight = 0.5
 
         self.stack=1
 
@@ -134,7 +131,7 @@ class Bread(Item):
 class Apple(Item):
     def __init__(self):
         self.itemType="food"
-
+        self.descr=["A ripe red apple.","","Heals for - 15"]
         self.id=2
 
         self.val = 2
@@ -142,16 +139,15 @@ class Apple(Item):
         self.consumeVal = 15
         self.ad = 0
         self.ap = 0
-        self.weight = 1
 
         self.stack=1
 
         self.image = itemsheet.subsurface(pygame.Rect(2*26, 0, 26, 26)).convert()
 
-class Pizza(Item):
+class Porkchop(Item):
     def __init__(self):
         self.itemType="food"
-
+        self.descr=["A well cooked porkchop.","","Heals for - 25"]
         self.id=3
 
         self.val = 2
@@ -159,7 +155,6 @@ class Pizza(Item):
         self.consumeVal = 25
         self.ad = 0
         self.ap = 0
-        self.weight = 1
 
         self.stack=1
 
@@ -168,7 +163,7 @@ class Pizza(Item):
 class Cheese(Item):
     def __init__(self):
         self.itemType="food"
-
+        self.descr=["Some funny smelling cheese.","","Heals for - 10"]
         self.id=4
 
         self.val = 2
@@ -176,7 +171,6 @@ class Cheese(Item):
         self.consumeVal = 10
         self.ad = 0
         self.ap = 0
-        self.weight = 1
 
         self.stack=1
 
@@ -185,7 +179,7 @@ class Cheese(Item):
 class Fish(Item):
     def __init__(self):
         self.itemType="food"
-
+        self.descr=["A fish, ready to be eaten.","","Heals for - 15"]
         self.id=5
 
         self.val = 2
@@ -193,7 +187,6 @@ class Fish(Item):
         self.consumeVal = 15
         self.ad = 0
         self.ap = 0
-        self.weight = 1
 
         self.stack=1
 
@@ -202,7 +195,7 @@ class Fish(Item):
 class HealthPotion(Item):
     def __init__(self):
         self.itemType="food"
-
+        self.descr=["A minor potion of healing, brewed to perfection.","","Heals for - 50"]
         self.id=6
 
         self.val = 2
@@ -210,7 +203,6 @@ class HealthPotion(Item):
         self.consumeVal = 50
         self.ad = 0
         self.ap = 0
-        self.weight = 1
 
         self.stack=1
 
@@ -221,7 +213,7 @@ def fromId(idn,parent=None,justname=False):
 
     itemDict= {1:"Bread",
                2:"Apple",
-               3:"Pizza",
+               3:"Porkchop",
                4:"Cheese",
                5:"Fish",
                6:"HealthPotion",
@@ -239,7 +231,7 @@ def randomItem():
     #incorporate levels
     randomIDN=choice(([1]*12) #bread
                    +([2]*15) #apple
-                   +([3]*14) #pizza
+                   +([3]*14) #porkchop
                    +([4]*13) #cheese
                    +([5]*13) #fish
                    +([6]*8) #hpot

@@ -97,7 +97,7 @@ class Menu(object):
                                 if b.active:
                                     pygame.display.set_mode((800, 640),HWSURFACE | DOUBLEBUF | FULLSCREEN)
                                 self.drawn=False
-                                
+
                 if self.screen == "main":
                     for b in self.mainbuttons:
                         if b.rect.collidepoint(e.pos):
@@ -112,6 +112,7 @@ class Menu(object):
                                 dl.LoadGame(self.game.gw)
                                 self.game.state="overworld"
                             if b.text == "New":
+                                self.game.qm.quests += [self.game.qm.allQuests['5']]
                                 self.drawn=False
                                 dl.NewGame(self.game.gw)
                                 self.game.state="overworld"

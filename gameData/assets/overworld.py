@@ -32,7 +32,7 @@ class Overworld(object):
         self.hudsurf = Surface((800,128))
 
         #First item is townIndex, corresponding item is list of quests for that town (questBoardList)
-        self.questBoardList = {0:[10,20],
+        self.questBoardList = {0:[10,20,12],
                                1:[30,40]}
         self.qbuttons = []
 

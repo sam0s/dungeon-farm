@@ -204,9 +204,11 @@ class PlayerQuestTask(Task):
         print "Checking completed quests for ID"
         print self.questID
 
+        self.completed=False
         for f in [x for x in game.qm.quests if not x.active]:
-            self.completed=int(f.id)==self.questID
-
+            if int(f.id)==int(self.questID):
+                self.completed=True
+                return self.completed
         return self.completed
 
     def descr(self):

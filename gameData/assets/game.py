@@ -54,9 +54,7 @@ class Game(object):
         #questhandler and questmenu
         self.qm=questmenu.Menu(self.surf)
         self.qm.game=self
-
         self.qm.quests=[]
-        self.qm.quests += [self.qm.allQuests['5']]
 
 
     def Update(self,dt):
