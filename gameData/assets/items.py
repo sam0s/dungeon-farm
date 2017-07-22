@@ -63,7 +63,7 @@ class Drum(Item):
         self.descr=["This sacred drum belongs to the Bright Foot tribe."]
 
         self.id = 102
-        
+
         self.val = 100
         self.consumeVal = 0
         self.ad = 0
@@ -147,11 +147,11 @@ class Apple(Item):
 class Porkchop(Item):
     def __init__(self):
         self.itemType="food"
-        self.descr=["A well cooked porkchop.","","Heals for - 25"]
+        self.descr=["Well cooked goblin meat.","","Heals for - 25"]
         self.id=3
 
         self.val = 2
-        self.name="pizza"
+        self.name="goblinmeat"
         self.consumeVal = 25
         self.ad = 0
         self.ap = 0

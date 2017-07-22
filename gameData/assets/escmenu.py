@@ -107,9 +107,20 @@ class EscMenu(object):
 
                 oef=230+(self.invy*42)
                 oef2=43+(self.invx*38)
-
+                #draw selected item, look at "USE" code
                 self.surf.blit(itemFrame,(0,0))
                 pygame.draw.circle(self.surf,(255,0,0),(oef2,oef),5,0)
+
+                try:
+                    item=self.world.player.inventory[(self.invx+(self.invy)*12)]
+                    self.surf.blit(pygame.transform.scale(item.image,(98,98)),(15,83))
+                    y=88
+                    for f in item.descr:
+                        self.surf.blit(font.render(f,0,(255,255,255),(0,0,0)),(122,y))
+                        y+=18
+                except IndexError:print "no item selected";item=None
+
+
                 x=30
                 y=229
                 for f in self.world.player.activeWeapon:
