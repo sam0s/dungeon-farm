@@ -19,6 +19,7 @@ import assets.world as world
 import assets.sound as sound
 import assets.questmenu as questmenu
 import assets.ui as ui
+import assets.items as items
 import dpylib as dl
 from os import path
 
@@ -41,6 +42,7 @@ class Game(object):
 
         #gameworld and player objects
         self.gw=world.World(self.surf)
+        items.loadItems("items.json")
         self.player=player.Player(384.0,224.0,self.gw)
         self.gw.game=self
         self.gw.player=self.player

@@ -30,7 +30,7 @@ class Player(object):
         self.movelist = []
         self.moving = False
         self.inventory = []
-        self.activeWeapon = [items.Dirk()]
+        self.activeWeapon = [items.getItem("Dirk")]
 
         self.changex = float(self.rect.x)
         self.changey = float(self.rect.y)
@@ -87,6 +87,7 @@ class Player(object):
                 f2=f.split("_")
                 if f2[1]=='a':
                     self.activeWeapon=[items.fromId(int(f2[0]),self)]
+                    print "Active Weapon: %s" % str(self.activeWeapon)
                     break
                 #give the item
                 for f3 in range(int(f2[1])):

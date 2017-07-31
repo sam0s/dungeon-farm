@@ -15,6 +15,7 @@ from pygame import *
 import dpylib as dl
 import ui
 from os import path
+import items
 
 pygame.init()
 font = ui.LoadFont()
@@ -215,14 +216,14 @@ class EscMenu(object):
                             except IndexError:print "no item selected";item=None
                             if item:
                                 if b.text=="Use":
-                                    if item.itemType=="food":
+                                    if isinstance(item, items.Food):
                                         self.world.player.hp+=item.consumeVal
                                         if self.world.player.hp>self.world.player.maxhp:self.world.player.hp=self.world.player.maxhp
                                         if item.stack==1:
                                             self.world.player.inventory.pop((self.invx+(self.invy)*12))
                                         else:
                                             item.stack-=1
-                                    if item.itemType=="weapon":
+                                    if isinstance(item, items.Weapon):
                                         if item.name!=self.world.player.activeWeapon[0].name:
                                             if item.stack>1:
                                                 item.stack-=1

@@ -1,0 +1,101 @@
+{
+	"Food":
+	 {
+	 	"1":
+	 	 {
+	 	 	"name": "Bread",
+	 	 	"descr": ["Some tasty bread.","","Heals for - 20"],
+	 	 	"idx": 1,
+	 	 	"value": 5,
+	 	 	"consumeVal": 20
+	 	 },
+	 	"2":
+	 	 {
+	 	 	"name": "Apple",
+	 	 	"descr": ["A ripe red apple.","","Heals for - 15"],
+	 	 	"idx": 2,
+	 	 	"value": 2,
+	 	 	"consumeVal": 15
+	 	 },
+	 	"3":
+	 	 {
+	 	 	"name": "Porkchop",
+	 	 	"descr": ["Well cooked goblin meat.","","Heals for - 25"],
+	 	 	"idx": 3,
+	 	 	"value": 2,
+	 	 	"consumeVal": 25
+	 	 },
+	 	"4":
+	 	 {
+	 	 	"name": "Cheese",
+	 	 	"descr": ["Some funny smelling cheese.","","Heals for - 10"],
+	 	 	"idx": 4,
+	 	 	"value": 2,
+	 	 	"consumeVal": 10
+	 	 },
+	 	"5":
+	 	 {
+	 	 	"name": "Fish",
+	 	 	"descr": ["A fish, ready to be eaten.","","Heals for - 15"],
+	 	 	"idx": 5,
+	 	 	"value": 2,
+	 	 	"consumeVal": 15
+	 	 },
+	 	"6":
+	 	 {
+	 	 	"name": "Health Potion",
+	 	 	"descr": ["A minor potion of healing, brewed to perfection.","","Heals for - 50"],
+	 	 	"idx": 6,
+	 	 	"value": 2,
+	 	 	"consumeVal": 50
+	 	 }
+	 },
+
+	"QuestItem":
+	 {
+	 	"100":
+	 	 {
+	 	 	"name": "Gabe",
+	 	 	"descr": ["A cute dog named Gabe! He belongs to a man from Fairfield."],
+	 	 	"idx": 0,
+	 	 	"value": 15
+	 	 },
+
+	 	"101":
+	 	 {
+	 	 	"name": "CherishedBow",
+	 	 	"descr": ["A sacred bow. It once belonged to a leader of","the Quiet Bison tribe, far to the west."],
+	 	 	"idx": 1,
+	 	 	"value": 100
+	 	 },
+
+	 	"102":
+	 	 {
+	 	 	"name": "Drum",
+	 	 	"descr": ["This sacred drum belongs to the Bright Foot tribe."],
+	 	 	"idx": 2,
+	 	 	"value": 100
+	 	 }
+	 },
+
+	"Weapon":
+	 {
+		"200":
+		 {
+		 	"name": "Dirk",
+		 	"descr": ["A very standard dirk.","","AD - 7"],
+		 	"idx": 0,
+		 	"ad": 7,
+		 	"ap": 0
+		 },
+
+		"201":
+		 {
+			"name": "Sword",
+			"descr": ["A two handed steel blade.","","AD - 12"],
+			"idx": 1,
+			"ad": 12,
+			"ap": 0
+		 }
+	 }
+}

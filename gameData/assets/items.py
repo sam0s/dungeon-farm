@@ -11,221 +11,56 @@ __credits__ = []
 import pygame
 from os import path
 from random import choice
+import json
+from copy import copy
 
 itemsheet = pygame.image.load(path.join("images","itemF.png")).convert()
 itemsheetWeapon = pygame.image.load(path.join("images","itemW.png")).convert()
 itemsheetQuest = pygame.image.load(path.join("images","itemQ.png")).convert()
 
+_ItemsById = {}
+_ItemsByName = {}
 
-class Item:
-    def __init__(self):
-        self.stack=1
+def loadItems(filename):
+    global _ItemsById, _ItemsByName
+    with open(path.join(filename)) as f:
+        jsondata = json.load(f)
 
-####### QUEST ITEMS ##########
-###########################
-class Gabe(Item):
-    def __init__(self):
-        self.itemType="quest"
-        self.name="gabe"
-        self.descr=["A cute dog named Gabe! He belongs to a man from Fairfield."]
-        self.id = 100
+        for itemclass in jsondata:
+            itemdata = jsondata[itemclass]
 
-        self.val = 15
-        self.consumeVal = 0
-        self.ad = 0
-        self.ap = 0
+            print "Itemclass Lookup: %s" % (itemclass)
+            # Attempt to find item class in globals
+            try:
+                iclass = globals()[itemclass]
+                print iclass
+            except KeyError as e:
+                print e
+                continue
 
-        self.stack=1
+            # Contruct item templates from data
+            print "Loading %d items of type %s" % (len(itemdata), str(iclass))
+            for itemid in itemdata:
+                item = iclass(int(itemid), **itemdata[itemid])
+                _ItemsById[item.id] = item
+                _ItemsByName[item.name] = item
 
-        self.image = itemsheetQuest.subsurface(pygame.Rect(0*26, 0, 26, 26)).convert()
+        print _ItemsById
 
-class CherishedBow(Item):
-    def __init__(self):
-        self.itemType="quest"
-        self.name="cherishedbow"
-        self.descr=["A sacred bow. It once belonged to a leader of","the Quiet Bison tribe, far to the west."]
+def getItem(name):
+    global _ItemsByName
+    print "Creating %s" % (name)
+    return copy(_ItemsByName[name])
 
-        self.id = 101
-
-        self.val = 100
-        self.consumeVal = 0
-        self.ad = 0
-        self.ap = 0
-
-        self.stack=1
-
-        self.image = itemsheetQuest.subsurface(pygame.Rect(1*26, 0, 26, 26)).convert()
-
-class Drum(Item):
-    def __init__(self):
-        self.itemType="quest"
-        self.name="drum"
-        self.descr=["This sacred drum belongs to the Bright Foot tribe."]
-
-        self.id = 102
-
-        self.val = 100
-        self.consumeVal = 0
-        self.ad = 0
-        self.ap = 0
-
-        self.stack=1
-
-        self.image = itemsheetQuest.subsurface(pygame.Rect(2*26, 0, 26, 26)).convert()
-
-############ WEAPONS #######################
-##########################
-class Dirk(Item):
-    def __init__(self):
-        self.itemType="weapon"
-        self.name="dirk"
-        self.descr=["A very standard dirk.","","AD - 7"]
-
-        self.id = 200
-
-        self.val = 15
-        self.consumeVal = 0
-        self.ad = 7
-        self.ap = 0
-
-        self.stack=1
-
-        self.image = itemsheetWeapon.subsurface(pygame.Rect(0*26, 0, 26, 26)).convert()
-
-class Sword(Item):
-    def __init__(self):
-        self.itemType="weapon"
-        self.name="sword"
-        self.descr=["A two handed steel blade.","","AD - 12"]
-        self.id = 201
-
-        self.val = 25
-        self.consumeVal = 0
-        self.ad = 12
-        self.ap = 0
-
-        self.stack=1
-
-        self.image = itemsheetWeapon.subsurface(pygame.Rect(1*26, 0, 26, 26)).convert()
-
-## EAT ##
-#########
-class Bread(Item):
-    def __init__(self):
-        self.itemType="food"
-        self.descr=["Some tasty bread.","","Heals for - 20"]
-        self.id=1
-
-        self.val=5
-        self.name="bread"
-        self.consumeVal = 20
-        self.ad=0
-        self.ap=0
-
-        self.stack=1
-
-        self.image = itemsheet.subsurface(pygame.Rect(1*26, 0, 26, 26)).convert()
-
-
-
-class Apple(Item):
-    def __init__(self):
-        self.itemType="food"
-        self.descr=["A ripe red apple.","","Heals for - 15"]
-        self.id=2
-
-        self.val = 2
-        self.name="apple"
-        self.consumeVal = 15
-        self.ad = 0
-        self.ap = 0
-
-        self.stack=1
-
-        self.image = itemsheet.subsurface(pygame.Rect(2*26, 0, 26, 26)).convert()
-
-class Porkchop(Item):
-    def __init__(self):
-        self.itemType="food"
-        self.descr=["Well cooked goblin meat.","","Heals for - 25"]
-        self.id=3
-
-        self.val = 2
-        self.name="goblinmeat"
-        self.consumeVal = 25
-        self.ad = 0
-        self.ap = 0
-
-        self.stack=1
-
-        self.image = itemsheet.subsurface(pygame.Rect(3*26, 0, 26, 26)).convert()
-
-class Cheese(Item):
-    def __init__(self):
-        self.itemType="food"
-        self.descr=["Some funny smelling cheese.","","Heals for - 10"]
-        self.id=4
-
-        self.val = 2
-        self.name="cheese"
-        self.consumeVal = 10
-        self.ad = 0
-        self.ap = 0
-
-        self.stack=1
-
-        self.image = itemsheet.subsurface(pygame.Rect(4*26, 0, 26, 26)).convert()
-
-class Fish(Item):
-    def __init__(self):
-        self.itemType="food"
-        self.descr=["A fish, ready to be eaten.","","Heals for - 15"]
-        self.id=5
-
-        self.val = 2
-        self.name="fish"
-        self.consumeVal = 15
-        self.ad = 0
-        self.ap = 0
-
-        self.stack=1
-
-        self.image = itemsheet.subsurface(pygame.Rect(5*26, 0, 26, 26)).convert()
-
-class HealthPotion(Item):
-    def __init__(self):
-        self.itemType="food"
-        self.descr=["A minor potion of healing, brewed to perfection.","","Heals for - 50"]
-        self.id=6
-
-        self.val = 2
-        self.name="healthpot"
-        self.consumeVal = 50
-        self.ad = 0
-        self.ap = 0
-
-        self.stack=1
-
-        self.image = itemsheet.subsurface(pygame.Rect(6*26, 0, 26, 26)).convert()
 
 def fromId(idn,parent=None,justname=False):
-    print idn
+    global _ItemsById
+    print "items.fromId(%d)" % (idn)
 
-    itemDict= {1:"Bread",
-               2:"Apple",
-               3:"Porkchop",
-               4:"Cheese",
-               5:"Fish",
-               6:"HealthPotion",
-               200:"Dirk",
-               201:"Sword",
-               100:"Gabe",
-               101:"CherishedBow",
-               102:"Drum"
-               }
-    if not justname:
-        return eval(itemDict[idn]+"()")
-    return itemDict[idn]
+    # New ItemDB lookup
+    item = _ItemsById[idn]
+    return item.name if justname else copy(item)
+
 
 def randomItem():
     #incorporate levels
@@ -238,3 +73,43 @@ def randomItem():
                    +([201]*4) #sword
                    )
     return fromId(randomIDN)
+
+
+class Item:
+    def __init__(self, id_, name, descr, idx, value = 0):
+        self.id = id_
+        self.name = name
+        self.descr = descr
+        self.idx = idx
+        self.val = value
+        self.stack=1
+
+####### QUEST ITEMS ##########
+###########################
+
+class QuestItem(Item):
+    def __init__(self, id_, **item_info):
+        Item.__init__(self, id_, **item_info)
+        self.image = itemsheetQuest.subsurface(pygame.Rect(self.idx*26, 0, 26, 26))
+
+
+############ WEAPONS #######################
+##########################
+
+class Weapon(Item):
+    def __init__(self, id_, ad, ap, **item_info):
+        Item.__init__(self, id_, **item_info)
+        self.ad = ad
+        self.ap = ap
+        self.image = itemsheetWeapon.subsurface(pygame.Rect(self.idx*26, 0, 26, 26))
+
+
+## EAT ##
+#########
+
+class Food(Item):
+    def __init__(self, id_, consumeVal, **item_info):
+        Item.__init__(self, id_, **item_info)
+        self.consumeVal = consumeVal
+        self.image = itemsheet.subsurface(pygame.Rect(self.idx*26, 0, 26, 26))
+
