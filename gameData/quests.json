@@ -4,7 +4,8 @@
       {
           "name": "Save Appigarth Pt. 1",
           "descr": [
-                     "Appigarth is in need of a hero.",
+                     "Appigarth is in need of a hero!",
+                     "Visit Prospect and check the quest board.",
                      "",
                      "Your reward is 2000 experience points."],
           "tasks": [
@@ -35,6 +36,7 @@
           "tasks": [
           {
             "type": "PlayerFetchTask",
+            "guarded": "1",
             "format": "Take the drum!",
             "itemID": "102",
             "location": "1_1_5_12"
@@ -97,6 +99,7 @@
             "tasks": [
             {
                 "type": "PlayerFetchTask",
+                "guarded": "0",
                 "format": "Find Gabe.",
                 "itemID": "100",
                 "location": "0_0_0_1"
@@ -118,6 +121,7 @@
             "tasks": [
             {
                 "type": "PlayerFetchTask",
+                "guarded": 0,
                 "format": "Find the weapon.",
                 "itemID": "101",
                 "location": "1_2_10_-4"
@@ -142,6 +146,24 @@
             }
                     ],
             "rew": 300
+        },
+
+    "500":
+        {
+            "name": "Monster Hunter 4",
+            "descr": ["The quest-giver of Easton has",
+                       "tasked you with killing 500 monsters.",
+                       "",
+                       "Your reward is 10,000 experience points."],
+            "tasks": [
+            {
+                "type": "PlayerPropTask",
+                "format": "Kill {count} enemies.",
+                "prop": "kills",
+                "count": 500
+            }
+                    ],
+            "rew": 10000
         }
 
 }

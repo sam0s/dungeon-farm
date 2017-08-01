@@ -116,7 +116,7 @@ class World(object):
                     self.good=1
 
                 pygame.event.pump()
-                
+
                 for e in self.game.events:
                     if e.type == MOUSEBUTTONDOWN and e.button == 1:
                         if self.player.moving==False:
@@ -238,4 +238,4 @@ class World(object):
         self.tdir=d
         self.containing.draw(self.new)
         self.trans=True
-        #self.ReDraw()
+        

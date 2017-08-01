@@ -122,25 +122,28 @@ def bar(surface,color1,color2,x,y,width,height,value,maxvalue):
     surface.blit(font.render(str(value)+"/"+str(maxvalue),0,(0,0,0)),(x+width/2-11,y+height/2-5))
 
 #used to load into a new level
-def changelevel(w):
-    w.containing.empty()
-    loc=path.join(w.levelname,"world"+str(w.pos[0])+str(w.pos[1])+".txt")
-
+def changelevel(w,compassCheck=False):
     game=w.game
+    if not compassCheck:
+        w.containing.empty()
+        loc=path.join(w.levelname,"world"+str(w.pos[0])+str(w.pos[1])+".txt")
 
-    if path.isfile(loc):
-        loadlvl(w.containing,loc)
-        savelvl(w.game)
-    else:
-        fill(w.containing)
-        carve(w.game)
-        doors(w.containing)
-        savelvl(w.game)
+        if path.isfile(loc):
+            loadlvl(w.containing,loc)
+            savelvl(w.game)
+        else:
+            fill(w.containing)
+            carve(w.game)
+            doors(w.containing)
+            savelvl(w.game)
+
     #check for quest specific placements
     for f in [x for x in game.qm.quests if x.active]:
-        for t in [x for x in f.tasks if x.location]:
+        for t in [x for x in f.tasks if x.location and x.isActiveFetch==1]:
+            abc=int(t.guarded)==1
             tl=t.location.split("_")
             tl=[int(x) for x in tl]
+            game.gw.pointTo=''
             if tl[0]==game.ow.townIndex and tl[1] == w.dn:
                 a=''
                 if tl[2]>w.pos[0]:a+='e'
@@ -149,7 +152,12 @@ def changelevel(w):
                 if tl[3]<w.pos[1]:a+='n'
                 game.gw.pointTo=a
             if tl[0]==game.ow.townIndex and tl[1] == w.dn and tl[2]==w.pos[0] and tl[3]==w.pos[1]:
+                if abc and not compassCheck:
+                    game.gw.bat.NewEnemy(3)
+                    game.gw.battle=True
+                    game.gw.ChangeState("battle")
                 w.containing.add(QuestItem(384,224,t.itemID))
+    game.gw.ReDraw()
 
 #carve out the level
 def carve(game):

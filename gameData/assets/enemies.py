@@ -15,6 +15,7 @@ from os import path
 #MAKE THIS A SUBSURFACE SET LATER
 orcHeadshot=pygame.image.load(path.join("images","headshots","orcheadshot.png"))
 goblinHeadshot=pygame.image.load(path.join("images","headshots","goblinheadshot.png"))
+testHeadshot=pygame.image.load(path.join("images","gold.png"))
 
 class Enemy:
     def __init__(self):
@@ -26,6 +27,14 @@ class Enemy:
         return dmg
 
 #TYPES
+
+class BadDude(Enemy):
+    def __init__(self,level):
+        self.atk=11
+        self.level=level
+        self.hp=self.maxhp=self.level*17
+        self.name="testEnemy"
+        self.image=testHeadshot.convert()
 
 class Orc(Enemy):
     def __init__(self,level):

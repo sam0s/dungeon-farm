@@ -36,11 +36,14 @@ class Battle(object):
         self.buttons=[ui.Button(300,300,100,32,"Attack",self.surf),ui.Button(300,364,100,32,"Items",self.surf)]
         self.mode = 'fight'
 
-    def NewEnemy(self):
+    def NewEnemy(self,en=-1):
         #set level of enemy
         #Use the dungeon level cap to create the enemies level
         elvl=randint(self.world.dungeonLevelCap-4,self.world.dungeonLevelCap+1)
-        self.enemy=choice([enemies.Orc(elvl),enemies.Goblin(elvl)])
+
+        if en==-1:en=choice([1,2])
+        self.enemy={1:enemies.Orc(elvl),2:enemies.Goblin(elvl),3:enemies.BadDude(1)}[en]
+
         self.world.logtext.append("The blob transforms into a level "+str(elvl)+" "+self.enemy.name+".")
 
     def Attack(self):

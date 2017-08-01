@@ -31,9 +31,11 @@ class Menu(object):
         self.menuimg=backDrop
         self.mainbuttons=[ui.Button(650,420,100,32,"Go Back",self.surf)]
         self.qbuttons=[]
+        self.tbuttons=[]
         self.good=False
         self.allQuests=loadAllQuests()
         self.goBackTo="overworld"
+
 
     def Draw(self):
         if self.screen=="questDescr":
@@ -51,8 +53,20 @@ class Menu(object):
                     descr = "[X] " if t.completed else "[ ] "
                     descr += t.descr()
                     self.surf.blit(font.render(descr,0,(0,0,0)),(42,y))
-                    y+=25
+                    #if t.taskName=="pft":
+                    checks=[f for f in self.selectedQuest.tasks if f.location]
+                    self.tbuttons=[]
+                    self.tIds=[]
+                    for a in checks:
+                        self.tIds.append(a)
+                        ncb=ui.CheckBox(17,y,"",self.surf,16)
+                        if a.isActiveFetch:ncb.active=True
+                        self.tbuttons.append(ncb)
 
+                    y+=25
+                    for f in self.tbuttons:
+                        f.Update()
+                    #
 
         if self.screen=="quests":
             #menu routine
@@ -85,15 +99,29 @@ class Menu(object):
                     if self.good:
                         self.good=False
                         self.drawn=False
+                        dl.changelevel(self.game.gw,compassCheck=True)
                         self.game.state=self.goBackTo
 
+
             if e.type == MOUSEBUTTONUP and e.button == 1:
+                self.drawn=False
+                if self.screen == "questDescr":
+                    if len(self.tbuttons)>0:
+                        for b in self.tbuttons:
+                            if b.rect.collidepoint(e.pos):
+
+                                for f in self.quests:
+                                    for x in f.tasks:
+                                        x.isActiveFetch=0
+                                self.tIds[self.tbuttons.index(b)].isActiveFetch=1
+                                checks=[f for f in self.selectedQuest.tasks if f.location]
+
                 if self.screen=="quests":
                     if len(self.qbuttons)>0:
                         for b in self.qbuttons:
                             if b.rect.collidepoint(e.pos):
                                 self.screen="questDescr"
-                                self.drawn=False
+                                #self.drawn=False
                                 #fix this
                                 targetId=self.qIds[self.qbuttons.index(b)]
                                 qlist=[x for x in self.quests if x.id == targetId]
@@ -103,10 +131,12 @@ class Menu(object):
                 for b in self.mainbuttons:
                     if b.rect.collidepoint(e.pos):
                         if self.screen=="quests":
-                            self.drawn=False
+                            #self.drawn=False
                             self.good=False
                             self.game.ow.good=True
+                            dl.changelevel(self.game.gw,compassCheck=True)
                             self.game.state=self.goBackTo
+
                         else:
                             self.drawn=False
                             self.screen="quests"
@@ -167,6 +197,8 @@ class Task(object):
     def __init__(self):
         self.completed = False
         self.location = False
+        self.guarded = 0
+        self.isActiveFetch = 0
 
     def check(self, game):
         return self.completed
@@ -180,6 +212,7 @@ class PlayerPropTask(Task):
     """
     def __init__(self, format, prop, count):
         Task.__init__(self)
+        self.taskName="ppt"
         self.format = format
         self.prop = prop
         self.count = count
@@ -198,6 +231,7 @@ class PlayerQuestTask(Task):
     """
     def __init__(self,format,questID):
         Task.__init__(self)
+        self.taskName="pqt"
         self.format=format
         self.questID=questID
     def check(self,game):
@@ -220,6 +254,7 @@ class PlayerItemTask(Task):
     """
     def __init__(self, format, item, count):
         Task.__init__(self)
+        self.taskName="pit"
         self.format = format
         self.item = item
         self.count = count
@@ -243,12 +278,13 @@ class PlayerFetchTask(Task):
     """
     Task allowing to check if a certain Player has found a certain item from dungeon.
     """
-    def __init__(self, format, itemID, location):
+    def __init__(self, format, itemID, location, guarded):
         Task.__init__(self)
+        self.taskName="pft"
         self.format = format
         self.itemID = itemID
-        self.location=location
-
+        self.location = location
+        self.guarded = guarded
     def check(self, game):
         print "Checking player's items for item with ID"
         print self.itemID
@@ -291,11 +327,10 @@ def loadAllQuests():
             qId="skip"
 
         if qId != "skip":
-            print "te"
             for f in jsondata[qId]['tasks']:
                 tp=f['type']
                 if tp=="PlayerFetchTask":
-                    QUEST.addTasks(PlayerFetchTask(f['format'],int(f['itemID']),f['location']))
+                    QUEST.addTasks(PlayerFetchTask(f['format'],int(f['itemID']),f['location'],f['guarded']))
                 if tp=="PlayerItemTask":
                     QUEST.addTasks(PlayerItemTask(f['format'],f['item'],f['count']))
                 if tp=="PlayerPropTask":

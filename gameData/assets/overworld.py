@@ -33,7 +33,10 @@ class Overworld(object):
 
         #First item is townIndex, corresponding item is list of quests for that town (questBoardList)
         self.questBoardList = {0:[10,20,12],
-                               1:[30,40]}
+                               1:[30,40,50],
+                               2:[],
+                               3:[],
+                               4:[500]}
         self.qbuttons = []
 
         self.hudsurf.fill((3,3,3))
@@ -122,7 +125,7 @@ class Overworld(object):
 
         #OVERWORLD SCREEN - NEW, IMPROVED, INTERACTIVE
         if self.screen == "main":
-            dt=dt*100
+            dt=dt*62
             if self.goto[0] > 0:self.offsetx+=1*dt;self.goto[0]-=1*dt;
             if self.goto[0] < 0:self.offsetx-=1*dt;self.goto[0]+=1*dt;
             if self.goto[1] > 0:self.offsety+=1*dt;self.goto[1]-=1*dt;

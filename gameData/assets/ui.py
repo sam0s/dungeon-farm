@@ -46,12 +46,12 @@ class Button(UiObj):
         self.surf.blit(self.image,(self.rect.x,self.rect.y))
         self.surf.blit(self.textimg,((self.rect.x+(self.rect.right-self.rect.left)/2) - self.textimg.get_width()/2, (self.rect.y+(self.rect.bottom-self.rect.top)/2) - self.textimg.get_height()/2))
 
-#DO THIS
 class CheckBox(UiObj):
-    def __init__(self,x,y,text,surf):
+    def __init__(self,x,y,text,surf,size=32):
         UiObj.__init__(self,text,Rect(x,y,32,32),surf)
-        self.image=pygame.Surface((32,32))
-        pygame.draw.rect(self.image,(255,0,0),(0,0,32,32),1)
+        self.size=size
+        self.image=pygame.Surface((size,size))
+        pygame.draw.rect(self.image,(255,0,0),(0,0,size,size),1)
         self.active=False
         self.textimg=uiF.render(text,0,(255,255,255))
     def Check(self):
@@ -62,8 +62,9 @@ class CheckBox(UiObj):
             self.active=False
             return self.active
     def Update(self):
+
         self.surf.blit(self.image,(self.rect.x,self.rect.y))
         a=(self.rect.x+(self.rect.right-self.rect.left)/2) - self.textimg.get_width()/2
-        self.surf.blit(self.textimg,(a,self.rect.y+35))
+        self.surf.blit(self.textimg,(a,self.rect.y+self.size+6))
         if self.active:
-            pygame.draw.circle(self.surf,(0,0,255),(self.rect.x+16,self.rect.y+16),8,0)
+            pygame.draw.circle(self.surf,(0,0,255),(self.rect.x+self.size/2,self.rect.y+self.size/2),8,0)
