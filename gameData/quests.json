@@ -93,7 +93,7 @@
             "name": "Find Gabe!",
             "descr": ["A man has posted about his lost friend",
                        "named gabe. Go find him!",
-                       "located in Prospect0 x0y1",
+                       "Located in a Prospect dungeon.",
                        "",
                        "Your reward is 150 experience points."],
             "tasks": [
@@ -115,7 +115,7 @@
                        "It once belong to a leader of the famous",
                        "Quiet Bison tribe, and was handed down to",
                        "her family long ago.",
-                       "located in Fairfield x10y-4",
+                       "Located in a Fairfield dungeon.",
                        "",
                        "Your reward is 150 experience points."],
             "tasks": [

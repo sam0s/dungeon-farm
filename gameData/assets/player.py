@@ -160,6 +160,7 @@ class Player(object):
                 for f in cl:
                     if f.name == 'qitem':
                         self.giveItem(f.item)
+                        self.world.logtext.append("You find a quest item (%s)!" % (f.item.name))
                         self.world.containing.remove(f)
                     if f.name=='door':
                         self.movelist=[]
