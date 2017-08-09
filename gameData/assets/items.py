@@ -41,7 +41,7 @@ def loadItems(filename):
             # Contruct item templates from data
             print "Loading %d items of type %s" % (len(itemdata), str(iclass))
             for itemid in itemdata:
-                item = iclass(int(itemid), **itemdata[itemid])
+                item = iclass(itemid, **itemdata[itemid])
                 _ItemsById[item.id] = item
                 _ItemsByName[item.name] = item
 
@@ -55,7 +55,9 @@ def getItem(name):
 
 def fromId(idn,parent=None,justname=False):
     global _ItemsById
-    print "items.fromId(%d)" % (idn)
+    if isinstance(idn, int):
+        idn = str(idn)
+    print "items.fromId(%s)" % (idn)
 
     # New ItemDB lookup
     item = _ItemsById[idn]

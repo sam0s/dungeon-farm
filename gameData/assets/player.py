@@ -86,12 +86,12 @@ class Player(object):
                 #divide up by name and stack
                 f2=f.split("_")
                 if f2[1]=='a':
-                    self.activeWeapon=[items.fromId(int(f2[0]),self)]
+                    self.activeWeapon=[items.fromId(f2[0],self)]
                     print "Active Weapon: %s" % str(self.activeWeapon)
                     break
                 #give the item
                 for f3 in range(int(f2[1])):
-                    it=items.fromId(int(f2[0]),self)
+                    it=items.fromId(f2[0],self)
                     self.giveItem(it)
         #load quests
 

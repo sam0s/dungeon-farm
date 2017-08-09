@@ -12,12 +12,12 @@
           {
             "type": "PlayerQuestTask",
             "format": "Become an adventurer.",
-            "quest": 10
+            "questID": "10"
           },
           {
             "type": "PlayerQuestTask",
             "format": "Help the tribe.",
-            "quest": 12
+            "questID": "12"
           }
                   ],
           "rew": 2000

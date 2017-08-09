@@ -240,7 +240,7 @@ class PlayerQuestTask(Task):
 
         self.completed=False
         for f in [x for x in game.qm.quests if not x.active]:
-            if int(f.id)==int(self.questID):
+            if f.id == self.questID:
                 self.completed=True
                 return self.completed
         return self.completed
@@ -310,34 +310,39 @@ def loadAllQuests():
     with open(path.join("quests.json")) as f:
         jsondata = json.load(f)
 
-    taskTypes = {
-    'PlayerPropTask':PlayerPropTask,
-    'PlayerItemTask':PlayerItemTask,
-    'PlayerFetchTask':PlayerFetchTask,
-    'PlayerQuestTask':PlayerQuestTask
-    }
+    for qId in jsondata:
+        qData = jsondata[qId]
 
-    for qId in range(999):
-        qId=str(qId)
+        # Quests can't have the same ID
+        if qId in allQuests:
+            print "Duplicate Quest ID(%d)!" % (qId)
+            continue
 
         try:
-            QUEST = Quest(qId,jsondata[qId]['name'],jsondata[qId]['descr'],active=True,rewards=[jsondata[qId]['rew']])
-        except KeyError:
-            print "No quest with id "+qId
-            qId="skip"
+            quest = Quest(qId,qData['name'],qData['descr'],active=True,rewards=[qData['rew']])
+        except KeyError as e:
+            print "Quest(%s) data is not valid: %s" % (qId, str(e))
+            continue
 
-        if qId != "skip":
-            for f in jsondata[qId]['tasks']:
-                tp=f['type']
-                if tp=="PlayerFetchTask":
-                    QUEST.addTasks(PlayerFetchTask(f['format'],int(f['itemID']),f['location'],f['guarded']))
-                if tp=="PlayerItemTask":
-                    QUEST.addTasks(PlayerItemTask(f['format'],f['item'],f['count']))
-                if tp=="PlayerPropTask":
-                    QUEST.addTasks(PlayerPropTask(f['format'],f['prop'],f['count']))
-                if tp=="PlayerQuestTask":
-                    QUEST.addTasks(PlayerQuestTask(f['format'],f['quest']))
-                allQuests[qId]=QUEST
-    #except KeyError:
-        #print "number of quests loaded-"+qId
+        for t in qData['tasks']:
+            tt=t['type']
+
+            # Lookup Task Class in globals table.
+            tc = globals().get(tt, None)
+            if not tc or not issubclass(tc, Task):
+                print "Invalid Task Type: " + tt
+                continue
+
+            # Type must be deleted from type parameters to keep Task __init__ from throwing exceptions.
+            del t['type']
+            try:
+                task = tc(**t)
+                quest.addTasks(task)
+            except TypeError as e:
+                print "Task(%s) data is not valid: %s" % (tt, str(e))
+                continue
+
+            allQuests[qId] = quest
+
+    print "Successfully loaded %d out of %d quests." % (len(allQuests), len(jsondata))
     return allQuests
