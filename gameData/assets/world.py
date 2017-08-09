@@ -119,9 +119,8 @@ class World(object):
 
                 for e in self.game.events:
                     if e.type == MOUSEBUTTONDOWN and e.button == 1:
-                        if self.player.moving==False:
-                            if self.mse32[1]<512:
-                                self.player.moveto=[self.mse32[0],self.mse32[1]]
+                        if self.mse32[1]<512:
+                            self.player.moveto(self.mse32)
                         #Headshot Click
                         if e.pos[0]<130:
                             if e.pos[1]>512:
@@ -213,22 +212,22 @@ class World(object):
         dl.savelvl(self.game)
         if d=='n':
             self.pos=[self.pos[0],self.pos[1]-1]
-            self.player.prev[1]=self.player.changey=self.player.moveto[1]=self.player.rect.y=448
+            self.player.prev[1]=self.player.changey=self.player.rect.y=448
 
             self.logtext.append("You head towards the north.")
         elif d=='e':
             self.pos=[self.pos[0]+1,self.pos[1]]
-            self.player.prev[0]=self.player.changex=self.player.moveto[0]=self.player.rect.x=32
+            self.player.prev[0]=self.player.changex=self.player.rect.x=32
 
             self.logtext.append("You head towards the east.")
         elif d=='s':
             self.pos=[self.pos[0],self.pos[1]+1]
-            self.player.prev[1]=self.player.changey=self.player.moveto[1]=self.player.rect.y=32
+            self.player.prev[1]=self.player.changey=self.player.rect.y=32
 
             self.logtext.append("You head towards the south.")
         elif d=='w':
             self.pos=[self.pos[0]-1,self.pos[1]]
-            self.player.prev[0]=self.player.changex=self.player.moveto[0]=self.player.rect.x=736
+            self.player.prev[0]=self.player.changex=self.player.rect.x=736
 
             self.logtext.append("You head towards the west.")
 

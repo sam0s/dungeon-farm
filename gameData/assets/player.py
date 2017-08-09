@@ -25,7 +25,7 @@ class Player(object):
         self.image = Surface((32,32))
         self.image.convert()
         self.rect = Rect(x,y,32,32)
-        self.prev = self.moveto = [x,y]
+        self.prev = [x,y]
         self.pfinder = None
         self.movelist = []
         self.moving = False
@@ -60,7 +60,7 @@ class Player(object):
         x=384
         y=224
         self.rect = Rect(x,y,32,32)
-        self.prev = self.moveto = [x,y]
+        self.prev = [x,y]
         self.movelist = []
         self.moving = False
         self.changex = float(self.rect.x)
@@ -135,6 +135,12 @@ class Player(object):
             self.xp-=self.nextxp
             self.levelUp()
 
+    def moveto(self, pos):
+        if self.prev == pos:
+            return
+        self.pfinder = dl.PathFinder(self.world, self.prev, pos)
+        self.moving = False
+
     def update(self):
         self.animator.render(self.world.surf, (self.rect.x+8,self.rect.y+4))
 
@@ -148,11 +154,6 @@ class Player(object):
                 print "Path " + str(self.movelist)
                 self.moving=True
                 self.pfinder = None
-        elif not self.moving:
-            self.prev=[self.rect.x,self.rect.y]
-            if self.moveto!=self.prev:
-                #print "Not moving %s->%s" % (self.prev, self.moveto)
-                self.pfinder = dl.PathFinder(self.world, self.prev, self.moveto)
         else:
             #collision
             cl=pygame.sprite.spritecollide(self, self.world.containing, False)
@@ -199,32 +200,32 @@ class Player(object):
 
             #move based on time delta
             if len(self.movelist)>0:
-                self.moveto=self.movelist[0]
-                if self.rect.x<self.moveto[0]:
+                moveto=self.movelist[0]
+                if self.rect.x<moveto[0]:
                     self.animator.setAnim("walk_right")
                     self.changex+=(self.speed)*self.world.delta
-                    if self.changex>self.moveto[0]-1:self.changex=self.moveto[0]
-                elif self.rect.x>self.moveto[0]:
+                    if self.changex>moveto[0]-1:self.changex=moveto[0]
+                elif self.rect.x>moveto[0]:
                     self.animator.setAnim("walk_left")
                     self.changex-=(self.speed)*self.world.delta
-                    if self.changex<self.moveto[0]+1:self.changex=self.moveto[0]
-                elif self.rect.y<self.moveto[1]:
+                    if self.changex<moveto[0]+1:self.changex=moveto[0]
+                elif self.rect.y<moveto[1]:
                     self.animator.setAnim("walk_down")
                     self.changey+=(self.speed)*self.world.delta
-                    if self.changey>self.moveto[1]+1:self.changey=self.moveto[1]
-                elif self.rect.y>self.moveto[1]:
+                    if self.changey>moveto[1]+1:self.changey=moveto[1]
+                elif self.rect.y>moveto[1]:
                     self.animator.setAnim("walk_up")
                     self.changey-=(self.speed)*self.world.delta
-                    if self.changey<self.moveto[1]-1:self.changey=self.moveto[1]
+                    if self.changey<moveto[1]-1:self.changey=moveto[1]
                 else:
-                    self.prev=self.movelist[0]
-                    self.movelist.pop(0)
+                    self.prev=self.movelist.pop(0)
                     #self.world.ReDraw()
             else:
                 self.moving=False
 
-            #draw player
-            self.animator.update(self.world.delta)
+            # Update animation
+            if self.moving:
+                self.animator.update(self.world.delta)
 
             self.rect.x=int(self.changex)
             self.rect.y=int(self.changey)
