@@ -20,6 +20,41 @@ import dpylib as dl
 mainmenu=pygame.image.load(path.join("images","menu.png")).convert()
 optionsimg=pygame.image.load(path.join("images","menu.png")).convert()
 logo_samiscool=pygame.image.load(path.join("images","samiscool_splash.png")).convert()
+font = ui.LoadFont(24)
+
+class ScrollingText(object):
+    def __init__(self,surf,gts):
+        self.surf=surf
+        self.goToState=gts
+        f=open(path.join("text","intro.txt"),'r')
+        entries=f.read()
+        f.close()
+        textList=[s.strip() for s in entries.splitlines()]
+        lines=[]
+        self.speed=0.1
+        totalheight=0
+        maxwidth=0
+        for f in textList:
+            a=font.render(f,0,(255,255,255))
+            lines.append(a)
+            totalheight+=a.get_height()
+        maxwidth=max([a.get_width() for a in lines])
+        self.textImage=pygame.Surface((maxwidth,totalheight))
+        self.textRect=pygame.Rect(0,0,maxwidth,totalheight)
+        self.textpos=0
+        for f in lines:
+            self.textImage.blit(f,(400-f.get_width()/2,self.textpos))
+            self.textpos+=32
+        self.textpos=650
+
+    def Draw(self,dt):
+        self.surf.fill((0,0,0))
+        self.surf.blit(self.textImage,(0,self.textpos))
+        self.textRect.top=self.textpos
+        pygame.draw.rect(self.surf,(255,0,0),self.textRect,2)
+        self.textpos-=self.speed
+        if self.textRect.bottom<0:
+            self.game.state=self.goToState
 
 class Logos(object):
     def __init__(self,surf):

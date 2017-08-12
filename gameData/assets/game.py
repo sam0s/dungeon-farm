@@ -27,9 +27,11 @@ pygame.init()
 
 class Game(object):
     def __init__(self,surf):
-        self.state="menu"
+        self.state="scrolling"
         self.surf=surf
-
+        #scrolling text handler
+        self.st=mainmenu.ScrollingText(self.surf,"menu")
+        self.st.game=self
         #logo screen
         self.logos=mainmenu.Logos(self.surf)
         self.logos.game=self
@@ -61,6 +63,8 @@ class Game(object):
 
     def Update(self,dt):
         self.events=pygame.event.get()
+        if self.state == "scrolling":
+            self.st.Draw(dt)
         if self.state == "logos":
             self.logos.Draw(dt)
         if self.state == "menu":
