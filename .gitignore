@@ -1,2 +1,3 @@
 *.pyc
 playername/
+.DS_Store
