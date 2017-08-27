@@ -27,7 +27,7 @@ pygame.init()
 
 class Game(object):
     def __init__(self,surf):
-        self.state="scrolling"
+        self.state="menu"
         self.surf=surf
         #scrolling text handler
         self.st=mainmenu.ScrollingText(self.surf,"menu")

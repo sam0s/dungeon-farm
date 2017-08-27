@@ -49,7 +49,10 @@ def savelvl(game):
     if world:
         pquests = [str(q.id)+"_"+str(q.active) for q in game.qm.quests]
         pitems=[str(i.id)+"_"+str(i.stack) for i in world.player.inventory]+[str(world.player.activeWeapon[0].id)+"_a"]
-
+        pvars=[]
+        for key, value in world.player.vars.iteritems():
+            pvars.append(str(key)+"_"+str(value))
+        print "GAME SAVE"
         #save stats
         data = {'player':[{'level':world.player.level,
                             'xp':world.player.xp,
@@ -60,7 +63,8 @@ def savelvl(game):
                             'speed':world.player.speed,
                             'kills':world.player.kills,
                             'quests':pquests,
-                            'inventory':pitems}]}
+                            'inventory':pitems,
+                            'vars':pvars}]}
 
         with open(path.join(world.playername,world.playername+".json"), 'w') as outfile:
             json.dump(data, outfile, indent=4)

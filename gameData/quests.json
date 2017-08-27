@@ -7,7 +7,7 @@
                      "Appigarth is in need of a hero!",
                      "Visit Prospect and check the quest board.",
                      "",
-                     "Your reward is 2000 experience points."],
+                     "Your reward is 1250 experience points."],
           "tasks": [
           {
             "type": "PlayerQuestTask",
@@ -20,9 +20,29 @@
             "questID": "12"
           }
                   ],
-          "rew": 2000
+          "rew": 1250
       },
-
+    "6":
+      {
+          "name": "Save Appigarth Pt. 2",
+          "descr": [
+                     "The town leader of Prospect would like to speak with you.",
+                     "",
+                     "Your reward is 1400 experience points."],
+          "tasks": [
+          {
+            "type": "PlayerPropTask",
+            "format": "Talk to town leader.",
+            "questID": "10"
+          },
+          {
+            "type": "PlayerQuestTask",
+            "format": "Do as he asks.",
+            "questID": "7"
+          }
+                  ],
+          "rew": 1400
+      },
     "12":
       {
           "name": "Tribal Woes",
@@ -55,10 +75,10 @@
                        "Your reward is 50 experience points."],
             "tasks": [
             {
-                "type": "PlayerPropTask",
-                "format": "Find {count} {prop}",
-                "prop": "gold",
-                "count": 5
+                "type": "PlayerVarTask",
+                "format": "do it ",
+                "var": "mq1",
+                "count": 2
             },
             {
               "type": "PlayerPropTask",

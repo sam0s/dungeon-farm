@@ -31,7 +31,7 @@ class Player(object):
         self.moving = False
         self.inventory = []
         self.activeWeapon = [items.getItem("Dirk")]
-
+        self.vars={'mq1':0}
         self.changex = float(self.rect.x)
         self.changey = float(self.rect.y)
 
@@ -80,6 +80,11 @@ class Player(object):
             self.kills=int(atr['kills'])
             pq=atr['quests']
             n2=atr['inventory']
+            vs=atr['vars']
+        #load player vars
+        for v in vs:
+            v=v.split("_")
+            self.vars[v[0]]=v[1]
         #load inventory
         if n2[0]!=[]:
             for f in n2:
@@ -94,13 +99,11 @@ class Player(object):
                     it=items.fromId(f2[0],self)
                     self.giveItem(it)
         #load quests
-
         for q in pq:
             q=q.split("_")
             nq=self.world.game.qm.allQuests[str(q[0])]
             nq.active=q[1]=="True"
             self.world.game.qm.quests += [nq]
-
 
     def giveItem(self,item):
         if len(self.inventory)==72:
@@ -113,7 +116,6 @@ class Player(object):
                     y=1
             if y==0:
                 self.inventory.append(item)
-
 
     def levelUp(self):
         #LEVEL UP

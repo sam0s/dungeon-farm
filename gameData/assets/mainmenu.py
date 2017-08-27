@@ -23,22 +23,22 @@ logo_samiscool=pygame.image.load(path.join("images","samiscool_splash.png")).con
 font = ui.LoadFont(24)
 
 class ScrollingText(object):
-    def __init__(self,surf,gts):
+    def __init__(self,surf,gts,text="intro"):
         self.surf=surf
         self.goToState=gts
-        f=open(path.join("text","intro.txt"),'r')
+        f=open(path.join("text",text+".txs"),'r')
         entries=f.read()
         f.close()
         textList=[s.strip() for s in entries.splitlines()]
         lines=[]
-        self.speed=0.1
+        self.speed=25
         totalheight=0
         maxwidth=0
         for f in textList:
             a=font.render(f,0,(255,255,255))
             lines.append(a)
-            totalheight+=a.get_height()
-        maxwidth=max([a.get_width() for a in lines])
+            totalheight+=a.get_height()+8
+        maxwidth=800
         self.textImage=pygame.Surface((maxwidth,totalheight))
         self.textRect=pygame.Rect(0,0,maxwidth,totalheight)
         self.textpos=0
@@ -52,9 +52,18 @@ class ScrollingText(object):
         self.surf.blit(self.textImage,(0,self.textpos))
         self.textRect.top=self.textpos
         pygame.draw.rect(self.surf,(255,0,0),self.textRect,2)
-        self.textpos-=self.speed
+        self.textpos-=self.speed*dt
         if self.textRect.bottom<0:
             self.game.state=self.goToState
+
+        for e in self.game.events:
+            if e.type == KEYUP:
+                if e.key == K_SPACE:
+                    self.textpos=-999999
+            if e.type==QUIT:
+                self.game.go=False
+
+
 
 class Logos(object):
     def __init__(self,surf):
@@ -147,7 +156,9 @@ class Menu(object):
                                 dl.LoadGame(self.game.gw)
                                 self.game.state="overworld"
                             if b.text == "New":
+
                                 self.game.qm.quests += [self.game.qm.allQuests['5']]
                                 self.drawn=False
                                 dl.NewGame(self.game.gw)
-                                self.game.state="overworld"
+                                self.game.state="scrolling"
+                                self.game.st.goToState="overworld"

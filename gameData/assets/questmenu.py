@@ -206,6 +206,26 @@ class Task(object):
     def descr(self):
         return "[Empty Task]"
 
+class PlayerVarTask(Task):
+    """
+    Task allowing to check if a certain Player property has reached a certain value.
+    """
+    def __init__(self, format, var, count):
+        Task.__init__(self)
+        self.taskName="pvt"
+        self.format = format
+        self.var = var
+        self.count = count
+
+    def check(self, game):
+        #print "Checking player.%s(%d) > %d" % (self.prop, getattr(game.player, self.prop), self.count)
+        self.completed = game.player.vars[self.var] >= self.count
+        #getattr(game.player, game.player.vars[self.var]) >= self.count
+        return self.completed
+
+    def descr(self):
+        return self.format
+
 class PlayerPropTask(Task):
     """
     Task allowing to check if a certain Player property has reached a certain value.
