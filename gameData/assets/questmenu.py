@@ -151,6 +151,7 @@ class Quest(object):
         self.tasks = tasks if tasks else []
         self.rewards = rewards
         self.id = id
+        self.postQuestStats = ""
 
     def addTasks(self, *tasks):
         # Allow single or list of tasks
@@ -187,6 +188,9 @@ class Quest(object):
         game.player.giveXp(xp)
         game.ow.logtext.append("You gain %d experience points." % xp)
         self.active = False
+        if len(self.postQuestStats)>0:
+            g=self.postQuestStats.split("_")
+            game.player.vars[g[0]]=g[1]
         return True
 
 class Task(object):
@@ -343,6 +347,12 @@ def loadAllQuests():
         except KeyError as e:
             print "Quest(%s) data is not valid: %s" % (qId, str(e))
             continue
+
+        #Load quest completion changes to story variables
+        try:
+            quest.postQuestStats=qData['postQuestStats']
+        except KeyError:
+            pass
 
         for t in qData['tasks']:
             tt=t['type']

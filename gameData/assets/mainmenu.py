@@ -31,7 +31,7 @@ class ScrollingText(object):
         f.close()
         textList=[s.strip() for s in entries.splitlines()]
         lines=[]
-        self.speed=25
+        self.speed=42
         totalheight=0
         maxwidth=0
         for f in textList:

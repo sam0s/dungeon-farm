@@ -6,27 +6,25 @@
           "descr": [
                      "Appigarth is in need of a hero!",
                      "Visit Prospect and check the quest board.",
+                     "Once you have become an adventurer, you will",
+                     "be granted access to new areas of the realm.",
                      "",
-                     "Your reward is 1250 experience points."],
+                     "Your reward is 1200 experience points."],
           "tasks": [
           {
             "type": "PlayerQuestTask",
             "format": "Become an adventurer.",
             "questID": "10"
-          },
-          {
-            "type": "PlayerQuestTask",
-            "format": "Help the tribe.",
-            "questID": "12"
           }
                   ],
-          "rew": 1250
+          "rew": 1200,
+          "postQuestStats": "mq1_1"
       },
     "6":
       {
           "name": "Save Appigarth Pt. 2",
           "descr": [
-                     "The town leader of Prospect would like to speak with you.",
+                     "The town leader of Fairfield would like to speak with you.",
                      "",
                      "Your reward is 1400 experience points."],
           "tasks": [
@@ -37,7 +35,7 @@
           },
           {
             "type": "PlayerQuestTask",
-            "format": "Do as he asks.",
+            "format": "Solve the problem.",
             "questID": "7"
           }
                   ],
@@ -70,15 +68,15 @@
             "name": "New Adventurer",
             "descr": ["As a new adventurer, the quest-giver of",
                        "Prospect has tasked you with finding 5 ",
-                       "gold. and killing an enemy.",
+                       "gold, and slaying an enemy.",
                        "",
                        "Your reward is 50 experience points."],
             "tasks": [
             {
-                "type": "PlayerVarTask",
-                "format": "do it ",
-                "var": "mq1",
-                "count": 2
+                "type": "PlayerPropTask",
+                "format": "Find 5 gold.",
+                "prop": "gold",
+                "count": 5
             },
             {
               "type": "PlayerPropTask",

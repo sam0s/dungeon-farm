@@ -31,7 +31,11 @@ class Player(object):
         self.moving = False
         self.inventory = []
         self.activeWeapon = [items.getItem("Dirk")]
+        ##################################
+        # STORY RELATED PLAYER VARIABLES #
         self.vars={'mq1':0}
+        ##################################
+        
         self.changex = float(self.rect.x)
         self.changey = float(self.rect.y)
 

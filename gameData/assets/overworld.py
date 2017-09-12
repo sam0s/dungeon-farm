@@ -52,6 +52,9 @@ class Overworld(object):
         self.offsety=0
         self.goto=[0,0]
 
+
+        self.boundingRect=pygame.Rect((22,22),(500,500))
+
         self.locationrects=[
         pygame.Rect((50,70),(245,245)),
         pygame.Rect((692,20),(245,245)),
@@ -164,6 +167,7 @@ class Overworld(object):
                 if e.key == K_f:
                     for f in self.locationrects:
                         if pygame.Rect(f.left+self.offsetx,f.top+self.offsety,f.width,f.height).collidepoint(400,320):
+
                             self.town = self.townRef[self.locationrects.index(f)]
                             self.townIndex = self.locationrects.index(f)
                             self.screen="town"
@@ -171,7 +175,9 @@ class Overworld(object):
             if e.type == MOUSEBUTTONDOWN and e.button == 1:
                 #OVERWORLD
                 if self.screen == "main":
-                    self.goto=[400-e.pos[0],320-e.pos[1]]
+                    if pygame.Rect(self.boundingRect.left+self.offsetx,self.boundingRect.top+self.offsety,self.boundingRect.width,self.boundingRect.height).collidepoint(e.pos[0],e.pos[1]):
+                        self.goto=[400-e.pos[0],320-e.pos[1]]
+
             if e.type == MOUSEBUTTONUP and e.button == 1:
                 #IN A TOWN
                 if self.screen == "town":
